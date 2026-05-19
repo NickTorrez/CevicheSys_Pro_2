@@ -31,10 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             tlpPrincipal = new TableLayoutPanel();
             pnlIzquierdo = new Panel();
-            pbLogo = new PictureBox();
-            pnlDerecho = new Panel();
             pnlTarjeta = new Panel();
-            label4 = new Label();
+            btnSalir = new Button();
             btnMostrarOcultar = new Button();
             btnIngresar = new Button();
             txtPassword = new TextBox();
@@ -42,24 +40,18 @@
             txtUsuario = new TextBox();
             label2 = new Label();
             label1 = new Label();
-            panel1 = new Panel();
-            pictureBox1 = new PictureBox();
+            pbLogo = new PictureBox();
             tlpPrincipal.SuspendLayout();
             pnlIzquierdo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pbLogo).BeginInit();
-            pnlDerecho.SuspendLayout();
             pnlTarjeta.SuspendLayout();
-            panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbLogo).BeginInit();
             SuspendLayout();
             // 
             // tlpPrincipal
             // 
-            tlpPrincipal.ColumnCount = 2;
-            tlpPrincipal.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpPrincipal.ColumnCount = 1;
             tlpPrincipal.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tlpPrincipal.Controls.Add(pnlIzquierdo, 0, 0);
-            tlpPrincipal.Controls.Add(pnlDerecho, 1, 0);
             tlpPrincipal.Dock = DockStyle.Fill;
             tlpPrincipal.Location = new Point(0, 0);
             tlpPrincipal.Name = "tlpPrincipal";
@@ -71,42 +63,21 @@
             // 
             // pnlIzquierdo
             // 
-            pnlIzquierdo.BackColor = Color.FromArgb(0, 33, 71);
+            pnlIzquierdo.BackColor = Color.LightSeaGreen;
+            pnlIzquierdo.Controls.Add(pnlTarjeta);
             pnlIzquierdo.Controls.Add(pbLogo);
             pnlIzquierdo.Dock = DockStyle.Fill;
             pnlIzquierdo.ForeColor = SystemColors.ControlText;
             pnlIzquierdo.Location = new Point(3, 3);
             pnlIzquierdo.Name = "pnlIzquierdo";
-            pnlIzquierdo.Size = new Size(943, 1023);
+            pnlIzquierdo.Size = new Size(1892, 1023);
             pnlIzquierdo.TabIndex = 0;
-            // 
-            // pbLogo
-            // 
-            pbLogo.Anchor = AnchorStyles.None;
-            pbLogo.Image = Properties.Resources.LOGO;
-            pbLogo.Location = new Point(130, 161);
-            pbLogo.Name = "pbLogo";
-            pbLogo.Size = new Size(700, 700);
-            pbLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            pbLogo.TabIndex = 0;
-            pbLogo.TabStop = false;
-            // 
-            // pnlDerecho
-            // 
-            pnlDerecho.BackColor = Color.WhiteSmoke;
-            pnlDerecho.Controls.Add(pnlTarjeta);
-            pnlDerecho.Controls.Add(panel1);
-            pnlDerecho.Dock = DockStyle.Fill;
-            pnlDerecho.Location = new Point(952, 3);
-            pnlDerecho.Name = "pnlDerecho";
-            pnlDerecho.Size = new Size(943, 1023);
-            pnlDerecho.TabIndex = 1;
             // 
             // pnlTarjeta
             // 
             pnlTarjeta.Anchor = AnchorStyles.None;
             pnlTarjeta.BackColor = Color.FromArgb(253, 246, 227);
-            pnlTarjeta.Controls.Add(label4);
+            pnlTarjeta.Controls.Add(btnSalir);
             pnlTarjeta.Controls.Add(btnMostrarOcultar);
             pnlTarjeta.Controls.Add(btnIngresar);
             pnlTarjeta.Controls.Add(txtPassword);
@@ -115,19 +86,22 @@
             pnlTarjeta.Controls.Add(label2);
             pnlTarjeta.Controls.Add(label1);
             pnlTarjeta.ForeColor = Color.FromArgb(64, 64, 64);
-            pnlTarjeta.Location = new Point(258, 186);
+            pnlTarjeta.Location = new Point(696, 316);
             pnlTarjeta.Name = "pnlTarjeta";
             pnlTarjeta.Size = new Size(500, 650);
             pnlTarjeta.TabIndex = 0;
             // 
-            // label4
+            // btnSalir
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(171, 610);
-            label4.Name = "label4";
-            label4.Size = new Size(162, 23);
-            label4.TabIndex = 7;
-            label4.Text = "CevicheSys-Pro";
+            btnSalir.FlatAppearance.BorderColor = Color.DarkGray;
+            btnSalir.FlatStyle = FlatStyle.Flat;
+            btnSalir.Location = new Point(119, 550);
+            btnSalir.Name = "btnSalir";
+            btnSalir.Size = new Size(262, 61);
+            btnSalir.TabIndex = 1;
+            btnSalir.Text = "Salir de CevicheSys-Pro";
+            btnSalir.UseVisualStyleBackColor = true;
+            btnSalir.Click += btnSalir_Click;
             // 
             // btnMostrarOcultar
             // 
@@ -136,7 +110,7 @@
             btnMostrarOcultar.FlatAppearance.BorderColor = Color.DimGray;
             btnMostrarOcultar.FlatStyle = FlatStyle.Flat;
             btnMostrarOcultar.Font = new Font("Century Gothic", 13F, FontStyle.Bold);
-            btnMostrarOcultar.Location = new Point(408, 303);
+            btnMostrarOcultar.Location = new Point(408, 349);
             btnMostrarOcultar.Name = "btnMostrarOcultar";
             btnMostrarOcultar.Size = new Size(50, 35);
             btnMostrarOcultar.TabIndex = 6;
@@ -152,7 +126,7 @@
             btnIngresar.FlatStyle = FlatStyle.Flat;
             btnIngresar.Font = new Font("Century Gothic", 14F, FontStyle.Bold);
             btnIngresar.ForeColor = Color.White;
-            btnIngresar.Location = new Point(50, 420);
+            btnIngresar.Location = new Point(50, 447);
             btnIngresar.Name = "btnIngresar";
             btnIngresar.Size = new Size(400, 55);
             btnIngresar.TabIndex = 5;
@@ -162,7 +136,7 @@
             // txtPassword
             // 
             txtPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtPassword.Location = new Point(50, 305);
+            txtPassword.Location = new Point(50, 351);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(340, 32);
             txtPassword.TabIndex = 4;
@@ -171,7 +145,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(50, 270);
+            label3.Location = new Point(50, 316);
             label3.Name = "label3";
             label3.Size = new Size(123, 23);
             label3.TabIndex = 3;
@@ -180,7 +154,7 @@
             // txtUsuario
             // 
             txtUsuario.BorderStyle = BorderStyle.FixedSingle;
-            txtUsuario.Location = new Point(50, 195);
+            txtUsuario.Location = new Point(50, 241);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(400, 32);
             txtUsuario.TabIndex = 2;
@@ -188,7 +162,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(50, 160);
+            label2.Location = new Point(50, 206);
             label2.Name = "label2";
             label2.Size = new Size(198, 23);
             label2.TabIndex = 1;
@@ -206,26 +180,16 @@
             label1.Text = "¡HOLA DE NUEVO!";
             label1.TextAlign = ContentAlignment.BottomLeft;
             // 
-            // panel1
+            // pbLogo
             // 
-            panel1.BackgroundImageLayout = ImageLayout.Stretch;
-            panel1.Controls.Add(pictureBox1);
-            panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 623);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(943, 400);
-            panel1.TabIndex = 1;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Image = Properties.Resources.pngtree_digital_ocean_wave_painting_png_image_6564274;
-            pictureBox1.Location = new Point(0, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(943, 400);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
+            pbLogo.Anchor = AnchorStyles.None;
+            pbLogo.Image = Properties.Resources.LOGO;
+            pbLogo.Location = new Point(596, 40);
+            pbLogo.Name = "pbLogo";
+            pbLogo.Size = new Size(700, 285);
+            pbLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            pbLogo.TabIndex = 0;
+            pbLogo.TabStop = false;
             // 
             // FrmLogin
             // 
@@ -235,7 +199,7 @@
             ClientSize = new Size(1898, 1029);
             Controls.Add(tlpPrincipal);
             Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            FormBorderStyle = FormBorderStyle.Fixed3D;
+            FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
             Name = "FrmLogin";
@@ -245,12 +209,9 @@
             Load += FrmLogin_Load;
             tlpPrincipal.ResumeLayout(false);
             pnlIzquierdo.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pbLogo).EndInit();
-            pnlDerecho.ResumeLayout(false);
             pnlTarjeta.ResumeLayout(false);
             pnlTarjeta.PerformLayout();
-            panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbLogo).EndInit();
             ResumeLayout(false);
         }
 
@@ -259,17 +220,14 @@
         private TableLayoutPanel tlpPrincipal;
         private Panel pnlIzquierdo;
         private PictureBox pbLogo;
-        private Panel pnlDerecho;
         private Panel pnlTarjeta;
-        private Label label2;
-        private Label label1;
+        private Button btnMostrarOcultar;
         private Button btnIngresar;
         private TextBox txtPassword;
         private Label label3;
         private TextBox txtUsuario;
-        private Button btnMostrarOcultar;
-        private Panel panel1;
-        private PictureBox pictureBox1;
-        private Label label4;
+        private Label label2;
+        private Label label1;
+        private Button btnSalir;
     }
 }

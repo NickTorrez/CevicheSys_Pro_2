@@ -53,6 +53,11 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
 
         }
+
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
     }
     public static class Sesion
     {
