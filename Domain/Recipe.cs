@@ -7,67 +7,67 @@ using System.Text.Json;
 
 namespace CevicheSys_Pro_2
 {
-    public class Receta
+    public class Recipe
     {
         /* --------------------------------------------------------------------- */
         /* Campos / Atributos Privados (Encapsulamiento)                         */
         /* --------------------------------------------------------------------- */
-        private int _id_Receta;
-        private int _id_Platillo;         // Llave Foránea hacia Platillo
-        private int _id_Producto;         // Llave Foránea hacia Producto (Insumo)
-        private double _cantidad_Utilizada; // Cantidad, peso o proporción requerida
+        private int _recipe_Id;
+        private int _dish_Id;             // Llave Foránea hacia Dish
+        private int _product_Id;          // Llave Foránea hacia Product (Insumo)
+        private double _quantity_Used;    // Cantidad, peso o proporción requerida
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
-        public Receta()
+        public Recipe()
         {
         }
 
-        public Receta(int id, int idPlatillo, int idProducto, double cantidadUtilizada)
+        public Recipe(int id, int dishId, int productId, double quantityUsed)
         {
-            _id_Receta = id;
-            _id_Platillo = idPlatillo;
-            _id_Producto = idProducto;
-            _cantidad_Utilizada = cantidadUtilizada;
+            _recipe_Id = id;
+            _dish_Id = dishId;
+            _product_Id = productId;
+            _quantity_Used = quantityUsed;
         }
 
         /* --------------------------------------------------------------------- */
         /* Propiedades Públicas (Getters y Setters)                              */
         /* --------------------------------------------------------------------- */
-        public int Id_Receta { get => _id_Receta; set => _id_Receta = value; }
-        public int Id_Platillo { get => _id_Platillo; set => _id_Platillo = value; }
-        public int Id_Producto { get => _id_Producto; set => _id_Producto = value; }
-        public double Cantidad_Utilizada { get => _cantidad_Utilizada; set => _cantidad_Utilizada = value; }
+        public int Recipe_Id { get => _recipe_Id; set => _recipe_Id = value; }
+        public int Dish_Id { get => _dish_Id; set => _dish_Id = value; }
+        public int Product_Id { get => _product_Id; set => _product_Id = value; }
+        public double Quantity_Used { get => _quantity_Used; set => _quantity_Used = value; }
 
         /* --------------------------------------------------------------------- */
         /* Métodos de Simulación de Persistencia (Similares a tu estructura)     */
         /* --------------------------------------------------------------------- */
         // Ruta unificada y limpia en la carpeta Data
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "recetas.json");
+        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "recipes.json");
 
-        public static List<Receta> Listar()
+        public static List<Recipe> List()
         {
             string directorio = Path.GetDirectoryName(PathArchivo);
             if (!Directory.Exists(directorio)) Directory.CreateDirectory(directorio);
 
-            if (!File.Exists(PathArchivo)) return new List<Receta>();
+            if (!File.Exists(PathArchivo)) return new List<Recipe>();
             string json = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<Receta>>(json) ?? new List<Receta>();
+            return JsonSerializer.Deserialize<List<Recipe>>(json) ?? new List<Recipe>();
         }
 
-        public bool Guardar()
+        public bool Save()
         {
-            List<Receta> lista = Listar();
+            List<Recipe> lista = List();
 
-            if (this.Id_Receta == 0)
+            if (this.Recipe_Id == 0)
             {
-                this.Id_Receta = lista.Count > 0 ? lista.Max(r => r.Id_Receta) + 1 : 1;
+                this.Recipe_Id = lista.Count > 0 ? lista.Max(r => r.Recipe_Id) + 1 : 1;
                 lista.Add(this);
             }
             else
             {
-                int index = lista.FindIndex(r => r.Id_Receta == this.Id_Receta);
+                int index = lista.FindIndex(r => r.Recipe_Id == this.Recipe_Id);
                 if (index != -1) lista[index] = this;
             }
 
@@ -76,10 +76,10 @@ namespace CevicheSys_Pro_2
             return true;
         }
 
-        public static bool Eliminar(int id)
+        public static bool Delete(int id)
         {
-            List<Receta> lista = Listar();
-            int index = lista.FindIndex(r => r.Id_Receta == id);
+            List<Recipe> lista = List();
+            int index = lista.FindIndex(r => r.Recipe_Id == id);
             if (index != -1)
             {
                 lista.RemoveAt(index);
@@ -95,9 +95,9 @@ namespace CevicheSys_Pro_2
         /* ===================================================================== */
 
         // Filtra y expone los ingredientes/proporciones asociados a un platillo en específico
-        public static List<Receta> ObtenerInsumosPorPlatillo(int idPlatillo)
+        public static List<Recipe> GetIngredientsByDish(int dishId)
         {
-            return Listar().Where(r => r.Id_Platillo == idPlatillo).ToList();
+            return List().Where(r => r.Dish_Id == dishId).ToList();
         }
     }
 }

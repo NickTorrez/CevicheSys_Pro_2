@@ -17,21 +17,6 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             InitializeComponent();
         }
 
-        private void btnIngresar_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void btnMostrarOcultar_Click(object sender, EventArgs e)
         {
             // UseSystemPasswordChar es la propiedad que oculta el texto con círculos
@@ -59,10 +44,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             Application.Exit();
         }
     }
-    public static class Sesion
+    public static class Session
     {
         // Guardará el objeto completo del usuario que logueó con éxito
-        public static Usuario UsuarioActivo { get; set; }
+        public static User ActiveUser { get; set; }
     }
 }
 

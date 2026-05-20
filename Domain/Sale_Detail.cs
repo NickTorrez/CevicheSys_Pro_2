@@ -7,66 +7,66 @@ using System.IO;
 
 namespace CevicheSys_Pro_2
 {
-    public class DetalleVenta
+    public class Sale_Detail
     {
         /* --------------------------------------------------------------------- */
         /* Campos / Atributos                                                    */
         /* --------------------------------------------------------------------- */
-        private int _id_Detalle;
-        private int _cantidad;
-        private int _id_Venta;    // Llave Foránea hacia Venta
-        private int _id_Platillo; // Llave Foránea hacia Platillo
+        private int _detail_Id;
+        private int _quantity;
+        private int _sale_Id;    // Llave Foránea hacia Sale
+        private int _dish_Id;    // Llave Foránea hacia Dish
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
         /* --------------------------------------------------------------------- */
 
-        public int Id_Detalle { get => _id_Detalle; set => _id_Detalle = value; }
-        public int Cantidad { get => _cantidad; set => _cantidad = value; }
-        public int Id_Venta { get => _id_Venta; set => _id_Venta = value; }
-        public int Id_Platillo { get => _id_Platillo; set => _id_Platillo = value; }
+        public int Detail_Id { get => _detail_Id; set => _detail_Id = value; }
+        public int Quantity { get => _quantity; set => _quantity = value; }
+        public int Sale_Id { get => _sale_Id; set => _sale_Id = value; }
+        public int Dish_Id { get => _dish_Id; set => _dish_Id = value; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
-        public DetalleVenta()
+        public Sale_Detail()
         {
         }
 
-        public DetalleVenta(int id, int cantidad, int idVenta, int idPlatillo)
+        public Sale_Detail(int id, int quantity, int saleId, int dishId)
         {
-            _id_Detalle = id;
-            _cantidad = cantidad;
-            _id_Venta = idVenta;
-            _id_Platillo = idPlatillo;
+            _detail_Id = id;
+            _quantity = quantity;
+            _sale_Id = saleId;
+            _dish_Id = dishId;
         }
         /* --------------------------------------------------------------------- */
         /* Métodos de Persistencia JSON                                          */
         /* --------------------------------------------------------------------- */
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "detalles_ventas.json");
+        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sale_details.json");
 
-        public static List<DetalleVenta> Listar()
+        public static List<Sale_Detail> List()
         {
             string directorio = Path.GetDirectoryName(PathArchivo);
             if (!Directory.Exists(directorio)) Directory.CreateDirectory(directorio);
 
-            if (!File.Exists(PathArchivo)) return new List<DetalleVenta>();
+            if (!File.Exists(PathArchivo)) return new List<Sale_Detail>();
             string json = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<DetalleVenta>>(json) ?? new List<DetalleVenta>();
+            return JsonSerializer.Deserialize<List<Sale_Detail>>(json) ?? new List<Sale_Detail>();
         }
 
-        public bool Guardar() // Guarda o actualiza un detalle de venta en el archivo JSON
+        public bool Save() // Guarda o actualiza un detalle de venta en el archivo JSON
         {
-            List<DetalleVenta> lista = Listar();
+            List<Sale_Detail> lista = List();
 
-            if (this.Id_Detalle == 0)
+            if (this.Detail_Id == 0)
             {
-                this.Id_Detalle = lista.Count > 0 ? lista.Max(d => d.Id_Detalle) + 1 : 1; // Asigna un nuevo ID incremental
+                this.Detail_Id = lista.Count > 0 ? lista.Max(d => d.Detail_Id) + 1 : 1; // Asigna un nuevo ID incremental
                 lista.Add(this); // Agrega el nuevo detalle a la lista
             }
             else
             {
-                int index = lista.FindIndex(d => d.Id_Detalle == this.Id_Detalle); // Busca el índice del detalle existente
+                int index = lista.FindIndex(d => d.Detail_Id == this.Detail_Id); // Busca el índice del detalle existente
                 if (index != -1) lista[index] = this; // Actualiza el detalle existente
                 else return false; // No se encontró el detalle para actualizar
             }
@@ -76,10 +76,10 @@ namespace CevicheSys_Pro_2
             return true;
         }
 
-        public static bool Eliminar(int id) // Elimina un detalle de venta por su ID del archivo JSON
+        public static bool Delete(int id) // Elimina un detalle de venta por su ID del archivo JSON
         {
-            List<DetalleVenta> lista = Listar();
-            int index = lista.FindIndex(d => d.Id_Detalle == id); // Busca el índice del detalle a eliminar
+            List<Sale_Detail> lista = List();
+            int index = lista.FindIndex(d => d.Detail_Id == id); // Busca el índice del detalle a eliminar
             if (index != -1)// Si se encuentra el detalle, se elimina de la lista y se actualiza el archivo JSON
             {
                 lista.RemoveAt(index); // Elimina el detalle de la lista
@@ -95,9 +95,9 @@ namespace CevicheSys_Pro_2
         /* ===================================================================== */
 
         // Trae los detalles específicos vinculados a una factura/boucher única
-        public static List<DetalleVenta> ObtenerDetallesPorVenta(int idVenta)
+        public static List<Sale_Detail> GetDetailsBySale(int saleId)
         {
-            return Listar().Where(d => d.Id_Venta == idVenta).ToList();
+            return List().Where(d => d.Sale_Id == saleId).ToList();
         }
     }
 }

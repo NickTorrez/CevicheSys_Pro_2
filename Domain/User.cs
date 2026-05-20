@@ -1,64 +1,68 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.IO;
 
 namespace CevicheSys_Pro_2
 {
-    public class Usuario
+    /// <summary>
+    /// Almacena la información de acceso y los privilegios asignados al personal de la cevichería.
+    /// </summary>
+    public class User
     {
         /* --------------------------------------------------------------------- */
         /* Campos / Atributos                                                    */
         /* --------------------------------------------------------------------- */
-        private int _id_Usuario;
-        private string _nombre_Usuario;
-        private string _contraseña;
-        private string _rol; // "Admin" o "Vendedor"
+        private int _user_Id;
+        private string _username;
+        private string _password;
+        private string _role; // "Admin" o "Vendedor"
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
         /* --------------------------------------------------------------------- */
-        public int Id_Usuario { get => _id_Usuario; set => _id_Usuario = value; }
-        public string Nombre_Usuario { get => _nombre_Usuario; set => _nombre_Usuario = value; }
-        public string Contraseña { get => _contraseña; set => _contraseña = value; }
-        public string Rol { get => _rol; set => _rol = value; }
+        public int User_Id { get => _user_Id; set => _user_Id = value; }
+        public string Username { get => _username; set => _username = value; }
+        public string Password { get => _password; set => _password = value; }
+        public string Role { get => _role; set => _role = value; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
-        public Usuario()
+        public User()
         {
-            _nombre_Usuario = string.Empty;
-            _contraseña = string.Empty;
-            _rol = string.Empty;
+            _username = string.Empty;
+            _password = string.Empty;
+            _role = string.Empty;
         }
 
-        public Usuario(int id, string nombreUsuario, string contraseña, string rol)
+        public User(int id, string username, string password, string role)
         {
-            _id_Usuario = id;
-            _nombre_Usuario = nombreUsuario;
-            _contraseña = contraseña;
-            _rol = rol;
+            _user_Id = id;
+            _username = username;
+            _password = password;
+            _role = role;
         }
 
         /* --------------------------------------------------------------------- */
         /* Métodos de Persistencia JSON                                          */
         /* --------------------------------------------------------------------- */
-        
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "usuarios.json");// Ruta unificada y limpia en la carpeta Data
+
+        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");// Ruta unificada y limpia en la carpeta Data
 
         // Obtener todos los usuarios de la base de datos JSON
-        public static List<Usuario> Listar()
+        public static List<User> List()
         {
             if (!File.Exists(PathArchivo)) // Si el archivo no existe, se crea con usuarios por defecto
             {
                 // Credenciales por defecto iniciales solicitadas por las funciones
-                var listaPorDefecto = new List<Usuario>
+                var listaPorDefecto = new List<User>
                 {
-                    new Usuario(1, "admin", "admin123", "Admin"),
-                    new Usuario(2, "vendedor", "vendedor123", "Vendedor")
+                    new User(1, "admin", "admin123", "Admin"),
+                    new User(2, "vendedor", "vendedor123", "Vendedor")
                 };
                 string json = JsonSerializer.Serialize(listaPorDefecto, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(PathArchivo, json);
@@ -66,13 +70,13 @@ namespace CevicheSys_Pro_2
             }
 
             string jsonExistente = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<Usuario>>(jsonExistente) ?? new List<Usuario>();
+            return JsonSerializer.Deserialize<List<User>>(jsonExistente) ?? new List<User>();
         }
 
         // Método para validar credenciales en la pantalla de Login
-        public static Usuario Autenticar(string username, string password)
+        public static User Authenticate(string username, string password)
         {
-            return Listar().FirstOrDefault(u => u.Nombre_Usuario.Equals(username, StringComparison.OrdinalIgnoreCase) && u.Contraseña == password);
+            return List().FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
         }
 
     }
