@@ -15,34 +15,29 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         public FrmLogin()
         {
             InitializeComponent();
-        }
-
-        private void btnMostrarOcultar_Click(object sender, EventArgs e)
-        {
-            // UseSystemPasswordChar es la propiedad que oculta el texto con círculos
-            // Al negarla (!), si está activada se desactiva, y viceversa
-            txtPassword.UseSystemPasswordChar = !txtPassword.UseSystemPasswordChar;
-
-            // Cambiamos el texto del botón para darle feedback visual al usuario
-            if (txtPassword.UseSystemPasswordChar)
-            {
-                btnMostrarOcultar.Text = "👁"; // Modo oculto (muestra el ojo para permitir ver)
-            }
-            else
-            {
-                btnMostrarOcultar.Text = "🔒"; // Modo visible (muestra el candado para permitir ocultar)
-            }
+            // Suscribimos el evento Resize
+            this.Resize += new EventHandler(FrmLogin_Resize);
         }
 
         private void FrmLogin_Load(object sender, EventArgs e)
         {
-
+            // Centrar al cargar por primera vez
+            CentrarTarjetaLogin();
         }
 
-        private void btnSalir_Click(object sender, EventArgs e)
+        private void FrmLogin_Resize(object sender, EventArgs e)
         {
-            Application.Exit();
+            // Volver a centrar si la pantalla cambia de tamaño
+            CentrarTarjetaLogin();
         }
+
+        private void CentrarTarjetaLogin()
+        {
+            // Calcula el centro exacto de la pantalla actual
+            pnlTarjetaLogin.Left = (this.ClientSize.Width - pnlTarjetaLogin.Width) / 2;
+            pnlTarjetaLogin.Top = (this.ClientSize.Height - pnlTarjetaLogin.Height) / 2;
+        }
+
     }
     public static class Session
     {

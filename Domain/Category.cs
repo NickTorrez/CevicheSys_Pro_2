@@ -12,25 +12,25 @@ namespace CevicheSys_Pro_2
         // Campos privados 
         private int _category_Id;
         private string _category_Name;
-        private string _applied_Module; // Debe ser estrictamente "Inventario" o "Gastos"
+        private string _target_Module; // Debe ser estrictamente "Inventario" o "Gastos"
 
         // Propiedades públicas
         public int Category_Id { get => _category_Id; set => _category_Id = value; }
         public string Category_Name { get => _category_Name; set => _category_Name = value; }
-        public string Applied_Module { get => _applied_Module; set => _applied_Module = value; }
+        public string Target_Module { get => _target_Module; set => _target_Module = value; }
 
         // Constructor sin parámetros (Útil para serialización JSON)
         public Category()
         {
             _category_Name = string.Empty;
-            _applied_Module = string.Empty;
+            _target_Module = string.Empty;
         }
 
-        public Category(int id, string categoryName, string appliedModule)
+        public Category(int id, string categoryName, string targetModule)
         {
             _category_Id = id;
             _category_Name = categoryName;
-            _applied_Module = appliedModule;
+            _target_Module = targetModule;
         }
 
         /* --------------------------------------------------------------------- */
@@ -69,7 +69,7 @@ namespace CevicheSys_Pro_2
         public static List<Category> GetCategoriesByModule(string module)
         {
             return List()
-                .Where(c => c.Applied_Module.Equals(module, StringComparison.OrdinalIgnoreCase))
+                .Where(c => c.Target_Module.Equals(module, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
 

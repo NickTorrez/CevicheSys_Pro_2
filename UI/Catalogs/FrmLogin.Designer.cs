@@ -29,148 +29,185 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
+            pnlTarjetaLogin = new Panel();
+            pnlInputUsuario = new Panel();
+            pbUser = new PictureBox();
+            lblBienvenida = new Label();
             pbLogo = new PictureBox();
-            pnlTarjeta = new Panel();
-            btnSalir = new Button();
-            btnMostrarOcultar = new Button();
-            btnIngresar = new Button();
+            txtUsername = new TextBox();
+            panel1 = new Panel();
+            pbPassword = new PictureBox();
             txtPassword = new TextBox();
-            label3 = new Label();
-            txtUsuario = new TextBox();
-            label2 = new Label();
-            label1 = new Label();
+            lblUser = new Label();
+            lblPassword = new Label();
+            lblErrorMessage = new Label();
+            lnkOlvidePassword = new LinkLabel();
+            btnIngresar = new Button();
+            pnlTarjetaLogin.SuspendLayout();
+            pnlInputUsuario.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbUser).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbLogo).BeginInit();
-            pnlTarjeta.SuspendLayout();
+            panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbPassword).BeginInit();
             SuspendLayout();
+            // 
+            // pnlTarjetaLogin
+            // 
+            pnlTarjetaLogin.Anchor = AnchorStyles.None;
+            pnlTarjetaLogin.BackColor = Color.White;
+            pnlTarjetaLogin.Controls.Add(btnIngresar);
+            pnlTarjetaLogin.Controls.Add(lnkOlvidePassword);
+            pnlTarjetaLogin.Controls.Add(lblErrorMessage);
+            pnlTarjetaLogin.Controls.Add(lblPassword);
+            pnlTarjetaLogin.Controls.Add(lblUser);
+            pnlTarjetaLogin.Controls.Add(panel1);
+            pnlTarjetaLogin.Controls.Add(pnlInputUsuario);
+            pnlTarjetaLogin.Controls.Add(lblBienvenida);
+            pnlTarjetaLogin.Controls.Add(pbLogo);
+            pnlTarjetaLogin.Location = new Point(406, 36);
+            pnlTarjetaLogin.Name = "pnlTarjetaLogin";
+            pnlTarjetaLogin.Size = new Size(450, 600);
+            pnlTarjetaLogin.TabIndex = 0;
+            // 
+            // pnlInputUsuario
+            // 
+            pnlInputUsuario.BorderStyle = BorderStyle.FixedSingle;
+            pnlInputUsuario.Controls.Add(txtUsername);
+            pnlInputUsuario.Controls.Add(pbUser);
+            pnlInputUsuario.Location = new Point(65, 270);
+            pnlInputUsuario.Name = "pnlInputUsuario";
+            pnlInputUsuario.Size = new Size(320, 45);
+            pnlInputUsuario.TabIndex = 3;
+            // 
+            // pbUser
+            // 
+            pbUser.Image = Properties.Resources.name_user_3716;
+            pbUser.Location = new Point(5, 6);
+            pbUser.Name = "pbUser";
+            pbUser.Size = new Size(32, 32);
+            pbUser.TabIndex = 0;
+            pbUser.TabStop = false;
+            // 
+            // lblBienvenida
+            // 
+            lblBienvenida.AutoSize = true;
+            lblBienvenida.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblBienvenida.ForeColor = Color.FromArgb(15, 23, 42);
+            lblBienvenida.Location = new Point(65, 185);
+            lblBienvenida.Name = "lblBienvenida";
+            lblBienvenida.Size = new Size(321, 34);
+            lblBienvenida.TabIndex = 2;
+            lblBienvenida.Text = "¡Bienvenido de nuevo!";
             // 
             // pbLogo
             // 
-            pbLogo.Anchor = AnchorStyles.None;
+            pbLogo.Dock = DockStyle.Top;
             pbLogo.Image = Properties.Resources.LOGO;
-            pbLogo.Location = new Point(284, 47);
+            pbLogo.Location = new Point(0, 0);
             pbLogo.Name = "pbLogo";
-            pbLogo.Size = new Size(600, 228);
+            pbLogo.Size = new Size(450, 150);
             pbLogo.SizeMode = PictureBoxSizeMode.Zoom;
             pbLogo.TabIndex = 1;
             pbLogo.TabStop = false;
             // 
-            // pnlTarjeta
+            // txtUsername
             // 
-            pnlTarjeta.Anchor = AnchorStyles.None;
-            pnlTarjeta.BackColor = Color.FromArgb(253, 246, 227);
-            pnlTarjeta.Controls.Add(btnSalir);
-            pnlTarjeta.Controls.Add(btnMostrarOcultar);
-            pnlTarjeta.Controls.Add(txtUsuario);
-            pnlTarjeta.Controls.Add(txtPassword);
-            pnlTarjeta.Controls.Add(btnIngresar);
-            pnlTarjeta.Controls.Add(label3);
-            pnlTarjeta.Controls.Add(label2);
-            pnlTarjeta.Controls.Add(label1);
-            pnlTarjeta.ForeColor = Color.FromArgb(64, 64, 64);
-            pnlTarjeta.Location = new Point(359, 262);
-            pnlTarjeta.Name = "pnlTarjeta";
-            pnlTarjeta.Size = new Size(451, 538);
-            pnlTarjeta.TabIndex = 2;
+            txtUsername.Font = new Font("Century Gothic", 11F, FontStyle.Bold);
+            txtUsername.ForeColor = Color.FromArgb(15, 23, 42);
+            txtUsername.Location = new Point(43, 7);
+            txtUsername.Name = "txtUsername";
+            txtUsername.Size = new Size(263, 30);
+            txtUsername.TabIndex = 1;
             // 
-            // btnSalir
+            // panel1
             // 
-            btnSalir.FlatAppearance.BorderColor = Color.DarkGray;
-            btnSalir.FlatStyle = FlatStyle.Flat;
-            btnSalir.Location = new Point(91, 436);
-            btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(262, 61);
-            btnSalir.TabIndex = 1;
-            btnSalir.Text = "Salir de CevicheSys-Pro";
-            btnSalir.UseVisualStyleBackColor = true;
+            panel1.Controls.Add(txtPassword);
+            panel1.Controls.Add(pbPassword);
+            panel1.Location = new Point(66, 375);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(320, 45);
+            panel1.TabIndex = 4;
             // 
-            // btnMostrarOcultar
+            // pbPassword
             // 
-            btnMostrarOcultar.BackColor = Color.White;
-            btnMostrarOcultar.Cursor = Cursors.Hand;
-            btnMostrarOcultar.FlatAppearance.BorderColor = Color.DimGray;
-            btnMostrarOcultar.FlatStyle = FlatStyle.Flat;
-            btnMostrarOcultar.Font = new Font("Century Gothic", 13F, FontStyle.Bold);
-            btnMostrarOcultar.Location = new Point(362, 274);
-            btnMostrarOcultar.Name = "btnMostrarOcultar";
-            btnMostrarOcultar.Size = new Size(50, 30);
-            btnMostrarOcultar.TabIndex = 6;
-            btnMostrarOcultar.Text = "👁";
-            btnMostrarOcultar.UseVisualStyleBackColor = false;
-            // 
-            // btnIngresar
-            // 
-            btnIngresar.BackColor = Color.FromArgb(255, 130, 0);
-            btnIngresar.Cursor = Cursors.Hand;
-            btnIngresar.FlatAppearance.BorderSize = 0;
-            btnIngresar.FlatStyle = FlatStyle.Flat;
-            btnIngresar.Font = new Font("Century Gothic", 14F, FontStyle.Bold);
-            btnIngresar.ForeColor = Color.White;
-            btnIngresar.Location = new Point(39, 353);
-            btnIngresar.Name = "btnIngresar";
-            btnIngresar.Size = new Size(373, 55);
-            btnIngresar.TabIndex = 5;
-            btnIngresar.Text = "INICIAR SESIÓN";
-            btnIngresar.UseVisualStyleBackColor = false;
+            pbPassword.Image = Properties.Resources.password_3715;
+            pbPassword.Location = new Point(6, 7);
+            pbPassword.Name = "pbPassword";
+            pbPassword.Size = new Size(32, 32);
+            pbPassword.TabIndex = 0;
+            pbPassword.TabStop = false;
             // 
             // txtPassword
             // 
-            txtPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtPassword.Location = new Point(39, 274);
-            txtPassword.Multiline = true;
+            txtPassword.Location = new Point(44, 7);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(314, 30);
-            txtPassword.TabIndex = 4;
+            txtPassword.Size = new Size(263, 32);
+            txtPassword.TabIndex = 1;
             txtPassword.UseSystemPasswordChar = true;
             // 
-            // label3
+            // lblUser
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(39, 240);
-            label3.Name = "label3";
-            label3.Size = new Size(98, 19);
-            label3.TabIndex = 3;
-            label3.Text = "Contraseña";
+            lblUser.AutoSize = true;
+            lblUser.Location = new Point(72, 244);
+            lblUser.Name = "lblUser";
+            lblUser.Size = new Size(81, 23);
+            lblUser.TabIndex = 5;
+            lblUser.Text = "Usuario";
             // 
-            // txtUsuario
+            // lblPassword
             // 
-            txtUsuario.BorderStyle = BorderStyle.FixedSingle;
-            txtUsuario.Location = new Point(39, 164);
-            txtUsuario.Multiline = true;
-            txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(314, 30);
-            txtUsuario.TabIndex = 2;
+            lblPassword.AutoSize = true;
+            lblPassword.Location = new Point(72, 339);
+            lblPassword.Name = "lblPassword";
+            lblPassword.Size = new Size(123, 23);
+            lblPassword.TabIndex = 6;
+            lblPassword.Text = "Contraseña";
             // 
-            // label2
+            // lblErrorMessage
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(39, 130);
-            label2.Name = "label2";
-            label2.Size = new Size(158, 19);
-            label2.TabIndex = 1;
-            label2.Text = "Nombre de Usuario";
+            lblErrorMessage.AutoSize = true;
+            lblErrorMessage.Font = new Font("Century Gothic", 10F, FontStyle.Bold);
+            lblErrorMessage.ForeColor = Color.FromArgb(239, 68, 68);
+            lblErrorMessage.Location = new Point(213, 437);
+            lblErrorMessage.Name = "lblErrorMessage";
+            lblErrorMessage.Size = new Size(21, 19);
+            lblErrorMessage.TabIndex = 7;
+            lblErrorMessage.Text = "\"\"";
+            lblErrorMessage.Visible = false;
             // 
-            // label1
+            // lnkOlvidePassword
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Century Gothic", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.FromArgb(0, 33, 71);
-            label1.Location = new Point(39, 41);
-            label1.Name = "label1";
-            label1.Size = new Size(289, 38);
-            label1.TabIndex = 0;
-            label1.Text = "¡HOLA DE NUEVO!";
-            label1.TextAlign = ContentAlignment.BottomLeft;
+            lnkOlvidePassword.AutoSize = true;
+            lnkOlvidePassword.Font = new Font("Century Gothic", 10F, FontStyle.Bold);
+            lnkOlvidePassword.LinkColor = Color.FromArgb(14, 165, 233);
+            lnkOlvidePassword.Location = new Point(114, 468);
+            lnkOlvidePassword.Name = "lnkOlvidePassword";
+            lnkOlvidePassword.Size = new Size(222, 19);
+            lnkOlvidePassword.TabIndex = 8;
+            lnkOlvidePassword.TabStop = true;
+            lnkOlvidePassword.Text = "¿Olvidaste tu contraseña?";
+            // 
+            // btnIngresar
+            // 
+            btnIngresar.BackColor = Color.FromArgb(14, 165, 233);
+            btnIngresar.FlatAppearance.BorderSize = 0;
+            btnIngresar.FlatStyle = FlatStyle.Flat;
+            btnIngresar.ForeColor = Color.White;
+            btnIngresar.Location = new Point(65, 524);
+            btnIngresar.Name = "btnIngresar";
+            btnIngresar.Size = new Size(320, 40);
+            btnIngresar.TabIndex = 9;
+            btnIngresar.Text = "INICIAR SESIÓN";
+            btnIngresar.UseVisualStyleBackColor = false;
             // 
             // FrmLogin
             // 
-            AutoScaleDimensions = new SizeF(9F, 19F);
+            AutoScaleDimensions = new SizeF(12F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.DarkSeaGreen;
-            ClientSize = new Size(1169, 830);
-            Controls.Add(pnlTarjeta);
-            Controls.Add(pbLogo);
+            BackColor = Color.FromArgb(241, 245, 249);
+            ClientSize = new Size(1262, 673);
+            Controls.Add(pnlTarjetaLogin);
             Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
             Name = "FrmLogin";
@@ -178,23 +215,33 @@
             Text = "INICIO DE SESIÓN";
             WindowState = FormWindowState.Maximized;
             Load += FrmLogin_Load;
+            pnlTarjetaLogin.ResumeLayout(false);
+            pnlTarjetaLogin.PerformLayout();
+            pnlInputUsuario.ResumeLayout(false);
+            pnlInputUsuario.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbUser).EndInit();
             ((System.ComponentModel.ISupportInitialize)pbLogo).EndInit();
-            pnlTarjeta.ResumeLayout(false);
-            pnlTarjeta.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbPassword).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
+        private Panel pnlTarjetaLogin;
         private PictureBox pbLogo;
-        private Panel pnlTarjeta;
-        private Button btnSalir;
-        private Button btnMostrarOcultar;
-        private Button btnIngresar;
+        private Label lblBienvenida;
+        private Panel pnlInputUsuario;
+        private PictureBox pbUser;
+        private TextBox txtUsername;
+        private Panel panel1;
+        private PictureBox pbPassword;
         private TextBox txtPassword;
-        private Label label3;
-        private TextBox txtUsuario;
-        private Label label2;
-        private Label label1;
+        private Label lblErrorMessage;
+        private Label lblPassword;
+        private Label lblUser;
+        private Button btnIngresar;
+        private LinkLabel lnkOlvidePassword;
     }
 }

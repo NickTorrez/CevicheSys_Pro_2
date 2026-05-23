@@ -16,7 +16,7 @@ namespace CevicheSys_Pro_2
         private string _dish_Type;
         private string _size;
         private double _price; // DECIMAL(10,2) mapeado a double para facilitar operaciones en C#
-        private bool _availability;
+        private bool _is_Available;
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
@@ -27,7 +27,7 @@ namespace CevicheSys_Pro_2
         public double Price { get => _price; set => _price = value; }
 
         // Control de inventario en mostrador (true = Venta permitida)
-        public bool Availability { get => _availability; set => _availability = value; }
+        public bool Is_Available { get => _is_Available; set => _is_Available = value; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
@@ -36,16 +36,16 @@ namespace CevicheSys_Pro_2
         {
             _dish_Type = string.Empty;
             _size = string.Empty;
-            _availability = true; // Por defecto al crear un registro, está disponible.
+            _is_Available = true; // Por defecto al crear un registro, está disponible.
         }
 
-        public Dish(int id, string dishType, string size, double price, bool availability = true)
+        public Dish(int id, string dishType, string size, double price, bool isAvailable = true)
         {
             _dish_Id = id;
             _dish_Type = dishType;
             _size = size;
             _price = price;
-            _availability = availability;
+            _is_Available = isAvailable;
         }
 
         /* --------------------------------------------------------------------- */

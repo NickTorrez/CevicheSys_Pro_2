@@ -121,22 +121,28 @@
   <data name="WhatsApp Image 2026-05-12 at 2.16.50 PM" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\WhatsApp Image 2026-05-12 at 2.16.50 PM.jpeg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="WhatsApp Image 2026-05-12 at 2.161" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\WhatsApp Image 2026-05-12 at 2.16.50 PM.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="descarga (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\descarga (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="1491313929-menu_82986" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1491313929-menu_82986.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="name_user_3716" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\name_user_3716.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="descarga (2)" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\descarga (2).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WhatsApp Image 2026-05-12 at 2.161" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WhatsApp Image 2026-05-12 at 2.16.50 PM.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pngtree-digital-ocean-wave-painting-png-image_6564274" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pngtree-digital-ocean-wave-painting-png-image_6564274.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="LOGO" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\LOGO.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="pngtree-digital-ocean-wave-painting-png-image_6564274" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pngtree-digital-ocean-wave-painting-png-image_6564274.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="password_3715" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\password_3715.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
