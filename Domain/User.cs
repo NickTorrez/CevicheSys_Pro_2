@@ -56,27 +56,71 @@ namespace CevicheSys_Pro_2
         // Obtener todos los usuarios de la base de datos JSON
         public static List<User> List()
         {
-            if (!File.Exists(PathArchivo)) // Si el archivo no existe, se crea con usuarios por defecto
+            try
             {
-                // Credenciales por defecto iniciales solicitadas por las funciones
-                var listaPorDefecto = new List<User>
+                // Asegura la creación de la carpeta Data si no existe en la instalación
+                string carpeta = Path.GetDirectoryName(PathArchivo);
+                if (!Directory.Exists(carpeta))
+                {
+                    Directory.CreateDirectory(carpeta);
+                }
+
+                if (!File.Exists(PathArchivo)) 
+                {
+                    // Credenciales predefinidas solicitadas
+                    var listaPorDefecto = new List<User>
+                    {
+                        new User(1, "admin", "admin123", "Admin"),
+                        new User(2, "vendedor", "vendedor123", "Vendedor")
+                    };
+                    string json = JsonSerializer.Serialize(listaPorDefecto, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(PathArchivo, json);
+                    return listaPorDefecto;
+                }
+
+                string jsonExistente = File.ReadAllText(PathArchivo);
+                return JsonSerializer.Deserialize<List<User>>(jsonExistente) ?? new List<User>();
+            }
+            catch (Exception)
+            {
+                // RESPALDO SEGURO: Si el JSON se corrompe o el disco falla, las credenciales siguen operando en RAM
+                return new List<User>
                 {
                     new User(1, "admin", "admin123", "Admin"),
                     new User(2, "vendedor", "vendedor123", "Vendedor")
                 };
-                string json = JsonSerializer.Serialize(listaPorDefecto, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(PathArchivo, json);
-                return listaPorDefecto;
             }
-
-            string jsonExistente = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<User>>(jsonExistente) ?? new List<User>();
         }
 
-        // Método para validar credenciales en la pantalla de Login
         public static User Authenticate(string username, string password)
         {
             return List().FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
+        }
+
+        public void Save()
+        {
+            try
+            {
+                List<User> currentList = User.List();
+                var existingUser = currentList.FirstOrDefault(u => u.User_Id == this.User_Id || u.Username.Equals(this.Username, StringComparison.OrdinalIgnoreCase));
+
+                if (existingUser != null)
+                {
+                    existingUser.Password = this.Password;
+                    existingUser.Role = this.Role;
+                }
+                else
+                {
+                    currentList.Add(this);
+                }
+
+                string jsonString = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(PathArchivo, jsonString); // Corrección de la ruta de guardado
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("No se pudieron guardar los cambios en el almacenamiento local: " + ex.Message);
+            }
         }
 
     }

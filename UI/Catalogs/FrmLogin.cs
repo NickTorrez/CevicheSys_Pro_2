@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
 {
@@ -15,7 +16,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         public FrmLogin()
         {
             InitializeComponent();
-            // Suscribimos el evento Resize
+            // Vinculamos el evento Resize para que responda si estiran o maximizan la ventana
             this.Resize += new EventHandler(FrmLogin_Resize);
         }
 
@@ -23,21 +24,101 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             // Centrar al cargar por primera vez
             CentrarTarjetaLogin();
+            // Aseguramos que la contraseña inicie oculta de forma nativa
+            txtPassword.PasswordChar = '●';
+            btnTogglePassword.Text = "👁";
         }
 
         private void FrmLogin_Resize(object sender, EventArgs e)
         {
             // Volver a centrar si la pantalla cambia de tamaño
             CentrarTarjetaLogin();
+
         }
 
         private void CentrarTarjetaLogin()
         {
-            // Calcula el centro exacto de la pantalla actual
-            pnlTarjetaLogin.Left = (this.ClientSize.Width - pnlTarjetaLogin.Width) / 2;
-            pnlTarjetaLogin.Top = (this.ClientSize.Height - pnlTarjetaLogin.Height) / 2;
+            if (pnlTarjetaLogin != null && pnlRegistro != null)
+            {
+                pnlTarjetaLogin.Left = (pnlRegistro.Width - pnlTarjetaLogin.Width) / 2;
+                pnlTarjetaLogin.Top = (pnlRegistro.Height - pnlTarjetaLogin.Height) / 2;
+            }
         }
 
+        private void btnIngresar_Click(object sender, EventArgs e)
+        {
+            string usernameInput = txtUsername.Text.Trim();
+            string passwordInput = txtPassword.Text;
+
+            if (string.IsNullOrEmpty(usernameInput) || string.IsNullOrEmpty(passwordInput))
+            {
+                MostrarError("Por favor, completa todos los campos.");
+                return;
+            }
+
+            try
+            {
+                // Validación directa contra las credenciales seguras
+                var usuarioEncontrado = User.Authenticate(usernameInput, passwordInput);
+
+                if (usuarioEncontrado != null)
+                {
+                    lblErrorMessage.Visible = false;
+
+                    // Almacenamiento del usuario activo para el control de accesos posterior
+                    Session.ActiveUser = usuarioEncontrado;
+
+                    // Instanciamos el menú principal unificado
+                    FrmMainMenu mainMenu = new FrmMainMenu();
+                    mainMenu.Show();
+
+                    // Ocultamos el Login para liberar espacio visual
+                    this.Hide();
+                }
+                else
+                {
+                    MostrarError("Usuario o contraseña incorrectos.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarError("Error del sistema: " + ex.Message);
+            }
+        }
+
+        private void MostrarError(string mensaje)
+        {
+            lblErrorMessage.Text = mensaje;
+            lblErrorMessage.Visible = true;
+        }
+
+        // LÓGICA PARA MOSTRAR / OCULTAR CONTRASEÑA
+        private void btnTogglePassword_Click(object sender, EventArgs e)
+        {
+            // Verificamos qué carácter está usando actualmente
+            if (txtPassword.PasswordChar == '●')
+            {
+                // Si está oculta, la mostramos. \0 significa "Carácter nulo / Ninguno"
+                txtPassword.PasswordChar = '\0';
+                btnTogglePassword.Text = "🔒︎";
+            }
+            else
+            {
+                // Si está visible, la volvemos a ocultar
+                txtPassword.PasswordChar = '●';
+                btnTogglePassword.Text = "👁";
+            }
+        }
+
+        private void lblBienvenida_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlRegistro_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
     public static class Session
     {

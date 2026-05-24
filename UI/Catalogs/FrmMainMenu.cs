@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
 {
-    public partial class FrmVenta : Form
+    public partial class FrmMainMenu : Form
     {
-        public FrmVenta()
+        public FrmMainMenu()
         {
             InitializeComponent();
         }
