@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
+using CevicheSys_Pro_2.Helpers;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
 {
@@ -92,6 +93,14 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             lblErrorMessage.Visible = true;
         }
 
+        public void LimpiarCampos()
+        {
+            txtUsername.Text = string.Empty;
+            txtPassword.Text = string.Empty;
+            lblErrorMessage.Visible = false; // Ocultamos errores previos si los hay
+            txtUsername.Focus();             // Coloca el cursor listo para escribir en el usuario
+        }
+
         // LÓGICA PARA MOSTRAR / OCULTAR CONTRASEÑA
         private void btnTogglePassword_Click(object sender, EventArgs e)
         {
@@ -110,20 +119,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             }
         }
 
-        private void lblBienvenida_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void pnlRegistro_Paint(object sender, PaintEventArgs e)
         {
 
         }
-    }
-    public static class Session
-    {
-        // Guardará el objeto completo del usuario que logueó con éxito
-        public static User ActiveUser { get; set; }
     }
 }
 
