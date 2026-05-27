@@ -118,11 +118,6 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 btnTogglePassword.Text = "👁";
             }
         }
-
-        private void pnlRegistro_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }
 

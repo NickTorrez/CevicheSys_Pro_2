@@ -272,7 +272,6 @@
             pnlRegistro.Name = "pnlRegistro";
             pnlRegistro.Size = new Size(762, 673);
             pnlRegistro.TabIndex = 2;
-            pnlRegistro.Paint += pnlRegistro_Paint;
             // 
             // FrmLogin
             // 

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-
+using CevicheSys_Pro_2.Helpers;
 namespace CevicheSys_Pro_2
 {
     /// <summary>
@@ -71,7 +71,9 @@ namespace CevicheSys_Pro_2
                     var listaPorDefecto = new List<User>
                     {
                         new User(1, "admin", "admin123", "Admin"),
-                        new User(2, "vendedor", "vendedor123", "Vendedor")
+                        new User(2, "vendedor", "vendedor123", "Vendedor"),
+                        new User(3, "elias", "caja2026", "Vendedor"),
+                        new User(4, "milton", "superadmin", "Admin")
                     };
                     string json = JsonSerializer.Serialize(listaPorDefecto, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText(PathArchivo, json);
@@ -102,20 +104,32 @@ namespace CevicheSys_Pro_2
             try
             {
                 List<User> currentList = User.List();
-                var existingUser = currentList.FirstOrDefault(u => u.User_Id == this.User_Id || u.Username.Equals(this.Username, StringComparison.OrdinalIgnoreCase));
+
+                // Buscamos si el usuario ya existe (para actualizarlo)
+                var existingUser = currentList.FirstOrDefault(u =>
+                    (this.User_Id > 0 && u.User_Id == this.User_Id) ||
+                    u.Username.Equals(this.Username, StringComparison.OrdinalIgnoreCase));
 
                 if (existingUser != null)
                 {
+                    // Actualización de un usuario existente
                     existingUser.Password = this.Password;
                     existingUser.Role = this.Role;
                 }
                 else
                 {
+                    // CREACIÓN DE NUEVO USUARIO
+                    // Calculamos el ID más alto que exista y le sumamos 1
+                    int nuevoId = currentList.Any() ? currentList.Max(u => u.User_Id) + 1 : 1;
+                    this.User_Id = nuevoId;
+
+                    // Lo agregamos a la lista
                     currentList.Add(this);
                 }
 
+                // Guardamos todo de vuelta al archivo JSON
                 string jsonString = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(PathArchivo, jsonString); // Corrección de la ruta de guardado
+                File.WriteAllText(PathArchivo, jsonString);
             }
             catch (Exception ex)
             {
