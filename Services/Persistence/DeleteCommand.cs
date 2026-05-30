@@ -1,22 +1,24 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace CevicheSys_Pro_2.DataConnect
+
+namespace CevicheSys_Pro_2.Services.Persistence
 {
     /// <summary>
-    /// Subclase para ejecutar operaciones UPDATE.
+    /// Subclase para ejecutar operaciones DELETE.
+    /// Incluye verificación de filas afectadas para detectar IDs inexistentes.
     /// </summary>
-    public class UpdateCommand : DatabaseConnection
+    public class DeleteCommand : DatabaseConnection
     {
-        public UpdateCommand() : base() { }
-        public UpdateCommand(string connectionString) : base(connectionString) { }
+        public DeleteCommand() : base() { }
+        public DeleteCommand(string connectionString) : base(connectionString) { }
         /// <summary>
-        /// Ejecuta un UPDATE y devuelve el número de filas afectadas.
+        /// Ejecuta un DELETE y devuelve el número de filas eliminadas.
         /// </summary>
-        /// <param name="query">Sentencia UPDATE parametrizada.</param>
+        /// <param name="query">Sentencia DELETE parametrizada.</param>
         /// <param name="parameters">Parámetros SQL.</param>
-        /// <returns>Número de filas modificadas.</returns>
-        public int ExecuteUpdate(string query, SqlParameter[]? parameters = null)
+        /// <returns>Número de filas eliminadas.</returns>
+        public int ExecuteDelete(string query, SqlParameter[]? parameters = null)
         {
             try
             {
@@ -27,13 +29,13 @@ namespace CevicheSys_Pro_2.DataConnect
                     _command.Parameters.AddRange(parameters);
                 int rowsAffected = _command.ExecuteNonQuery();
                 if (rowsAffected == 0)
-                    throw new Exception("El UPDATE no afectó ningún registro. " +
+                    throw new Exception("El DELETE no eliminó ningún registro. " +
                     "Verifica que el ID exista en la base de datos.");
                 return rowsAffected;
             }
             catch (SqlException ex)
             {
-                throw new Exception($"Error SQL al ejecutar UPDATE: {ex.Message}", ex);
+                throw new Exception($"Error SQL al ejecutar DELETE: {ex.Message}", ex);
             }
             finally
             {

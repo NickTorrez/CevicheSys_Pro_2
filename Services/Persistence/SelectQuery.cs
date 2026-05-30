@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace CevicheSys_Pro_2.DataConnect
+namespace CevicheSys_Pro_2.Services.Persistence
 {
     /// <summary>
     /// Subclase para ejecutar consultas SELECT.

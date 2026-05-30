@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace CevicheSys_Pro_2.DataConnect
+namespace CevicheSys_Pro_2.Services.Persistence
 {
     /// <summary>
     /// Superclase base para el acceso a SQL Server 2022.
