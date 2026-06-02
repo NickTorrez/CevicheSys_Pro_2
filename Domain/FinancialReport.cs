@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.IO;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using CevicheSys_Pro_2.Services.Persistence;
 
 namespace CevicheSys_Pro_2
 {
@@ -19,8 +18,6 @@ namespace CevicheSys_Pro_2
         /// <param name="endDate">Fecha límite del filtro.</param>
         public FinancialReport(DateTime startDate, DateTime endDate)
         {
-            // Ajustamos las horas para que abarque desde el primer segundo del día inicial 
-            // hasta el último milisegundo del día final seleccionado.
             _startDate = startDate.Date;
             _endDate = endDate.Date.AddDays(1).AddTicks(-1);
         }
@@ -31,16 +28,24 @@ namespace CevicheSys_Pro_2
 
         public double CalculateTotalIncome()
         {
-            return Sale.List()
-                .Where(v => v.Record_Date >= _startDate && v.Record_Date <= _endDate)
-                .Sum(v => v.Total_Amount);
+            string query = "SELECT ISNULL(SUM(Total_Pagar), 0) FROM Venta WHERE Fecha_Registro BETWEEN @start AND @end";
+            using var select = new SelectQuery();
+            object result = select.ExecuteScalar(query, new[] {
+                new SqlParameter("@start", _startDate),
+                new SqlParameter("@end", _endDate)
+            });
+            return Convert.ToDouble(result);
         }
 
         public double CalculateTotalExpenses()
         {
-            return Expense.List()
-                .Where(g => g.Expense_Date >= _startDate && g.Expense_Date <= _endDate)
-                .Sum(g => g.Amount);
+            string query = "SELECT ISNULL(SUM(Monto), 0) FROM Gasto WHERE Fecha BETWEEN @start AND @end";
+            using var select = new SelectQuery();
+            object result = select.ExecuteScalar(query, new[] {
+                new SqlParameter("@start", _startDate),
+                new SqlParameter("@end", _endDate)
+            });
+            return Convert.ToDouble(result);
         }
 
         public double CalculateTotalProfit()
@@ -53,84 +58,120 @@ namespace CevicheSys_Pro_2
         /* ===================================================================== */
 
         /// <summary>
-        /// Analiza los detalles de ventas en el periodo de tiempo y retorna el objeto Platillo con más demanda.
+        /// Delega el análisis a SQL Server usando TOP 1, JOIN y GROUP BY para encontrar el platillo más vendido.
         /// </summary>
         public Dish GetMostSoldDish()
         {
-            // Filtramos los IDs de ventas que caen en el rango de fechas para optimizar la búsqueda
-            var ventasEnRango = Sale.List()
-                .Where(v => v.Record_Date >= _startDate && v.Record_Date <= _endDate)
-                .Select(v => v.Sale_Id)
-                .ToHashSet();
+            string query = @"
+                SELECT TOP 1 p.Id_Platillo, p.Tipo_Platillo, p.Tamaño, p.Precio, p.Disponibilidad
+                FROM Detalle_Venta d
+                INNER JOIN Venta v ON d.Id_Venta = v.Id_Venta
+                INNER JOIN Platillo p ON d.Id_Platillo = p.Id_Platillo
+                WHERE v.Fecha_Registro BETWEEN @start AND @end
+                GROUP BY p.Id_Platillo, p.Tipo_Platillo, p.Tamaño, p.Precio, p.Disponibilidad
+                ORDER BY SUM(d.Cantidad) DESC";
 
-            // Agrupamos los detalles por Dish_Id y sumamos la cantidad total vendida
-            var topPlatilloGrupo = Sale_Detail.List()
-                .Where(d => ventasEnRango.Contains(d.Sale_Id))
-                .GroupBy(d => d.Dish_Id)
-                .Select(grupo => new { Dish_Id = grupo.Key, TotalUnidades = grupo.Sum(d => d.Quantity) })
-                .OrderByDescending(x => x.TotalUnidades)
-                .FirstOrDefault();
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query, new[] {
+                new SqlParameter("@start", _startDate),
+                new SqlParameter("@end", _endDate)
+            });
 
-            if (topPlatilloGrupo != null)
+            if (dt.Rows.Count > 0)
             {
-                // Retornamos el objeto completo del platillo encontrado
-                return Dish.List().FirstOrDefault(p => p.Dish_Id == topPlatilloGrupo.Dish_Id);
+                DataRow row = dt.Rows[0];
+                return new Dish
+                {
+                    Dish_Id = Convert.ToInt32(row["Id_Platillo"]),
+                    Dish_Type = row["Tipo_Platillo"].ToString(),
+                    Size = row["Tamaño"].ToString(),
+                    Price = Convert.ToDouble(row["Precio"]),
+                    Availability = Convert.ToBoolean(row["Disponibilidad"])
+                };
             }
 
             return null; // En caso de que no existan ventas en ese periodo
         }
 
         /// <summary>
-        /// Analiza la tabla de gastos en el periodo e indica cuál es el concepto que más veces se repitió.
+        /// Encuentra el concepto de gasto más recurrente directamente mediante agrupación SQL.
         /// </summary>
         public string GetMostFrequentExpense()
         {
-            var topGasto = Expense.List()
-                .Where(g => g.Expense_Date >= _startDate && g.Expense_Date <= _endDate)
-                .GroupBy(g => g.Description)
-                .Select(grupo => new { Description = grupo.Key, Conteo = grupo.Count() })
-                .OrderByDescending(x => x.Conteo)
-                .FirstOrDefault();
+            string query = @"
+                SELECT TOP 1 Concepto
+                FROM Gasto
+                WHERE Fecha BETWEEN @start AND @end
+                GROUP BY Concepto
+                ORDER BY COUNT(*) DESC";
 
-            return topGasto != null ? topGasto.Description : "Sin registros";
+            using var select = new SelectQuery();
+            object result = select.ExecuteScalar(query, new[] {
+                new SqlParameter("@start", _startDate),
+                new SqlParameter("@end", _endDate)
+            });
+
+            return result != null && result != DBNull.Value ? result.ToString() : "Sin registros";
         }
 
         /* ===================================================================== */
-        /* 3. HISTORIAL DE VENTAS DETALLADO (Combinación Multi-Tabla)           */
+        /* 3. HISTORIAL DE VENTAS DETALLADO (Combinación Multi-Tabla 3NF)        */
         /* ===================================================================== */
 
         /// <summary>
-        /// Cruza los datos de Sale_Detail, Sale, Dish y User para desplegar la auditoría completa.
+        /// Extrae la auditoría completa cruzando 5 tablas relacionales en una sola petición a la base de datos.
         /// </summary>
         public List<DetailedSaleDTO> GetSalesHistory()
         {
-            var listaVentas = Sale.List().Where(v => v.Record_Date >= _startDate && v.Record_Date <= _endDate).ToList();
-            var listaDetalles = Sale_Detail.List();
-            var listaPlatillos = Dish.List();
-            var listaUsuarios = User.List();
+            var historyList = new List<DetailedSaleDTO>();
 
-            // Realizamos un JOIN relacional usando LINQ
-            var consultaHistorial = from d in listaDetalles
-                                    join v in listaVentas on d.Sale_Id equals v.Sale_Id
-                                    join p in listaPlatillos on d.Dish_Id equals p.Dish_Id
-                                    join u in listaUsuarios on v.User_Id equals u.User_Id
-                                    orderby v.Record_Date descending
-                                    select new DetailedSaleDTO
-                                    {
-                                        Sale_Id = v.Sale_Id,
-                                        Date = v.Record_Date,
-                                        Customer = v.Customer_Name,
-                                        Dish_Type = p.Dish_Type,
-                                        Size = p.Size,
-                                        Price = p.Price,
-                                        Quantity = d.Quantity,
-                                        Total_Amount = p.Price * d.Quantity,
-                                        Payment_Method = v.Payment_Method,
-                                        Purchase_Type = v.Purchase_Type,
-                                        Auditor_User = u.Username // Nombre del usuario con sesión activa que procesó la transacción
-                                    };
+            // El JOIN incorpora la tabla Cliente de acuerdo a la Tercera Forma Normal (3NF)
+            string query = @"
+                SELECT 
+                    v.Id_Venta, 
+                    v.Fecha_Registro, 
+                    c.Nombre_Completo, 
+                    p.Tipo_Platillo, 
+                    p.Tamaño, 
+                    p.Precio, 
+                    d.Cantidad, 
+                    (p.Precio * d.Cantidad) AS Total_Calculado, 
+                    v.Metodo_Pago, 
+                    v.Tipo_Compra, 
+                    u.Nombre_Usuario
+                FROM Detalle_Venta d
+                INNER JOIN Venta v ON d.Id_Venta = v.Id_Venta
+                INNER JOIN Platillo p ON d.Id_Platillo = p.Id_Platillo
+                INNER JOIN Usuario u ON v.Id_Usuario = u.Id_Usuario
+                INNER JOIN Cliente c ON v.Id_Cliente = c.Id_Cliente
+                WHERE v.Fecha_Registro BETWEEN @start AND @end
+                ORDER BY v.Fecha_Registro DESC";
 
-            return consultaHistorial.ToList();
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query, new[] {
+                new SqlParameter("@start", _startDate),
+                new SqlParameter("@end", _endDate)
+            });
+
+            foreach (DataRow row in dt.Rows)
+            {
+                historyList.Add(new DetailedSaleDTO
+                {
+                    Sale_Id = Convert.ToInt32(row["Id_Venta"]),
+                    Date = Convert.ToDateTime(row["Fecha_Registro"]),
+                    Customer = row["Nombre_Completo"].ToString(),
+                    Dish_Type = row["Tipo_Platillo"].ToString(),
+                    Size = row["Tamaño"].ToString(),
+                    Price = Convert.ToDouble(row["Precio"]),
+                    Quantity = Convert.ToInt32(row["Cantidad"]),
+                    Total_Amount = Convert.ToDouble(row["Total_Calculado"]),
+                    Payment_Method = row["Metodo_Pago"].ToString(),
+                    Purchase_Type = row["Tipo_Compra"].ToString(),
+                    Auditor_User = row["Nombre_Usuario"].ToString()
+                });
+            }
+
+            return historyList;
         }
     }
 

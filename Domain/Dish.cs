@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.IO;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using CevicheSys_Pro_2.Services.Persistence;
 
 namespace CevicheSys_Pro_2
 {
@@ -15,8 +14,8 @@ namespace CevicheSys_Pro_2
         private int _dish_Id;
         private string _dish_Type;
         private string _size;
-        private double _price; // DECIMAL(10,2) mapeado a double para facilitar operaciones en C#
-        private bool _is_Available;
+        private double _price;
+        private bool _availability;
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
@@ -25,18 +24,15 @@ namespace CevicheSys_Pro_2
         public string Dish_Type { get => _dish_Type; set => _dish_Type = value; }
         public string Size { get => _size; set => _size = value; }
         public double Price { get => _price; set => _price = value; }
+        public bool Availability { get => _availability; set => _availability = value; }
 
-        // Control de inventario en mostrador (true = Venta permitida)
-        public bool Is_Available { get => _is_Available; set => _is_Available = value; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
         public Dish()
         {
-            _dish_Type = string.Empty;
-            _size = string.Empty;
-            _is_Available = true; // Por defecto al crear un registro, está disponible.
+
         }
 
         public Dish(int id, string dishType, string size, double price, bool isAvailable = true)
@@ -45,57 +41,56 @@ namespace CevicheSys_Pro_2
             _dish_Type = dishType;
             _size = size;
             _price = price;
-            _is_Available = isAvailable;
+            _availability = isAvailable;
         }
 
         /* --------------------------------------------------------------------- */
-        /* Métodos de Persistencia JSON                                          */
+        /* Métodos                                        */
         /* --------------------------------------------------------------------- */
-        // Ruta unificada y limpia en la carpeta Data
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "dishes.json"); // Ruta unificada y limpia en la carpeta Data
-
-        public static List<Dish> List() // Lee el archivo JSON y devuelve la lista de platillos
+        public static List<Dish> List()
         {
-            string directorio = Path.GetDirectoryName(PathArchivo); // Asegura que el directorio exista antes de intentar leer el archivo
-            if (!Directory.Exists(directorio)) Directory.CreateDirectory(directorio);// Crea el directorio si no existe
+            var list = new List<Dish>();
+            string query = "SELECT Id_Platillo, Tipo_Platillo, Tamaño, Precio, Disponibilidad FROM Platillo";
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query);
 
-            if (!File.Exists(PathArchivo)) return new List<Dish>(); // Si el archivo no existe, devuelve una lista vacía
-            string json = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<Dish>>(json) ?? new List<Dish>();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new Dish
+                {
+                    Dish_Id = Convert.ToInt32(row["Id_Platillo"]),
+                    Dish_Type = row["Tipo_Platillo"].ToString(),
+                    Size = row["Tamaño"].ToString(),
+                    Price = Convert.ToDouble(row["Precio"]),
+                    Availability = Convert.ToBoolean(row["Disponibilidad"])
+                });
+            }
+            return list;
         }
 
         public bool Save()
         {
-            List<Dish> lista = List();
+            SqlParameter[] p = {
+                new SqlParameter("@tipo", this.Dish_Type),
+                new SqlParameter("@tam", this.Size),
+                new SqlParameter("@precio", this.Price),
+                new SqlParameter("@disp", this.Availability)
+            };
 
             if (this.Dish_Id == 0)
             {
-                this.Dish_Id = lista.Count > 0 ? lista.Max(p => p.Dish_Id) + 1 : 1;
-                lista.Add(this);
+                string query = "INSERT INTO Platillo (Tipo_Platillo, Tamaño, Precio, Disponibilidad) VALUES (@tipo, @tam, @precio, @disp)";
+                using var insert = new InsertCommand();
+                this.Dish_Id = insert.ExecuteInsertReturnId(query, p);
             }
             else
             {
-                int index = lista.FindIndex(p => p.Dish_Id == this.Dish_Id);
-                if (index != -1) lista[index] = this;
+                string query = "UPDATE Platillo SET Tipo_Platillo=@tipo, Tamaño=@tam, Precio=@precio, Disponibilidad=@disp WHERE Id_Platillo=@id";
+                var pUpdate = new List<SqlParameter>(p) { new SqlParameter("@id", this.Dish_Id) };
+                using var update = new UpdateCommand();
+                update.ExecuteUpdate(query, pUpdate.ToArray());
             }
-
-            string json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(PathArchivo, json);
             return true;
-        }
-
-        public static bool Delete(int id)
-        {
-            List<Dish> lista = List();
-            int index = lista.FindIndex(p => p.Dish_Id == id);
-            if (index != -1)
-            {
-                lista.RemoveAt(index);
-                string json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(PathArchivo, json);
-                return true;
-            }
-            return false;
         }
 
     }

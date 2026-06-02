@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.IO;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using CevicheSys_Pro_2.Services.Persistence;
 
 namespace CevicheSys_Pro_2
 {
@@ -16,7 +15,7 @@ namespace CevicheSys_Pro_2
         private string _description;
         private double _amount;
         private DateTime _expense_Date;
-        private int _category_Id; // Llave foránea hacia Category (Applied_Module == "Gastos")
+        private int _category_Id;
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
@@ -26,6 +25,7 @@ namespace CevicheSys_Pro_2
         public double Amount { get => _amount; set => _amount = value; }
         public DateTime Expense_Date { get => _expense_Date; set => _expense_Date = value; }
         public int Category_Id { get => _category_Id; set => _category_Id = value; }
+  
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
@@ -46,52 +46,52 @@ namespace CevicheSys_Pro_2
         }
 
         /* --------------------------------------------------------------------- */
-        /* Métodos de Persistencia JSON                                          */
+        /* Métodos                                                               */
         /* --------------------------------------------------------------------- */
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "expenses.json");
-
-        public static List<Expense> List() // Obtener todos los gastos de la base de datos JSON
+        public static List<Expense> List()
         {
-            string directory = Path.GetDirectoryName(PathArchivo);
-            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+            var list = new List<Expense>();
+            string query = "SELECT Id_Gasto, Concepto, Monto, Fecha, Id_Categoria FROM Gasto";
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query);
 
-            if (!File.Exists(PathArchivo)) return new List<Expense>(); // Si el archivo no existe, se devuelve una lista vacía
-            string json = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<Expense>>(json) ?? new List<Expense>();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new Expense
+                {
+                    Expense_Id = Convert.ToInt32(row["Id_Gasto"]),
+                    Description = row["Concepto"].ToString(),
+                    Amount = Convert.ToDouble(row["Monto"]),
+                    Expense_Date = Convert.ToDateTime(row["Fecha"]),
+                    Category_Id = Convert.ToInt32(row["Id_Categoria"])
+                });
+            }
+            return list;
         }
 
-        public bool Save() // Guardar o actualizar el gasto en la base de datos JSON
+        public bool Save()
         {
-            List<Expense> list = List();
+            SqlParameter[] p = {
+                new SqlParameter("@conc", this.Description),
+                new SqlParameter("@monto", this.Amount),
+                new SqlParameter("@fec", this.Expense_Date),
+                new SqlParameter("@cat", this.Category_Id)
+            };
 
             if (this.Expense_Id == 0)
             {
-                this.Expense_Id = list.Count > 0 ? list.Max(g => g.Expense_Id) + 1 : 1; // Asigna un nuevo ID incremental
-                list.Add(this);
+                string query = "INSERT INTO Gasto (Concepto, Monto, Fecha, Id_Categoria) VALUES (@conc, @monto, @fec, @cat)";
+                using var insert = new InsertCommand();
+                this.Expense_Id = insert.ExecuteInsertReturnId(query, p);
             }
             else
             {
-                int index = list.FindIndex(g => g.Expense_Id == this.Expense_Id); // Busca el índice del gasto existente para actualizarlo
-                if (index != -1) list[index] = this; // Si se encuentra, se actualiza el gasto en la lista
+                string query = "UPDATE Gasto SET Concepto=@conc, Monto=@monto, Fecha=@fec, Id_Categoria=@cat WHERE Id_Gasto=@id";
+                var pUpdate = new List<SqlParameter>(p) { new SqlParameter("@id", this.Expense_Id) };
+                using var update = new UpdateCommand();
+                update.ExecuteUpdate(query, pUpdate.ToArray());
             }
-
-            string json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(PathArchivo, json);
             return true;
-        }
-
-        public static bool Delete(int id) // Eliminar un gasto por su ID
-        {
-            List<Expense> list = List();
-            int index = list.FindIndex(g => g.Expense_Id == id); // Busca el índice del gasto a eliminar
-            if (index != -1) // Si se encuentra, se elimina de la lista y se actualiza el archivo JSON
-            {
-                list.RemoveAt(index);
-                string json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(PathArchivo, json);
-                return true;
-            }
-            return false;
         }
     }
 }

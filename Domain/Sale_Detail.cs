@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.IO;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using CevicheSys_Pro_2.Services.Persistence;
 
 namespace CevicheSys_Pro_2
 {
@@ -14,8 +13,8 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         private int _detail_Id;
         private int _quantity;
-        private int _sale_Id;    // Llave Foránea hacia Sale
-        private int _dish_Id;    // Llave Foránea hacia Dish
+        private int _sale_Id;
+        private int _dish_Id;
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
@@ -41,63 +40,71 @@ namespace CevicheSys_Pro_2
             _dish_Id = dishId;
         }
         /* --------------------------------------------------------------------- */
-        /* Métodos de Persistencia JSON                                          */
+        /* Métodos                                                               */
         /* --------------------------------------------------------------------- */
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sale_details.json");
-
         public static List<Sale_Detail> List()
         {
-            string directorio = Path.GetDirectoryName(PathArchivo);
-            if (!Directory.Exists(directorio)) Directory.CreateDirectory(directorio);
+            var list = new List<Sale_Detail>();
+            string query = "SELECT Id_Detalle, Cantidad, Id_Venta, Id_Platillo FROM Detalle_Venta";
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query);
 
-            if (!File.Exists(PathArchivo)) return new List<Sale_Detail>();
-            string json = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<Sale_Detail>>(json) ?? new List<Sale_Detail>();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new Sale_Detail
+                {
+                    Detail_Id = Convert.ToInt32(row["Id_Detalle"]),
+                    Quantity = Convert.ToInt32(row["Cantidad"]),
+                    Sale_Id = Convert.ToInt32(row["Id_Venta"]),
+                    Dish_Id = Convert.ToInt32(row["Id_Platillo"])
+                });
+            }
+            return list;
         }
 
-        public bool Save() // Guarda o actualiza un detalle de venta en el archivo JSON
+        // Optimización: Filtrado directo en SQL Server
+        public static List<Sale_Detail> GetDetailsBySale(int saleId)
         {
-            List<Sale_Detail> lista = List();
+            var list = new List<Sale_Detail>();
+            string query = "SELECT Id_Detalle, Cantidad, Id_Venta, Id_Platillo FROM Detalle_Venta WHERE Id_Venta = @id";
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query, new[] { new SqlParameter("@id", saleId) });
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new Sale_Detail
+                {
+                    Detail_Id = Convert.ToInt32(row["Id_Detalle"]),
+                    Quantity = Convert.ToInt32(row["Cantidad"]),
+                    Sale_Id = Convert.ToInt32(row["Id_Venta"]),
+                    Dish_Id = Convert.ToInt32(row["Id_Platillo"])
+                });
+            }
+            return list;
+        }
+
+        public bool Save()
+        {
+            SqlParameter[] p = {
+                new SqlParameter("@cant", this.Quantity),
+                new SqlParameter("@venta", this.Sale_Id),
+                new SqlParameter("@plat", this.Dish_Id)
+            };
 
             if (this.Detail_Id == 0)
             {
-                this.Detail_Id = lista.Count > 0 ? lista.Max(d => d.Detail_Id) + 1 : 1; // Asigna un nuevo ID incremental
-                lista.Add(this); // Agrega el nuevo detalle a la lista
+                string query = "INSERT INTO Detalle_Venta (Cantidad, Id_Venta, Id_Platillo) VALUES (@cant, @venta, @plat)";
+                using var insert = new InsertCommand();
+                this.Detail_Id = insert.ExecuteInsertReturnId(query, p);
             }
             else
             {
-                int index = lista.FindIndex(d => d.Detail_Id == this.Detail_Id); // Busca el índice del detalle existente
-                if (index != -1) lista[index] = this; // Actualiza el detalle existente
-                else return false; // No se encontró el detalle para actualizar
+                string query = "UPDATE Detalle_Venta SET Cantidad=@cant, Id_Venta=@venta, Id_Platillo=@plat WHERE Id_Detalle=@id";
+                var pUpdate = new List<SqlParameter>(p) { new SqlParameter("@id", this.Detail_Id) };
+                using var update = new UpdateCommand();
+                update.ExecuteUpdate(query, pUpdate.ToArray());
             }
-
-            string json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(PathArchivo, json);
             return true;
-        }
-
-        public static bool Delete(int id) // Elimina un detalle de venta por su ID del archivo JSON
-        {
-            List<Sale_Detail> lista = List();
-            int index = lista.FindIndex(d => d.Detail_Id == id); // Busca el índice del detalle a eliminar
-            if (index != -1)// Si se encuentra el detalle, se elimina de la lista y se actualiza el archivo JSON
-            {
-                lista.RemoveAt(index); // Elimina el detalle de la lista
-                string json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });// Serializa la lista actualizada a JSON
-                File.WriteAllText(PathArchivo, json);// Escribe el JSON actualizado en el archivo
-                return true;
-            }
-            return false;
-        }
-
-        /* ===================================================================== */
-        /* MÉTODOS DE FILTRADO                                                   */
-        /* ===================================================================== */
-
-        // Trae los detalles específicos vinculados a una factura/boucher única
-        public static List<Sale_Detail> GetDetailsBySale(int saleId)
-        {
-            return List().Where(d => d.Sale_Id == saleId).ToList();
         }
     }
 }

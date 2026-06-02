@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Text.Json;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using CevicheSys_Pro_2.Services.Persistence;
 
 namespace CevicheSys_Pro_2
 {
@@ -13,9 +12,17 @@ namespace CevicheSys_Pro_2
         /* Campos / Atributos Privados (Encapsulamiento)                         */
         /* --------------------------------------------------------------------- */
         private int _recipe_Id;
-        private int _dish_Id;             // Llave Foránea hacia Dish
-        private int _product_Id;          // Llave Foránea hacia Product (Insumo)
-        private double _quantity_Used;    // Cantidad, peso o proporción requerida
+        private int _dish_Id;
+        private int _product_Id;
+        private double _quantity_Used;
+
+        /* '--------------------------------------------------------------------- */
+        /* Propiedades con Validaciones                                          */
+        /* --------------------------------------------------------------------- */
+        public int Recipe_Id { get => _recipe_Id; set => _recipe_Id = value; }
+        public int Dish_Id { get => _dish_Id; set => _dish_Id = value; }
+        public int Product_Id { get => _product_Id; set => _product_Id = value; }
+        public double Quantity_Used { get => _quantity_Used; set => _quantity_Used = value; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
@@ -33,71 +40,71 @@ namespace CevicheSys_Pro_2
         }
 
         /* --------------------------------------------------------------------- */
-        /* Propiedades Públicas (Getters y Setters)                              */
+        /* Métodos                                                              */
         /* --------------------------------------------------------------------- */
-        public int Recipe_Id { get => _recipe_Id; set => _recipe_Id = value; }
-        public int Dish_Id { get => _dish_Id; set => _dish_Id = value; }
-        public int Product_Id { get => _product_Id; set => _product_Id = value; }
-        public double Quantity_Used { get => _quantity_Used; set => _quantity_Used = value; }
-
-        /* --------------------------------------------------------------------- */
-        /* Métodos de Simulación de Persistencia (Similares a tu estructura)     */
-        /* --------------------------------------------------------------------- */
-        // Ruta unificada y limpia en la carpeta Data
-        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "recipes.json");
-
         public static List<Recipe> List()
         {
-            string directorio = Path.GetDirectoryName(PathArchivo);
-            if (!Directory.Exists(directorio)) Directory.CreateDirectory(directorio);
+            var list = new List<Recipe>();
+            string query = "SELECT Id_Receta, Cantidad_Utilizada, Id_Platillo, Id_Producto FROM Receta";
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query);
 
-            if (!File.Exists(PathArchivo)) return new List<Recipe>();
-            string json = File.ReadAllText(PathArchivo);
-            return JsonSerializer.Deserialize<List<Recipe>>(json) ?? new List<Recipe>();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new Recipe
+                {
+                    Recipe_Id = Convert.ToInt32(row["Id_Receta"]),
+                    Quantity_Used = Convert.ToDouble(row["Cantidad_Utilizada"]),
+                    Dish_Id = Convert.ToInt32(row["Id_Platillo"]),
+                    Product_Id = Convert.ToInt32(row["Id_Producto"])
+                });
+            }
+            return list;
+        }
+
+        // Optimización: Ahora el motor SQL filtra los datos, no la memoria RAM
+        public static List<Recipe> GetIngredientsByDish(int dishId)
+        {
+            var list = new List<Recipe>();
+            string query = "SELECT Id_Receta, Cantidad_Utilizada, Id_Platillo, Id_Producto FROM Receta WHERE Id_Platillo = @id";
+            using var select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(query, new[] { new SqlParameter("@id", dishId) });
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new Recipe
+                {
+                    Recipe_Id = Convert.ToInt32(row["Id_Receta"]),
+                    Quantity_Used = Convert.ToDouble(row["Cantidad_Utilizada"]),
+                    Dish_Id = Convert.ToInt32(row["Id_Platillo"]),
+                    Product_Id = Convert.ToInt32(row["Id_Producto"])
+                });
+            }
+            return list;
         }
 
         public bool Save()
         {
-            List<Recipe> lista = List();
+            SqlParameter[] p = {
+                new SqlParameter("@cant", this.Quantity_Used),
+                new SqlParameter("@plat", this.Dish_Id),
+                new SqlParameter("@prod", this.Product_Id)
+            };
 
             if (this.Recipe_Id == 0)
             {
-                this.Recipe_Id = lista.Count > 0 ? lista.Max(r => r.Recipe_Id) + 1 : 1;
-                lista.Add(this);
+                string query = "INSERT INTO Receta (Cantidad_Utilizada, Id_Platillo, Id_Producto) VALUES (@cant, @plat, @prod)";
+                using var insert = new InsertCommand();
+                this.Recipe_Id = insert.ExecuteInsertReturnId(query, p);
             }
             else
             {
-                int index = lista.FindIndex(r => r.Recipe_Id == this.Recipe_Id);
-                if (index != -1) lista[index] = this;
+                string query = "UPDATE Receta SET Cantidad_Utilizada=@cant, Id_Platillo=@plat, Id_Producto=@prod WHERE Id_Receta=@id";
+                var pUpdate = new List<SqlParameter>(p) { new SqlParameter("@id", this.Recipe_Id) };
+                using var update = new UpdateCommand();
+                update.ExecuteUpdate(query, pUpdate.ToArray());
             }
-
-            string json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(PathArchivo, json);
             return true;
-        }
-
-        public static bool Delete(int id)
-        {
-            List<Recipe> lista = List();
-            int index = lista.FindIndex(r => r.Recipe_Id == id);
-            if (index != -1)
-            {
-                lista.RemoveAt(index);
-                string json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(PathArchivo, json);
-                return true;
-            }
-            return false;
-        }
-
-        /* ===================================================================== */
-        /* MÉTODOS DE CONSULTA INTERRELACIONAL                                   */
-        /* ===================================================================== */
-
-        // Filtra y expone los ingredientes/proporciones asociados a un platillo en específico
-        public static List<Recipe> GetIngredientsByDish(int dishId)
-        {
-            return List().Where(r => r.Dish_Id == dishId).ToList();
         }
     }
 }
