@@ -49,6 +49,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 btnProveedores.Visible = true;
                 btnGastos.Visible = true;
                 btnReportes.Visible = true;
+                btnUsuarios.Visible = true;
             }
             else if (rol == "Vendedor")
             {
@@ -60,6 +61,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 btnProveedores.Visible = false;
                 btnGastos.Visible = false;
                 btnReportes.Visible = false;
+                btnUsuarios.Visible = false;
 
                 // NOTA: La validación de "Solo Lectura" para el Inventario
                 // se programará directamente dentro del formulario de Inventario al abrirlo.

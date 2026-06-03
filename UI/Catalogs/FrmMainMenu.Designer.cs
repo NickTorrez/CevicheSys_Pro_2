@@ -45,6 +45,7 @@
             lblUsuarioActivo = new Label();
             pnlContenedorPrincipal = new Panel();
             tmrReloj = new System.Windows.Forms.Timer(components);
+            btnUsuarios = new Button();
             pnlMenuLateral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
             pnlEncabezado.SuspendLayout();
@@ -53,6 +54,7 @@
             // pnlMenuLateral
             // 
             pnlMenuLateral.BackColor = Color.FromArgb(10, 25, 47);
+            pnlMenuLateral.Controls.Add(btnUsuarios);
             pnlMenuLateral.Controls.Add(btnCerrarSesion);
             pnlMenuLateral.Controls.Add(btnReportes);
             pnlMenuLateral.Controls.Add(btnGastos);
@@ -258,6 +260,24 @@
             tmrReloj.Interval = 1000;
             tmrReloj.Tick += tmrReloj_Tick;
             // 
+            // btnUsuarios
+            // 
+            btnUsuarios.Cursor = Cursors.Hand;
+            btnUsuarios.Dock = DockStyle.Top;
+            btnUsuarios.FlatAppearance.BorderSize = 0;
+            btnUsuarios.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
+            btnUsuarios.FlatStyle = FlatStyle.Flat;
+            btnUsuarios.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnUsuarios.ForeColor = Color.White;
+            btnUsuarios.Location = new Point(0, 415);
+            btnUsuarios.Name = "btnUsuarios";
+            btnUsuarios.Padding = new Padding(20, 0, 0, 0);
+            btnUsuarios.Size = new Size(300, 55);
+            btnUsuarios.TabIndex = 7;
+            btnUsuarios.Text = "👤​ Control de Perfiles";
+            btnUsuarios.TextAlign = ContentAlignment.MiddleLeft;
+            btnUsuarios.UseVisualStyleBackColor = true;
+            // 
             // FrmMainMenu
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -295,5 +315,6 @@
         private Label lblHora;
         private Label lblFecha;
         private System.Windows.Forms.Timer tmrReloj;
+        private Button btnUsuarios;
     }
 }

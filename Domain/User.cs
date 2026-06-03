@@ -24,7 +24,7 @@ namespace CevicheSys_Pro_2
         private int _user_Id;
         private string _username;
         private string _password;
-        private string _role;
+        private string _role; // "Admin" o "Vendedor"
 
         /* --------------------------------------------------------------------- */
         /* Propiedades con Validaciones                                          */
@@ -37,73 +37,108 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
-        public User() { }
+        public User()
+        {
+            _username = string.Empty;
+            _password = string.Empty;
+            _role = string.Empty;
+        }
+
         public User(int id, string username, string password, string role)
         {
-            _user_Id = id; _username = username; _password = password; _role = role;
+            _user_Id = id;
+            _username = username;
+            _password = password;
+            _role = role;
         }
 
         /* --------------------------------------------------------------------- */
         /* Métodos de Persistencia JSON                                          */
         /* --------------------------------------------------------------------- */
 
+        private static string PathArchivo => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");// Ruta unificada y limpia en la carpeta Data
+
+        // Obtener todos los usuarios de la base de datos JSON
         public static List<User> List()
         {
-            var list = new List<User>();
-            string query = "SELECT Id_Usuario, Nombre_Usuario, Contraseña, Rol FROM Usuario";
-            using var select = new SelectQuery();
-            DataTable dt = select.ExecuteSelect(query);
-
-            foreach (DataRow row in dt.Rows)
+            try
             {
-                list.Add(new User(
-                    Convert.ToInt32(row["Id_Usuario"]),
-                    row["Nombre_Usuario"].ToString(),
-                    row["Contraseña"].ToString(),
-                    row["Rol"].ToString()
-                ));
+                // Asegura la creación de la carpeta Data si no existe en la instalación
+                string carpeta = Path.GetDirectoryName(PathArchivo);
+                if (!Directory.Exists(carpeta))
+                {
+                    Directory.CreateDirectory(carpeta);
+                }
+
+                if (!File.Exists(PathArchivo))
+                {
+                    // Credenciales predefinidas solicitadas
+                    var listaPorDefecto = new List<User>
+                    {
+                        new User(1, "admin", "admin123", "Admin"),
+                        new User(2, "vendedor", "vendedor123", "Vendedor"),
+                        new User(3, "elias", "caja2026", "Vendedor"),
+                        new User(4, "milton", "superadmin", "Admin")
+                    };
+                    string json = JsonSerializer.Serialize(listaPorDefecto, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(PathArchivo, json);
+                    return listaPorDefecto;
+                }
+
+                string jsonExistente = File.ReadAllText(PathArchivo);
+                return JsonSerializer.Deserialize<List<User>>(jsonExistente) ?? new List<User>();
             }
-            return list;
+            catch (Exception)
+            {
+                // RESPALDO SEGURO: Si el JSON se corrompe o el disco falla, las credenciales siguen operando en RAM
+                return new List<User>
+                {
+                    new User(1, "admin", "admin123", "Admin"),
+                    new User(2, "vendedor", "vendedor123", "Vendedor")
+                };
+            }
         }
 
         public static User Authenticate(string username, string password)
         {
-            string query = "SELECT Id_Usuario, Nombre_Usuario, Contraseña, Rol FROM Usuario WHERE Nombre_Usuario = @user AND Contraseña = @pass";
-            SqlParameter[] p = { new SqlParameter("@user", username), new SqlParameter("@pass", password) };
-
-            using var select = new SelectQuery();
-            DataTable dt = select.ExecuteSelect(query, p);
-
-            if (dt.Rows.Count > 0)
-            {
-                DataRow row = dt.Rows[0];
-                return new User(Convert.ToInt32(row["Id_Usuario"]), row["Nombre_Usuario"].ToString(), row["Contraseña"].ToString(), row["Rol"].ToString());
-            }
-            return null;
+            return List().FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
         }
 
-        public bool Save()
+        public void Save()
         {
-            SqlParameter[] p = {
-                new SqlParameter("@user", this.Username),
-                new SqlParameter("@pass", this.Password),
-                new SqlParameter("@rol", this.Role)
-            };
+            try
+            {
+                List<User> currentList = User.List();
 
-            if (this.User_Id == 0)
-            {
-                string query = "INSERT INTO Usuario (Nombre_Usuario, Contraseña, Rol) VALUES (@user, @pass, @rol)";
-                using var insert = new InsertCommand();
-                this.User_Id = insert.ExecuteInsertReturnId(query, p);
-                return true;
+                // Buscamos si el usuario ya existe (para actualizarlo)
+                var existingUser = currentList.FirstOrDefault(u =>
+                    (this.User_Id > 0 && u.User_Id == this.User_Id) ||
+                    u.Username.Equals(this.Username, StringComparison.OrdinalIgnoreCase));
+
+                if (existingUser != null)
+                {
+                    // Actualización de un usuario existente
+                    existingUser.Password = this.Password;
+                    existingUser.Role = this.Role;
+                }
+                else
+                {
+                    // CREACIÓN DE NUEVO USUARIO
+                    // Calculamos el ID más alto que exista y le sumamos 1
+                    int nuevoId = currentList.Any() ? currentList.Max(u => u.User_Id) + 1 : 1;
+                    this.User_Id = nuevoId;
+
+                    // Lo agregamos a la lista
+                    currentList.Add(this);
+                }
+
+                // Guardamos todo de vuelta al archivo JSON
+                string jsonString = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(PathArchivo, jsonString);
             }
-            else
+            catch (Exception ex)
             {
-                string query = "UPDATE Usuario SET Nombre_Usuario=@user, Contraseña=@pass, Rol=@rol WHERE Id_Usuario=@id";
-                var pUpdate = new List<SqlParameter>(p) { new SqlParameter("@id", this.User_Id) };
-                using var update = new UpdateCommand();
-                update.ExecuteUpdate(query, pUpdate.ToArray());
-                return true;
+                throw new Exception("No se pudieron guardar los cambios en el almacenamiento local: " + ex.Message);
             }
         }
 
