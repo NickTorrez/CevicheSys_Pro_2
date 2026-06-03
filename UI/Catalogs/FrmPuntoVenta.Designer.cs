@@ -28,16 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tbControlPOS = new TabControl();
             POS = new TabPage();
             splitContainer1 = new SplitContainer();
             pnlFacturacion = new Panel();
+            textBox1 = new TextBox();
+            btnFinalizarVenta = new Button();
+            lblVueltoCambio = new Label();
+            numEfectivoRecibido = new NumericUpDown();
             flowLayoutPanel1 = new FlowLayoutPanel();
             label2 = new Label();
             txtClienteNombre = new TextBox();
             flowLayoutPanel2 = new FlowLayoutPanel();
             label3 = new Label();
             txtClienteTelefono = new TextBox();
+            flowLayoutPanel4 = new FlowLayoutPanel();
+            label5 = new Label();
+            cmbTipoCompra = new ComboBox();
             flowLayoutPanel3 = new FlowLayoutPanel();
             label4 = new Label();
             cmbMetodoPago = new ComboBox();
@@ -58,31 +66,27 @@
             Amount = new DataGridViewTextBoxColumn();
             SubTotal = new DataGridViewTextBoxColumn();
             CashClosure = new TabPage();
-            flowLayoutPanel4 = new FlowLayoutPanel();
-            label5 = new Label();
-            cmbTipoCompra = new ComboBox();
-            numEfectivoRecibido = new NumericUpDown();
-            lblVueltoCambio = new Label();
-            btnFinalizarVenta = new Button();
             groupBox1 = new GroupBox();
-            rdbCierreAutomatico = new RadioButton();
-            rdbCierreManual = new RadioButton();
-            flowLayoutPanel5 = new FlowLayoutPanel();
-            numFondoInicial = new NumericUpDown();
-            label6 = new Label();
+            btnEjecutarCierre = new Button();
+            label11 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
+            label8 = new Label();
             label7 = new Label();
+            label6 = new Label();
+            numFondoInicial = new NumericUpDown();
             numIngresosVentas = new NumericUpDown();
             numEfectivoEntregado = new NumericUpDown();
-            label8 = new Label();
-            lblTotalEsperado = new Label();
             label9 = new Label();
             numEfectivoReal = new NumericUpDown();
             label10 = new Label();
             lblDescuadre = new Label();
+            lblTotalEsperado = new Label();
+            label12 = new Label();
+            numIngresosTransferencia = new NumericUpDown();
             rtbObservaciones = new RichTextBox();
-            label11 = new Label();
-            btnEjecutarCierre = new Button();
+            flowLayoutPanel5 = new FlowLayoutPanel();
+            rdbCierreAutomatico = new RadioButton();
+            rdbCierreManual = new RadioButton();
             tbControlPOS.SuspendLayout();
             POS.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -90,22 +94,23 @@
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             pnlFacturacion.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numEfectivoRecibido).BeginInit();
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
+            flowLayoutPanel4.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numCantidadPlatillo).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvCatalogoPlatillos).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvTicket).BeginInit();
             CashClosure.SuspendLayout();
-            flowLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numEfectivoRecibido).BeginInit();
             groupBox1.SuspendLayout();
-            flowLayoutPanel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numFondoInicial).BeginInit();
             tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numFondoInicial).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numIngresosVentas).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoEntregado).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoReal).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numIngresosTransferencia).BeginInit();
+            flowLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
             // tbControlPOS
@@ -160,6 +165,7 @@
             // 
             // pnlFacturacion
             // 
+            pnlFacturacion.Controls.Add(textBox1);
             pnlFacturacion.Controls.Add(btnFinalizarVenta);
             pnlFacturacion.Controls.Add(lblVueltoCambio);
             pnlFacturacion.Controls.Add(numEfectivoRecibido);
@@ -172,6 +178,48 @@
             pnlFacturacion.Padding = new Padding(30);
             pnlFacturacion.Size = new Size(729, 275);
             pnlFacturacion.TabIndex = 4;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(439, 70);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(257, 26);
+            textBox1.TabIndex = 8;
+            textBox1.Text = "Cuenta Banpro: 10021500581239";
+            textBox1.TextAlign = HorizontalAlignment.Center;
+            // 
+            // btnFinalizarVenta
+            // 
+            btnFinalizarVenta.BackColor = Color.MediumSeaGreen;
+            btnFinalizarVenta.FlatAppearance.BorderSize = 0;
+            btnFinalizarVenta.FlatAppearance.MouseOverBackColor = Color.Lime;
+            btnFinalizarVenta.FlatStyle = FlatStyle.Flat;
+            btnFinalizarVenta.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnFinalizarVenta.ForeColor = SystemColors.ButtonFace;
+            btnFinalizarVenta.Location = new Point(191, 203);
+            btnFinalizarVenta.Name = "btnFinalizarVenta";
+            btnFinalizarVenta.Size = new Size(346, 56);
+            btnFinalizarVenta.TabIndex = 7;
+            btnFinalizarVenta.Text = "✅ Finalizar e Imprimir Boucher";
+            btnFinalizarVenta.UseVisualStyleBackColor = false;
+            // 
+            // lblVueltoCambio
+            // 
+            lblVueltoCambio.AutoSize = true;
+            lblVueltoCambio.Location = new Point(450, 152);
+            lblVueltoCambio.Name = "lblVueltoCambio";
+            lblVueltoCambio.Size = new Size(128, 18);
+            lblVueltoCambio.TabIndex = 6;
+            lblVueltoCambio.Text = "Cambio: C$ 0.00";
+            // 
+            // numEfectivoRecibido
+            // 
+            numEfectivoRecibido.DecimalPlaces = 2;
+            numEfectivoRecibido.Location = new Point(439, 114);
+            numEfectivoRecibido.Name = "numEfectivoRecibido";
+            numEfectivoRecibido.Size = new Size(150, 26);
+            numEfectivoRecibido.TabIndex = 5;
+            numEfectivoRecibido.TextAlign = HorizontalAlignment.Center;
             // 
             // flowLayoutPanel1
             // 
@@ -225,6 +273,33 @@
             txtClienteTelefono.Size = new Size(222, 26);
             txtClienteTelefono.TabIndex = 1;
             // 
+            // flowLayoutPanel4
+            // 
+            flowLayoutPanel4.Controls.Add(label5);
+            flowLayoutPanel4.Controls.Add(cmbTipoCompra);
+            flowLayoutPanel4.Location = new Point(39, 152);
+            flowLayoutPanel4.Name = "flowLayoutPanel4";
+            flowLayoutPanel4.Size = new Size(384, 34);
+            flowLayoutPanel4.TabIndex = 4;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.Location = new Point(3, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(141, 19);
+            label5.TabIndex = 0;
+            label5.Text = "Tipo de Compra";
+            // 
+            // cmbTipoCompra
+            // 
+            cmbTipoCompra.FormattingEnabled = true;
+            cmbTipoCompra.Location = new Point(150, 3);
+            cmbTipoCompra.Name = "cmbTipoCompra";
+            cmbTipoCompra.Size = new Size(221, 26);
+            cmbTipoCompra.TabIndex = 1;
+            // 
             // flowLayoutPanel3
             // 
             flowLayoutPanel3.Controls.Add(label4);
@@ -247,6 +322,7 @@
             // cmbMetodoPago
             // 
             cmbMetodoPago.FormattingEnabled = true;
+            cmbMetodoPago.Items.AddRange(new object[] { "Efectivo", "Transferencia" });
             cmbMetodoPago.Location = new Point(156, 3);
             cmbMetodoPago.Name = "cmbMetodoPago";
             cmbMetodoPago.Size = new Size(221, 26);
@@ -286,11 +362,21 @@
             // 
             // dgvCatalogoPlatillos
             // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(10, 25, 47);
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvCatalogoPlatillos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvCatalogoPlatillos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvCatalogoPlatillos.Columns.AddRange(new DataGridViewColumn[] { Type, Size, Price, Enable });
+            dgvCatalogoPlatillos.EnableHeadersVisualStyles = false;
             dgvCatalogoPlatillos.Location = new Point(66, 97);
             dgvCatalogoPlatillos.Name = "dgvCatalogoPlatillos";
             dgvCatalogoPlatillos.ReadOnly = true;
+            dgvCatalogoPlatillos.RowHeadersVisible = false;
             dgvCatalogoPlatillos.RowHeadersWidth = 51;
             dgvCatalogoPlatillos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvCatalogoPlatillos.Size = new Size(729, 146);
@@ -302,7 +388,7 @@
             Type.MinimumWidth = 6;
             Type.Name = "Type";
             Type.ReadOnly = true;
-            Type.Width = 125;
+            Type.Width = 180;
             // 
             // Size
             // 
@@ -310,7 +396,7 @@
             Size.MinimumWidth = 6;
             Size.Name = "Size";
             Size.ReadOnly = true;
-            Size.Width = 125;
+            Size.Width = 140;
             // 
             // Price
             // 
@@ -318,7 +404,7 @@
             Price.MinimumWidth = 6;
             Price.Name = "Price";
             Price.ReadOnly = true;
-            Price.Width = 125;
+            Price.Width = 150;
             // 
             // Enable
             // 
@@ -377,6 +463,7 @@
             dgvTicket.Columns.AddRange(new DataGridViewColumn[] { Dish, Amount, SubTotal });
             dgvTicket.Location = new Point(15, 49);
             dgvTicket.Name = "dgvTicket";
+            dgvTicket.RowHeadersVisible = false;
             dgvTicket.RowHeadersWidth = 51;
             dgvTicket.Size = new Size(370, 188);
             dgvTicket.TabIndex = 0;
@@ -415,79 +502,218 @@
             CashClosure.Text = "Cierre de Caja";
             CashClosure.UseVisualStyleBackColor = true;
             // 
-            // flowLayoutPanel4
-            // 
-            flowLayoutPanel4.Controls.Add(label5);
-            flowLayoutPanel4.Controls.Add(cmbTipoCompra);
-            flowLayoutPanel4.Location = new Point(39, 152);
-            flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(384, 34);
-            flowLayoutPanel4.TabIndex = 4;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(3, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(141, 19);
-            label5.TabIndex = 0;
-            label5.Text = "Tipo de Compra";
-            // 
-            // cmbTipoCompra
-            // 
-            cmbTipoCompra.FormattingEnabled = true;
-            cmbTipoCompra.Location = new Point(150, 3);
-            cmbTipoCompra.Name = "cmbTipoCompra";
-            cmbTipoCompra.Size = new Size(221, 26);
-            cmbTipoCompra.TabIndex = 1;
-            // 
-            // numEfectivoRecibido
-            // 
-            numEfectivoRecibido.DecimalPlaces = 2;
-            numEfectivoRecibido.Location = new Point(439, 114);
-            numEfectivoRecibido.Name = "numEfectivoRecibido";
-            numEfectivoRecibido.Size = new Size(150, 26);
-            numEfectivoRecibido.TabIndex = 5;
-            numEfectivoRecibido.TextAlign = HorizontalAlignment.Center;
-            // 
-            // lblVueltoCambio
-            // 
-            lblVueltoCambio.AutoSize = true;
-            lblVueltoCambio.Location = new Point(450, 152);
-            lblVueltoCambio.Name = "lblVueltoCambio";
-            lblVueltoCambio.Size = new Size(128, 18);
-            lblVueltoCambio.TabIndex = 6;
-            lblVueltoCambio.Text = "Cambio: C$ 0.00";
-            // 
-            // btnFinalizarVenta
-            // 
-            btnFinalizarVenta.BackColor = Color.MediumSeaGreen;
-            btnFinalizarVenta.FlatAppearance.BorderSize = 0;
-            btnFinalizarVenta.FlatAppearance.MouseOverBackColor = Color.Lime;
-            btnFinalizarVenta.FlatStyle = FlatStyle.Flat;
-            btnFinalizarVenta.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnFinalizarVenta.ForeColor = SystemColors.ButtonFace;
-            btnFinalizarVenta.Location = new Point(191, 203);
-            btnFinalizarVenta.Name = "btnFinalizarVenta";
-            btnFinalizarVenta.Size = new Size(346, 56);
-            btnFinalizarVenta.TabIndex = 7;
-            btnFinalizarVenta.Text = "✅ Finalizar e Imprimir Boucher";
-            btnFinalizarVenta.UseVisualStyleBackColor = false;
-            // 
             // groupBox1
             // 
             groupBox1.Controls.Add(btnEjecutarCierre);
             groupBox1.Controls.Add(label11);
+            groupBox1.Controls.Add(flowLayoutPanel5);
             groupBox1.Controls.Add(rtbObservaciones);
             groupBox1.Controls.Add(tableLayoutPanel1);
-            groupBox1.Controls.Add(flowLayoutPanel5);
-            groupBox1.Location = new Point(282, 31);
+            groupBox1.Location = new Point(282, 6);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(708, 648);
+            groupBox1.Size = new Size(708, 673);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Desglose de Caja";
+            // 
+            // btnEjecutarCierre
+            // 
+            btnEjecutarCierre.BackColor = Color.FromArgb(0, 0, 192);
+            btnEjecutarCierre.FlatAppearance.BorderSize = 0;
+            btnEjecutarCierre.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 192, 192);
+            btnEjecutarCierre.FlatStyle = FlatStyle.Flat;
+            btnEjecutarCierre.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnEjecutarCierre.ForeColor = Color.White;
+            btnEjecutarCierre.Location = new Point(202, 596);
+            btnEjecutarCierre.Name = "btnEjecutarCierre";
+            btnEjecutarCierre.Size = new Size(304, 67);
+            btnEjecutarCierre.TabIndex = 8;
+            btnEjecutarCierre.Text = "🔒 Registrar Cierre de Caja";
+            btnEjecutarCierre.UseVisualStyleBackColor = false;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(123, 423);
+            label11.Name = "label11";
+            label11.Size = new Size(134, 19);
+            label11.TabIndex = 7;
+            label11.Text = "Observaciones";
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 53.695652F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 46.304348F));
+            tableLayoutPanel1.Controls.Add(label8, 0, 3);
+            tableLayoutPanel1.Controls.Add(label7, 0, 1);
+            tableLayoutPanel1.Controls.Add(label6, 0, 0);
+            tableLayoutPanel1.Controls.Add(numFondoInicial, 1, 0);
+            tableLayoutPanel1.Controls.Add(numIngresosVentas, 1, 1);
+            tableLayoutPanel1.Controls.Add(numEfectivoEntregado, 1, 3);
+            tableLayoutPanel1.Controls.Add(label9, 0, 4);
+            tableLayoutPanel1.Controls.Add(numEfectivoReal, 1, 5);
+            tableLayoutPanel1.Controls.Add(label10, 0, 5);
+            tableLayoutPanel1.Controls.Add(lblDescuadre, 1, 6);
+            tableLayoutPanel1.Controls.Add(lblTotalEsperado, 1, 4);
+            tableLayoutPanel1.Controls.Add(label12, 0, 2);
+            tableLayoutPanel1.Controls.Add(numIngresosTransferencia, 1, 2);
+            tableLayoutPanel1.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            tableLayoutPanel1.Location = new Point(100, 111);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.Padding = new Padding(20);
+            tableLayoutPanel1.RowCount = 7;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.1702137F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.1702137F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 39F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.66666F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2241383F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 19.3965511F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.66667F));
+            tableLayoutPanel1.Size = new Size(509, 322);
+            tableLayoutPanel1.TabIndex = 5;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            label8.Location = new Point(23, 137);
+            label8.Name = "label8";
+            label8.Size = new Size(175, 22);
+            label8.TabIndex = 8;
+            label8.Text = "Efectivo Entregado";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            label7.Location = new Point(23, 59);
+            label7.Name = "label7";
+            label7.Size = new Size(70, 22);
+            label7.TabIndex = 5;
+            label7.Text = "Ventas";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            label6.Location = new Point(23, 20);
+            label6.Name = "label6";
+            label6.Size = new Size(123, 22);
+            label6.TabIndex = 4;
+            label6.Text = "Fondo Inicial";
+            // 
+            // numFondoInicial
+            // 
+            numFondoInicial.DecimalPlaces = 2;
+            numFondoInicial.Location = new Point(274, 23);
+            numFondoInicial.Name = "numFondoInicial";
+            numFondoInicial.Size = new Size(212, 30);
+            numFondoInicial.TabIndex = 3;
+            numFondoInicial.TextAlign = HorizontalAlignment.Center;
+            // 
+            // numIngresosVentas
+            // 
+            numIngresosVentas.Location = new Point(274, 62);
+            numIngresosVentas.Name = "numIngresosVentas";
+            numIngresosVentas.Size = new Size(212, 30);
+            numIngresosVentas.TabIndex = 6;
+            numIngresosVentas.TextAlign = HorizontalAlignment.Center;
+            // 
+            // numEfectivoEntregado
+            // 
+            numEfectivoEntregado.DecimalPlaces = 2;
+            numEfectivoEntregado.Location = new Point(274, 140);
+            numEfectivoEntregado.Name = "numEfectivoEntregado";
+            numEfectivoEntregado.Size = new Size(212, 30);
+            numEfectivoEntregado.TabIndex = 7;
+            numEfectivoEntregado.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            label9.Location = new Point(23, 177);
+            label9.Name = "label9";
+            label9.Size = new Size(51, 22);
+            label9.TabIndex = 10;
+            label9.Text = "Total";
+            // 
+            // numEfectivoReal
+            // 
+            numEfectivoReal.DecimalPlaces = 2;
+            numEfectivoReal.Location = new Point(274, 214);
+            numEfectivoReal.Name = "numEfectivoReal";
+            numEfectivoReal.Size = new Size(212, 30);
+            numEfectivoReal.TabIndex = 11;
+            numEfectivoReal.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            label10.Location = new Point(23, 211);
+            label10.Name = "label10";
+            label10.Size = new Size(160, 22);
+            label10.TabIndex = 12;
+            label10.Text = "Efectivo Existente";
+            // 
+            // lblDescuadre
+            // 
+            lblDescuadre.AutoSize = true;
+            lblDescuadre.ForeColor = Color.Red;
+            lblDescuadre.Location = new Point(274, 258);
+            lblDescuadre.Name = "lblDescuadre";
+            lblDescuadre.Size = new Size(178, 22);
+            lblDescuadre.TabIndex = 14;
+            lblDescuadre.Text = "Faltante de C$ 0.00";
+            // 
+            // lblTotalEsperado
+            // 
+            lblTotalEsperado.AutoSize = true;
+            lblTotalEsperado.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTotalEsperado.ForeColor = Color.FromArgb(0, 0, 192);
+            lblTotalEsperado.Location = new Point(274, 177);
+            lblTotalEsperado.Name = "lblTotalEsperado";
+            lblTotalEsperado.Size = new Size(82, 23);
+            lblTotalEsperado.TabIndex = 9;
+            lblTotalEsperado.Text = "C$ 0.00";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            label12.Location = new Point(23, 98);
+            label12.Name = "label12";
+            label12.Size = new Size(229, 22);
+            label12.TabIndex = 15;
+            label12.Text = "Ventas por Transferencia";
+            // 
+            // numIngresosTransferencia
+            // 
+            numIngresosTransferencia.Location = new Point(274, 101);
+            numIngresosTransferencia.Name = "numIngresosTransferencia";
+            numIngresosTransferencia.ReadOnly = true;
+            numIngresosTransferencia.Size = new Size(212, 30);
+            numIngresosTransferencia.TabIndex = 16;
+            // 
+            // rtbObservaciones
+            // 
+            rtbObservaciones.Location = new Point(104, 451);
+            rtbObservaciones.Name = "rtbObservaciones";
+            rtbObservaciones.Size = new Size(500, 133);
+            rtbObservaciones.TabIndex = 6;
+            rtbObservaciones.Text = "";
+            // 
+            // flowLayoutPanel5
+            // 
+            flowLayoutPanel5.Controls.Add(rdbCierreAutomatico);
+            flowLayoutPanel5.Controls.Add(rdbCierreManual);
+            flowLayoutPanel5.Location = new Point(156, 13);
+            flowLayoutPanel5.Name = "flowLayoutPanel5";
+            flowLayoutPanel5.Padding = new Padding(30);
+            flowLayoutPanel5.Size = new Size(397, 90);
+            flowLayoutPanel5.TabIndex = 2;
             // 
             // rdbCierreAutomatico
             // 
@@ -511,176 +737,6 @@
             rdbCierreManual.Text = "Cierre Manual";
             rdbCierreManual.UseVisualStyleBackColor = true;
             // 
-            // flowLayoutPanel5
-            // 
-            flowLayoutPanel5.Controls.Add(rdbCierreAutomatico);
-            flowLayoutPanel5.Controls.Add(rdbCierreManual);
-            flowLayoutPanel5.Location = new Point(156, 13);
-            flowLayoutPanel5.Name = "flowLayoutPanel5";
-            flowLayoutPanel5.Padding = new Padding(30);
-            flowLayoutPanel5.Size = new Size(397, 90);
-            flowLayoutPanel5.TabIndex = 2;
-            // 
-            // numFondoInicial
-            // 
-            numFondoInicial.DecimalPlaces = 2;
-            numFondoInicial.Location = new Point(253, 23);
-            numFondoInicial.Name = "numFondoInicial";
-            numFondoInicial.Size = new Size(224, 28);
-            numFondoInicial.TabIndex = 3;
-            numFondoInicial.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(23, 20);
-            label6.Name = "label6";
-            label6.Size = new Size(114, 19);
-            label6.TabIndex = 4;
-            label6.Text = "Fondo Inicial";
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.ColumnCount = 2;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(label8, 0, 2);
-            tableLayoutPanel1.Controls.Add(label7, 0, 1);
-            tableLayoutPanel1.Controls.Add(label6, 0, 0);
-            tableLayoutPanel1.Controls.Add(numFondoInicial, 1, 0);
-            tableLayoutPanel1.Controls.Add(numIngresosVentas, 1, 1);
-            tableLayoutPanel1.Controls.Add(numEfectivoEntregado, 1, 2);
-            tableLayoutPanel1.Controls.Add(lblTotalEsperado, 1, 3);
-            tableLayoutPanel1.Controls.Add(label9, 0, 3);
-            tableLayoutPanel1.Controls.Add(numEfectivoReal, 1, 4);
-            tableLayoutPanel1.Controls.Add(label10, 0, 4);
-            tableLayoutPanel1.Controls.Add(lblDescuadre, 1, 5);
-            tableLayoutPanel1.Location = new Point(105, 109);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.Padding = new Padding(20);
-            tableLayoutPanel1.RowCount = 6;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            tableLayoutPanel1.Size = new Size(500, 252);
-            tableLayoutPanel1.TabIndex = 5;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(23, 55);
-            label7.Name = "label7";
-            label7.Size = new Size(65, 19);
-            label7.TabIndex = 5;
-            label7.Text = "Ventas";
-            // 
-            // numIngresosVentas
-            // 
-            numIngresosVentas.Location = new Point(253, 58);
-            numIngresosVentas.Name = "numIngresosVentas";
-            numIngresosVentas.Size = new Size(224, 28);
-            numIngresosVentas.TabIndex = 6;
-            numIngresosVentas.TextAlign = HorizontalAlignment.Center;
-            // 
-            // numEfectivoEntregado
-            // 
-            numEfectivoEntregado.DecimalPlaces = 2;
-            numEfectivoEntregado.Location = new Point(253, 93);
-            numEfectivoEntregado.Name = "numEfectivoEntregado";
-            numEfectivoEntregado.Size = new Size(224, 28);
-            numEfectivoEntregado.TabIndex = 7;
-            numEfectivoEntregado.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(23, 90);
-            label8.Name = "label8";
-            label8.Size = new Size(162, 19);
-            label8.TabIndex = 8;
-            label8.Text = "Efectivo Entregado";
-            // 
-            // lblTotalEsperado
-            // 
-            lblTotalEsperado.AutoSize = true;
-            lblTotalEsperado.Location = new Point(253, 125);
-            lblTotalEsperado.Name = "lblTotalEsperado";
-            lblTotalEsperado.Size = new Size(72, 19);
-            lblTotalEsperado.TabIndex = 9;
-            lblTotalEsperado.Text = "C$ 0.00";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(23, 125);
-            label9.Name = "label9";
-            label9.Size = new Size(46, 19);
-            label9.TabIndex = 10;
-            label9.Text = "Total";
-            // 
-            // numEfectivoReal
-            // 
-            numEfectivoReal.DecimalPlaces = 2;
-            numEfectivoReal.Location = new Point(253, 163);
-            numEfectivoReal.Name = "numEfectivoReal";
-            numEfectivoReal.Size = new Size(224, 28);
-            numEfectivoReal.TabIndex = 11;
-            numEfectivoReal.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(23, 160);
-            label10.Name = "label10";
-            label10.Size = new Size(150, 19);
-            label10.TabIndex = 12;
-            label10.Text = "Efectivo Existente";
-            // 
-            // lblDescuadre
-            // 
-            lblDescuadre.AutoSize = true;
-            lblDescuadre.ForeColor = Color.Red;
-            lblDescuadre.Location = new Point(253, 195);
-            lblDescuadre.Name = "lblDescuadre";
-            lblDescuadre.Size = new Size(167, 19);
-            lblDescuadre.TabIndex = 14;
-            lblDescuadre.Text = "Faltante de C$ 0.00";
-            // 
-            // rtbObservaciones
-            // 
-            rtbObservaciones.Location = new Point(105, 406);
-            rtbObservaciones.Name = "rtbObservaciones";
-            rtbObservaciones.Size = new Size(500, 133);
-            rtbObservaciones.TabIndex = 6;
-            rtbObservaciones.Text = "";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(128, 377);
-            label11.Name = "label11";
-            label11.Size = new Size(134, 19);
-            label11.TabIndex = 7;
-            label11.Text = "Observaciones";
-            // 
-            // btnEjecutarCierre
-            // 
-            btnEjecutarCierre.BackColor = Color.FromArgb(0, 0, 192);
-            btnEjecutarCierre.FlatAppearance.BorderSize = 0;
-            btnEjecutarCierre.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 192, 192);
-            btnEjecutarCierre.FlatStyle = FlatStyle.Flat;
-            btnEjecutarCierre.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnEjecutarCierre.ForeColor = Color.White;
-            btnEjecutarCierre.Location = new Point(202, 558);
-            btnEjecutarCierre.Name = "btnEjecutarCierre";
-            btnEjecutarCierre.Size = new Size(304, 67);
-            btnEjecutarCierre.TabIndex = 8;
-            btnEjecutarCierre.Text = "🔒 Registrar Cierre de Caja";
-            btnEjecutarCierre.UseVisualStyleBackColor = false;
-            // 
             // FrmPuntoVenta
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -700,29 +756,30 @@
             splitContainer1.ResumeLayout(false);
             pnlFacturacion.ResumeLayout(false);
             pnlFacturacion.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numEfectivoRecibido).EndInit();
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
+            flowLayoutPanel4.ResumeLayout(false);
+            flowLayoutPanel4.PerformLayout();
             flowLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numCantidadPlatillo).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvCatalogoPlatillos).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvTicket).EndInit();
             CashClosure.ResumeLayout(false);
-            flowLayoutPanel4.ResumeLayout(false);
-            flowLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numEfectivoRecibido).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            flowLayoutPanel5.ResumeLayout(false);
-            flowLayoutPanel5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numFondoInicial).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numFondoInicial).EndInit();
             ((System.ComponentModel.ISupportInitialize)numIngresosVentas).EndInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoEntregado).EndInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoReal).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numIngresosTransferencia).EndInit();
+            flowLayoutPanel5.ResumeLayout(false);
+            flowLayoutPanel5.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -733,10 +790,6 @@
         private TabPage CashClosure;
         private SplitContainer splitContainer1;
         private DataGridView dgvCatalogoPlatillos;
-        private DataGridViewTextBoxColumn Type;
-        private DataGridViewTextBoxColumn Size;
-        private DataGridViewTextBoxColumn Price;
-        private DataGridViewTextBoxColumn Enable;
         private TextBox txtBuscarPlatillo;
         private NumericUpDown numCantidadPlatillo;
         private Label label1;
@@ -783,5 +836,12 @@
         private RichTextBox rtbObservaciones;
         private Button btnEjecutarCierre;
         private Label label11;
+        private DataGridViewTextBoxColumn Type;
+        private DataGridViewTextBoxColumn Size;
+        private DataGridViewTextBoxColumn Price;
+        private DataGridViewTextBoxColumn Enable;
+        private TextBox textBox1;
+        private Label label12;
+        private NumericUpDown numIngresosTransferencia;
     }
 }
