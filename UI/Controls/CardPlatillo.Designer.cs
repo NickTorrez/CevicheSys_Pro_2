@@ -28,17 +28,42 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
+            lblTipo = new Label();
+            lblTamaño = new Label();
+            lblPrecio = new Label();
             SuspendLayout();
             // 
-            // label1
+            // lblTipo
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(55, 13);
-            label1.Name = "label1";
-            label1.Size = new Size(50, 20);
-            label1.TabIndex = 0;
-            label1.Text = "label1";
+            lblTipo.AutoSize = true;
+            lblTipo.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTipo.Location = new Point(11, 11);
+            lblTipo.Name = "lblTipo";
+            lblTipo.Size = new Size(137, 22);
+            lblTipo.TabIndex = 0;
+            lblTipo.Text = "Ceviche Mixto";
+            // 
+            // lblTamaño
+            // 
+            lblTamaño.AutoSize = true;
+            lblTamaño.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTamaño.ForeColor = SystemColors.ControlDarkDark;
+            lblTamaño.Location = new Point(53, 46);
+            lblTamaño.Name = "lblTamaño";
+            lblTamaño.Size = new Size(54, 20);
+            lblTamaño.TabIndex = 1;
+            lblTamaño.Text = "25 onz";
+            // 
+            // lblPrecio
+            // 
+            lblPrecio.AutoSize = true;
+            lblPrecio.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblPrecio.ForeColor = Color.LimeGreen;
+            lblPrecio.Location = new Point(27, 80);
+            lblPrecio.Name = "lblPrecio";
+            lblPrecio.Size = new Size(104, 23);
+            lblPrecio.TabIndex = 2;
+            lblPrecio.Text = "C$ 150.00";
             // 
             // CardPlatillo
             // 
@@ -46,7 +71,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             BorderStyle = BorderStyle.FixedSingle;
-            Controls.Add(label1);
+            Controls.Add(lblPrecio);
+            Controls.Add(lblTamaño);
+            Controls.Add(lblTipo);
             Name = "CardPlatillo";
             Size = new Size(158, 118);
             ResumeLayout(false);
@@ -55,6 +82,8 @@
 
         #endregion
 
-        private Label label1;
+        private Label lblTipo;
+        private Label lblTamaño;
+        private Label lblPrecio;
     }
 }

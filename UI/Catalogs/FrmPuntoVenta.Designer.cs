@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tbControlPOS = new TabControl();
             POS = new TabPage();
             splitContainer1 = new SplitContainer();
+            flpCatalogo = new FlowLayoutPanel();
             pnlFacturacion = new Panel();
             textBox1 = new TextBox();
             btnFinalizarVenta = new Button();
@@ -52,11 +52,6 @@
             btnAgregarPedido = new Button();
             numCantidadPlatillo = new NumericUpDown();
             label1 = new Label();
-            dgvCatalogoPlatillos = new DataGridView();
-            Type = new DataGridViewTextBoxColumn();
-            Size = new DataGridViewTextBoxColumn();
-            Price = new DataGridViewTextBoxColumn();
-            Enable = new DataGridViewTextBoxColumn();
             txtBuscarPlatillo = new TextBox();
             btnProcesarVenta = new Button();
             lblTotalPagar = new Label();
@@ -69,6 +64,10 @@
             groupBox1 = new GroupBox();
             btnEjecutarCierre = new Button();
             label11 = new Label();
+            flowLayoutPanel5 = new FlowLayoutPanel();
+            rdbCierreAutomatico = new RadioButton();
+            rdbCierreManual = new RadioButton();
+            rtbObservaciones = new RichTextBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             label8 = new Label();
             label7 = new Label();
@@ -83,10 +82,6 @@
             lblTotalEsperado = new Label();
             label12 = new Label();
             numIngresosTransferencia = new NumericUpDown();
-            rtbObservaciones = new RichTextBox();
-            flowLayoutPanel5 = new FlowLayoutPanel();
-            rdbCierreAutomatico = new RadioButton();
-            rdbCierreManual = new RadioButton();
             tbControlPOS.SuspendLayout();
             POS.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -100,17 +95,16 @@
             flowLayoutPanel4.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numCantidadPlatillo).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvCatalogoPlatillos).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvTicket).BeginInit();
             CashClosure.SuspendLayout();
             groupBox1.SuspendLayout();
+            flowLayoutPanel5.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numFondoInicial).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numIngresosVentas).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoEntregado).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoReal).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numIngresosTransferencia).BeginInit();
-            flowLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
             // tbControlPOS
@@ -145,11 +139,11 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(flpCatalogo);
             splitContainer1.Panel1.Controls.Add(pnlFacturacion);
             splitContainer1.Panel1.Controls.Add(btnAgregarPedido);
             splitContainer1.Panel1.Controls.Add(numCantidadPlatillo);
             splitContainer1.Panel1.Controls.Add(label1);
-            splitContainer1.Panel1.Controls.Add(dgvCatalogoPlatillos);
             splitContainer1.Panel1.Controls.Add(txtBuscarPlatillo);
             splitContainer1.Panel1.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             // 
@@ -162,6 +156,13 @@
             splitContainer1.Size = new Size(1266, 681);
             splitContainer1.SplitterDistance = 861;
             splitContainer1.TabIndex = 0;
+            // 
+            // flpCatalogo
+            // 
+            flpCatalogo.Location = new Point(66, 92);
+            flpCatalogo.Name = "flpCatalogo";
+            flpCatalogo.Size = new Size(729, 132);
+            flpCatalogo.TabIndex = 5;
             // 
             // pnlFacturacion
             // 
@@ -360,60 +361,6 @@
             label1.TabIndex = 2;
             label1.Text = "Cantidad";
             // 
-            // dgvCatalogoPlatillos
-            // 
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(10, 25, 47);
-            dataGridViewCellStyle1.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvCatalogoPlatillos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dgvCatalogoPlatillos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCatalogoPlatillos.Columns.AddRange(new DataGridViewColumn[] { Type, Size, Price, Enable });
-            dgvCatalogoPlatillos.EnableHeadersVisualStyles = false;
-            dgvCatalogoPlatillos.Location = new Point(66, 97);
-            dgvCatalogoPlatillos.Name = "dgvCatalogoPlatillos";
-            dgvCatalogoPlatillos.ReadOnly = true;
-            dgvCatalogoPlatillos.RowHeadersVisible = false;
-            dgvCatalogoPlatillos.RowHeadersWidth = 51;
-            dgvCatalogoPlatillos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCatalogoPlatillos.Size = new Size(729, 146);
-            dgvCatalogoPlatillos.TabIndex = 1;
-            // 
-            // Type
-            // 
-            Type.HeaderText = "Tipo";
-            Type.MinimumWidth = 6;
-            Type.Name = "Type";
-            Type.ReadOnly = true;
-            Type.Width = 180;
-            // 
-            // Size
-            // 
-            Size.HeaderText = "Tamaño";
-            Size.MinimumWidth = 6;
-            Size.Name = "Size";
-            Size.ReadOnly = true;
-            Size.Width = 140;
-            // 
-            // Price
-            // 
-            Price.HeaderText = "Precio (C$)";
-            Price.MinimumWidth = 6;
-            Price.Name = "Price";
-            Price.ReadOnly = true;
-            Price.Width = 150;
-            // 
-            // Enable
-            // 
-            Enable.HeaderText = "Disponibilidad";
-            Enable.MinimumWidth = 6;
-            Enable.Name = "Enable";
-            Enable.ReadOnly = true;
-            Enable.Width = 125;
-            // 
             // txtBuscarPlatillo
             // 
             txtBuscarPlatillo.Location = new Point(258, 27);
@@ -539,6 +486,46 @@
             label11.Size = new Size(134, 19);
             label11.TabIndex = 7;
             label11.Text = "Observaciones";
+            // 
+            // flowLayoutPanel5
+            // 
+            flowLayoutPanel5.Controls.Add(rdbCierreAutomatico);
+            flowLayoutPanel5.Controls.Add(rdbCierreManual);
+            flowLayoutPanel5.Location = new Point(156, 13);
+            flowLayoutPanel5.Name = "flowLayoutPanel5";
+            flowLayoutPanel5.Padding = new Padding(30);
+            flowLayoutPanel5.Size = new Size(397, 90);
+            flowLayoutPanel5.TabIndex = 2;
+            // 
+            // rdbCierreAutomatico
+            // 
+            rdbCierreAutomatico.AutoSize = true;
+            rdbCierreAutomatico.Location = new Point(33, 33);
+            rdbCierreAutomatico.Name = "rdbCierreAutomatico";
+            rdbCierreAutomatico.Size = new Size(179, 23);
+            rdbCierreAutomatico.TabIndex = 0;
+            rdbCierreAutomatico.TabStop = true;
+            rdbCierreAutomatico.Text = "Cierre Automatico\r\n";
+            rdbCierreAutomatico.UseVisualStyleBackColor = true;
+            // 
+            // rdbCierreManual
+            // 
+            rdbCierreManual.AutoSize = true;
+            rdbCierreManual.Location = new Point(218, 33);
+            rdbCierreManual.Name = "rdbCierreManual";
+            rdbCierreManual.Size = new Size(145, 23);
+            rdbCierreManual.TabIndex = 1;
+            rdbCierreManual.TabStop = true;
+            rdbCierreManual.Text = "Cierre Manual";
+            rdbCierreManual.UseVisualStyleBackColor = true;
+            // 
+            // rtbObservaciones
+            // 
+            rtbObservaciones.Location = new Point(104, 451);
+            rtbObservaciones.Name = "rtbObservaciones";
+            rtbObservaciones.Size = new Size(500, 133);
+            rtbObservaciones.TabIndex = 6;
+            rtbObservaciones.Text = "";
             // 
             // tableLayoutPanel1
             // 
@@ -697,46 +684,6 @@
             numIngresosTransferencia.Size = new Size(212, 30);
             numIngresosTransferencia.TabIndex = 16;
             // 
-            // rtbObservaciones
-            // 
-            rtbObservaciones.Location = new Point(104, 451);
-            rtbObservaciones.Name = "rtbObservaciones";
-            rtbObservaciones.Size = new Size(500, 133);
-            rtbObservaciones.TabIndex = 6;
-            rtbObservaciones.Text = "";
-            // 
-            // flowLayoutPanel5
-            // 
-            flowLayoutPanel5.Controls.Add(rdbCierreAutomatico);
-            flowLayoutPanel5.Controls.Add(rdbCierreManual);
-            flowLayoutPanel5.Location = new Point(156, 13);
-            flowLayoutPanel5.Name = "flowLayoutPanel5";
-            flowLayoutPanel5.Padding = new Padding(30);
-            flowLayoutPanel5.Size = new Size(397, 90);
-            flowLayoutPanel5.TabIndex = 2;
-            // 
-            // rdbCierreAutomatico
-            // 
-            rdbCierreAutomatico.AutoSize = true;
-            rdbCierreAutomatico.Location = new Point(33, 33);
-            rdbCierreAutomatico.Name = "rdbCierreAutomatico";
-            rdbCierreAutomatico.Size = new Size(179, 23);
-            rdbCierreAutomatico.TabIndex = 0;
-            rdbCierreAutomatico.TabStop = true;
-            rdbCierreAutomatico.Text = "Cierre Automatico\r\n";
-            rdbCierreAutomatico.UseVisualStyleBackColor = true;
-            // 
-            // rdbCierreManual
-            // 
-            rdbCierreManual.AutoSize = true;
-            rdbCierreManual.Location = new Point(218, 33);
-            rdbCierreManual.Name = "rdbCierreManual";
-            rdbCierreManual.Size = new Size(145, 23);
-            rdbCierreManual.TabIndex = 1;
-            rdbCierreManual.TabStop = true;
-            rdbCierreManual.Text = "Cierre Manual";
-            rdbCierreManual.UseVisualStyleBackColor = true;
-            // 
             // FrmPuntoVenta
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -766,11 +713,12 @@
             flowLayoutPanel3.ResumeLayout(false);
             flowLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numCantidadPlatillo).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvCatalogoPlatillos).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvTicket).EndInit();
             CashClosure.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            flowLayoutPanel5.ResumeLayout(false);
+            flowLayoutPanel5.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numFondoInicial).EndInit();
@@ -778,8 +726,6 @@
             ((System.ComponentModel.ISupportInitialize)numEfectivoEntregado).EndInit();
             ((System.ComponentModel.ISupportInitialize)numEfectivoReal).EndInit();
             ((System.ComponentModel.ISupportInitialize)numIngresosTransferencia).EndInit();
-            flowLayoutPanel5.ResumeLayout(false);
-            flowLayoutPanel5.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -789,7 +735,6 @@
         private TabPage POS;
         private TabPage CashClosure;
         private SplitContainer splitContainer1;
-        private DataGridView dgvCatalogoPlatillos;
         private TextBox txtBuscarPlatillo;
         private NumericUpDown numCantidadPlatillo;
         private Label label1;
@@ -836,12 +781,9 @@
         private RichTextBox rtbObservaciones;
         private Button btnEjecutarCierre;
         private Label label11;
-        private DataGridViewTextBoxColumn Type;
-        private DataGridViewTextBoxColumn Size;
-        private DataGridViewTextBoxColumn Price;
-        private DataGridViewTextBoxColumn Enable;
         private TextBox textBox1;
         private Label label12;
         private NumericUpDown numIngresosTransferencia;
+        private FlowLayoutPanel flpCatalogo;
     }
 }
