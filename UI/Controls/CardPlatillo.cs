@@ -51,13 +51,16 @@ namespace CevicheSys_Pro_2.UI.Controls
             lblPrecio.Click += EmitirClic;
         }
 
-        private void EmitirClic(object sender, EventArgs e)
+        private async void EmitirClic(object sender, EventArgs e)
         {
-            // Disparamos el evento hacia afuera
             TarjetaSeleccionada?.Invoke(this, EventArgs.Empty);
 
-            // Efecto visual rápido al hacer clic (opcional)
-            this.BackColor = Color.FromArgb(230, 240, 255); // Un azulito claro
+            // Guardamos el fondo original si estaba activo
+            Color fondoOriginal = Color.White;
+
+            this.BackColor = Color.FromArgb(230, 240, 255); // Azul claro de pulsación
+            await System.Threading.Tasks.Task.Delay(150);   // Espera 150 milisegundos
+            this.BackColor = fondoOriginal;                 // Regresa a su estado original limpio
         }
     }
     

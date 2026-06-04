@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CevicheSys_Pro_2;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
 {
@@ -18,51 +19,109 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             InitializeComponent();
         }
 
+        // Evento que se dispara al abrir la pantalla
         private void FrmPuntoVenta_Load(object sender, EventArgs e)
         {
             CargarCatalogoDinamico();
         }
 
+        /* --------------------------------------------------------------------- */
+        /* 1. CREACIÓN DE LAS TARJETAS DINÁMICAS                                 */
+        /* --------------------------------------------------------------------- */
         private void CargarCatalogoDinamico()
         {
-            // 1. Limpiamos tarjetas anteriores (por si estamos recargando)
+            // Limpiamos el panel por si se recarga la pantalla
             flpCatalogo.Controls.Clear();
 
-            // 2. Obtenemos la lista de platillos desde la BD (o memoria si aún pruebas sin BD)
-            var listaPlatillos = Dish.List();
-
-            // 3. Iteramos y creamos las tarjetas
-            foreach (var platillo in listaPlatillos)
+            try
             {
-                // Instanciamos el UserControl pasándole el platillo
-                CardPlatillo nuevaTarjeta = new CardPlatillo(platillo);
+                // SOLUCIÓN AL ERROR: Forzamos la ruta absoluta de la clase Dish
+                var listaPlatillos = CevicheSys_Pro_2.Dish.List();
 
-                // Nos suscribimos al evento click de la tarjeta
-                nuevaTarjeta.TarjetaSeleccionada += NuevaTarjeta_TarjetaSeleccionada;
+                foreach (var platillo in listaPlatillos)
+                {
+                    // Creamos una nueva tarjeta por cada platillo en la BD
+                    CardPlatillo nuevaTarjeta = new CardPlatillo(platillo);
 
-                // La agregamos al FlowLayoutPanel
-                flpCatalogo.Controls.Add(nuevaTarjeta);
+                    // Nos suscribimos para escuchar cuando el vendedor le haga clic
+                    nuevaTarjeta.TarjetaSeleccionada += NuevaTarjeta_TarjetaSeleccionada;
+
+                    // Agregamos la tarjeta visualmente al FlowLayoutPanel
+                    flpCatalogo.Controls.Add(nuevaTarjeta);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar el catálogo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        /* --------------------------------------------------------------------- */
+        /* 2. LÓGICA AL HACER CLIC EN UNA TARJETA                                */
+        /* --------------------------------------------------------------------- */
 
         // Este método se ejecuta automáticamente cuando alguien hace clic en CUALQUIER tarjeta
         private void NuevaTarjeta_TarjetaSeleccionada(object sender, EventArgs e)
         {
-            // Descubrimos qué tarjeta disparó el evento
             CardPlatillo tarjetaClickeada = sender as CardPlatillo;
 
             if (tarjetaClickeada != null)
             {
                 Dish platilloElegido = tarjetaClickeada.PlatilloAsignado;
+                int cantidad = (int)numCantidadPlatillo.Value;
+                string descripcionFactura = $"{platilloElegido.Dish_Type} ({platilloElegido.Size})";
 
-                // Aquí ya tienes el objeto exacto. 
-                // Muestra el nombre en un Label, o prepáralo para agregarlo al DataGridView del Ticket.
-                MessageBox.Show($"Seleccionaste: {platilloElegido.Dish_Type} de {platilloElegido.Size}");
+                bool productoExiste = false;
 
-                // Ejemplo de lo que harías luego:
-                // lblPlatilloSeleccionado.Text = platilloElegido.Dish_Type;
-                // numCantidadPlatillo.Focus();
+                // Buscamos si el platillo ya fue agregado previamente al ticket
+                foreach (DataGridViewRow row in dgvTicket.Rows)
+                {
+                    if (row.Cells[0].Value != null && row.Cells[0].Value.ToString() == descripcionFactura)
+                    {
+                        // El producto ya existe, actualizamos su cantidad y su nuevo subtotal
+                        int cantidadAnterior = Convert.ToInt32(row.Cells[1].Value);
+                        int nuevaCantidad = cantidadAnterior + cantidad;
+
+                        row.Cells[1].Value = nuevaCantidad;
+                        row.Cells[2].Value = platilloElegido.Price * nuevaCantidad;
+
+                        productoExiste = true;
+                        break;
+                    }
+                }
+
+                // Si es un platillo nuevo en la orden actual, se agrega una nueva fila de forma limpia
+                if (!productoExiste)
+                {
+                    double subtotal = platilloElegido.Price * cantidad;
+                    dgvTicket.Rows.Add(descripcionFactura, cantidad, subtotal);
+                }
+
+                ActualizarTotalPagar();
+                numCantidadPlatillo.Value = 1; // Reseteamos el contador siempre a 1
+
             }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 3. MATEMÁTICA DE LA FACTURA                                           */
+        /* --------------------------------------------------------------------- */
+        private void ActualizarTotalPagar()
+        {
+            double totalGeneral = 0;
+
+            // Recorremos todas las filas del ticket
+            foreach (DataGridViewRow row in dgvTicket.Rows)
+            {
+                // Verificamos que la celda del subtotal (índice 2) no esté vacía
+                if (row.Cells[2].Value != null)
+                {
+                    totalGeneral += Convert.ToDouble(row.Cells[2].Value);
+                }
+            }
+
+            // Actualizamos el Label gigante con el formato de moneda de Nicaragua
+            lblTotalPagar.Text = $"TOTAL: C$ {totalGeneral:N2}";
         }
     }
 }
