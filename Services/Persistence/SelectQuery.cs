@@ -97,5 +97,27 @@ namespace CevicheSys_Pro_2.Services.Persistence
                 CloseConnection();
             }
         }
+
+        public bool IsDuplicate(string query, SqlParameter[] parameters = null)
+        {
+            try
+            {
+                OpenConnection ();
+
+                _command = new SqlCommand(query, _connection);
+                _command.CommandType |= CommandType.Text;
+
+                if ( parameters is not null)
+                    _command.Parameters.AddRange(parameters);
+               
+                return Convert.ToBoolean(_command.ExecuteScalar());
+
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(
+                    $"Error al ejecutar consulta escalar. {ex.Message}", ex);
+            }
+        }
     }
 }
