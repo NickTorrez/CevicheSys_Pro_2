@@ -226,7 +226,7 @@
             lblFecha.AutoSize = true;
             lblFecha.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblFecha.ForeColor = Color.FromArgb(119, 119, 119);
-            lblFecha.Location = new Point(835, 47);
+            lblFecha.Location = new Point(837, 47);
             lblFecha.Name = "lblFecha";
             lblFecha.Size = new Size(60, 19);
             lblFecha.TabIndex = 3;
@@ -288,7 +288,7 @@
             Controls.Add(pnlMenuLateral);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmMainMenu";
-            Text = "MENU PRINCIPAL CEVICHESYS-PRO";
+            Text = "CEVICHESYS-PRO";
             WindowState = FormWindowState.Maximized;
             Load += FrmMainMenu_Load;
             pnlMenuLateral.ResumeLayout(false);

@@ -20,5 +20,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             InitializeComponent();
         }
+
+        private void btnCierreCaja_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
