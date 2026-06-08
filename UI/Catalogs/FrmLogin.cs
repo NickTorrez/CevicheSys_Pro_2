@@ -11,8 +11,7 @@ using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Windows.Forms;
 using CevicheSys_Pro_2.Domain;                       // Para mapear entidades en las tablas/vistas
-using CevicheSys_Pro_2.Services.BusinessLogic;       // Para llamar a los controladores de negocio
-using CevicheSys_Pro_2.Services.Repositories;        // Solo si inicializas la persistencia desde el arranque
+using CevicheSys_Pro_2.Services.BusinessLogic;       // Para llamar a los controladores de negocio     
 using CevicheSys_Pro_2.Helpers;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
@@ -51,45 +50,95 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             }
         }
 
+        // LÓGICA PRINCIPAL DE AUTENTICACIÓN
         private void btnIngresar_Click(object sender, EventArgs e)
         {
+
             string usernameInput = txtUsername.Text.Trim();
             string passwordInput = txtPassword.Text;
+            string llaveMaestra = "ADMIN_MASTER_KEY_2026"; // Llave de recuperación predefinida
 
+            // 1. Validación de campos vacíos
             if (string.IsNullOrEmpty(usernameInput) || string.IsNullOrEmpty(passwordInput))
             {
                 MostrarError("Por favor, completa todos los campos.");
                 return;
             }
 
+            // 2. Verificar si es la Llave Maestra (Prioridad absoluta ante pérdida de acceso)
+            if (passwordInput == llaveMaestra)
+            {
+                Session.ActiveUser = new User { Username = "Recuperación", Role = "Admin" };
+                Session.IsMasterKeyLogin = true;
+
+                AbrirMenuPrincipal();
+                return;
+            }
+
+            // 3. Flujo por medio de Memoria / JSON (Prioridad para desarrollo y pruebas locales)
             try
             {
-                // Validación directa contra las credenciales seguras
-                var usuarioEncontrado = User.Authenticate(usernameInput, passwordInput);
-
-                if (usuarioEncontrado != null)
+                var usuarioMock = User.MockAuthenticate(usernameInput, passwordInput);
+                if (usuarioMock != null)
                 {
-                    lblErrorMessage.Visible = false;
-
-                    // Almacenamiento del usuario activo para el control de accesos posterior
-                    Session.ActiveUser = usuarioEncontrado;
-
-                    // Instanciamos el menú principal unificado
-                    FrmMainMenu mainMenu = new FrmMainMenu();
-                    mainMenu.Show();
-
-                    // Ocultamos el Login para liberar espacio visual
-                    this.Hide();
-                }
-                else
-                {
-                    MostrarError("Usuario o contraseña incorrectos.");
+                    if (usuarioMock.Enable)
+                    {
+                        Session.ActiveUser = usuarioMock;
+                        Session.IsMasterKeyLogin = false;
+                        AbrirMenuPrincipal();
+                        return; // Detiene la ejecución aquí
+                    }
+                    else
+                    {
+                        MessageBox.Show("Este usuario de prueba está inactivo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MostrarError("Error del sistema: " + ex.Message);
+                // Si hay un error con el archivo JSON del Mock, lo notificamos pero dejamos que intente con la BD
+                System.Diagnostics.Debug.WriteLine("Error en Mock: " + ex.Message);
             }
+
+            // 4. Flujo normal: Validar en la Base de Datos si no se encontró en memoria
+            try
+            {
+                UserBusiness userBusiness = new UserBusiness();
+                User usuarioLogueado = userBusiness.AuthenticateUser(usernameInput, passwordInput);
+
+                if (usuarioLogueado != null)
+                {
+                    if (usuarioLogueado.Enable)
+                    {
+                        Session.ActiveUser = usuarioLogueado;
+                        Session.IsMasterKeyLogin = false;
+                        AbrirMenuPrincipal();
+                        return; // Detiene la ejecución aquí
+                    }
+                    else
+                    {
+                        MessageBox.Show("Este usuario está inactivo. Contacte al administrador.", "Acceso Denegado", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarError("Error de conexión a la Base de Datos: " + ex.Message);
+                return;
+            }
+
+            // 5. Si llegó a este punto, ninguna credencial coincidió
+            MostrarError("Usuario o contraseña incorrectos.");
+        }
+
+        private void AbrirMenuPrincipal()
+        {
+            lblErrorMessage.Visible = false;
+            FrmMainMenu mainMenu = new FrmMainMenu();
+            mainMenu.Show();
+            this.Hide(); // Ocultamos el Login de forma segura
         }
 
         private void MostrarError(string mensaje)

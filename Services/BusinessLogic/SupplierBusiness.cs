@@ -1,118 +1,68 @@
-﻿using CevicheSys_Pro_2.UI.Catalogs;
-using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CevicheSys_Pro_2.Domain;
-using System.Data;
-using Microsoft.Data.SqlClient;
 
 namespace CevicheSys_Pro_2.Services.BusinessLogic
 {
     //// <summary>
-    /// Gestiona el CRUD y las reglas de validación estricta para la tabla Proveedor.
+    /// Gestiona el flujo y las reglas de validación estricta para la entidad Proveedor.
     /// </summary>
     public class SupplierBusiness
     {
-        private readonly string _connectionString;
+        private Supplier supplier; // Instancia interna del modelo de dominio
 
-        public SupplierBusiness(string connectionString) => _connectionString = connectionString;
+        public SupplierBusiness()
+        {
+            supplier = new Supplier();
+        }
 
         public List<Supplier> ObtainAllSuppliers()
         {
-            var suppliers = new List<Supplier>();
-            string query = "SELECT Id_Proveedor, Cedula_Ruc, Nombre, Apellido, Direccion, Telefono, Correo, Enable FROM Proveedor WHERE Enable = 1";
-
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                conn.Open();
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        suppliers.Add(new Supplier(
-                            Convert.ToInt32(reader["Id_Proveedor"]),
-                            reader["Cedula_Ruc"].ToString(),
-                            reader["Nombre"].ToString(),
-                            reader["Apellido"].ToString(),
-                            reader["Direccion"].ToString(),
-                            reader["Correo"].ToString(),
-                            reader["Telefono"].ToString(),
-                            Convert.ToBoolean(reader["Enable"])
-                        ));
-                    }
-                }
-            }
-            return suppliers;
+            return supplier.ListAllSuppliers();
         }
 
-        public bool RegisterSupplier(Supplier supplier)
+        public int RegisterSupplier(Supplier newSupplier)
         {
-            if (supplier == null) throw new ArgumentNullException(nameof(supplier));
-            if (!supplier.ValidateIdentification())
-                throw new InvalidOperationException("La Cédula o RUC debe tener al menos 14 caracteres.");
-            if (string.IsNullOrWhiteSpace(supplier.FirstName) || string.IsNullOrWhiteSpace(supplier.LastName))
-                throw new InvalidOperationException("Nombre y Apellido son obligatorios.");
+            if (newSupplier == null) return 1;
 
-            string query = @"INSERT INTO Proveedor (Cedula_Ruc, Nombre, Apellido, Direccion, Telefono, Correo, Enable) 
-                             VALUES (@TaxId, @FirstName, @LastName, @Address, @Phone, @Email, @Enable)";
+            // Filtro de negocio polimórfico heredado de Person (Cédula/RUC)
+            if (!newSupplier.ValidateIdentification())
+                return 2; // Código 2: Cédula o RUC inválido (Menor a 14 dígitos)
 
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@TaxId", supplier.TaxId);
-                cmd.Parameters.AddWithValue("@FirstName", supplier.FirstName);
-                cmd.Parameters.AddWithValue("@LastName", supplier.LastName);
-                cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
-                cmd.Parameters.AddWithValue("@Email", supplier.Email);
-                cmd.Parameters.AddWithValue("@Enable", supplier.Enable);
+            if (string.IsNullOrWhiteSpace(newSupplier.FirstName) || string.IsNullOrWhiteSpace(newSupplier.LastName))
+                return 3; // Código 3: Nombre o Apellido vacío
 
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            // Ordena al dominio ejecutar la inserción
+            if (newSupplier.AddSupplier() > 0)
+                return 0; // Código 0: Éxito
+            else
+                return 1; // Código 1: Fallo operacional en la BD
         }
 
-        public bool ModifySupplier(Supplier supplier)
+        public int ModifySupplier(Supplier modifiedSupplier)
         {
-            if (supplier == null || supplier.SupplierId <= 0) throw new ArgumentException("Proveedor no válido.");
-            if (!supplier.ValidateIdentification()) throw new InvalidOperationException("Cédula/RUC inválida.");
+            if (modifiedSupplier == null || modifiedSupplier.SupplierId <= 0) return 1;
 
-            string query = @"UPDATE Proveedor SET Cedula_Ruc = @TaxId, Nombre = @FirstName, Apellido = @LastName, 
-                             Direccion = @Address, Telefono = @Phone, Correo = @Email WHERE Id_Proveedor = @Id";
+            if (!modifiedSupplier.ValidateIdentification())
+                return 2;
 
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@Id", supplier.SupplierId);
-                cmd.Parameters.AddWithValue("@TaxId", supplier.TaxId);
-                cmd.Parameters.AddWithValue("@FirstName", supplier.FirstName);
-                cmd.Parameters.AddWithValue("@LastName", supplier.LastName);
-                cmd.Parameters.AddWithValue("@Address", supplier.Address);
-                cmd.Parameters.AddWithValue("@Phone", supplier.Phone);
-                cmd.Parameters.AddWithValue("@Email", supplier.Email);
-
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            if (modifiedSupplier.UpdateSupplier() > 0)
+                return 0;
+            else
+                return 1;
         }
 
-        public bool RemoveSupplier(int id)
+        public int RemoveSupplier(int id)
         {
-            if (id <= 0) throw new ArgumentException("ID no válido.");
-            string query = "UPDATE Proveedor SET Enable = 0 WHERE Id_Proveedor = @Id";
+            if (id <= 0) return 1;
 
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@Id", id);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            if (supplier.DisableSupplier(id) > 0)
+                return 0;
+            else
+                return 1;
         }
     }    
 }

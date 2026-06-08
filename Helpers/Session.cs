@@ -10,5 +10,8 @@ namespace CevicheSys_Pro_2.Helpers
     {
         // Guardará el objeto completo del usuario que logueó con éxito
         public static User ActiveUser { get; set; }
+
+        // Bandera para saber si se entró usando la llave maestra
+        public static bool IsMasterKeyLogin { get; set; } = false;
     }
 }

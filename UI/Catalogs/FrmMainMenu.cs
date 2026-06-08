@@ -8,14 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CevicheSys_Pro_2.Domain;                       // Para mapear entidades en las tablas/vistas
-using CevicheSys_Pro_2.Services.BusinessLogic;       // Para llamar a los controladores de negocio
-using CevicheSys_Pro_2.Services.Repositories;        // Solo si inicializas la persistencia desde el arranque
+using CevicheSys_Pro_2.Services.BusinessLogic;       // Para llamar a los controladores de negocio      
 using CevicheSys_Pro_2.Helpers;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
 {
     public partial class FrmMainMenu : Form
     {
+        // Variable para mantener el rastro del formulario abierto actualmente
+        private Form formularioActivo = null;
+
         public FrmMainMenu()
         {
             InitializeComponent();
@@ -42,11 +44,29 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 
         private void ConfigurarAccesos()
         {
+            // PASO 1: Ocultar TODOS los botones por defecto (Estrategia de seguridad limpia)
+            btnPuntoVenta.Visible = false;
+            btnInventario.Visible = false;
+            btnProveedores.Visible = false;
+            btnGastos.Visible = false;
+            btnReportes.Visible = false;
+            btnUsuarios.Visible = false;
+
+            // PASO 2: Evaluar caso crítico de la Llave Maestra
+            if (Session.IsMasterKeyLogin)
+            {
+                btnUsuarios.Visible = true; // Único botón visible
+                MessageBox.Show("Modo de recuperación activo.\nPor seguridad, únicamente tiene acceso al módulo de 'Gestión de Perfiles' para restablecer credenciales.",
+                                "Control de Acceso Contingente", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Bloquea que se evalúen los roles estándar
+            }
+
+            // PASO 3: Distribución de módulos por Flujo Normal de Roles
             string rol = Session.ActiveUser.Role;
 
             if (rol == "Admin")
             {
-                // El administrador tiene control total del negocio
+                // El administrador visualiza la totalidad de los módulos
                 btnPuntoVenta.Visible = true;
                 btnInventario.Visible = true;
                 btnProveedores.Visible = true;
@@ -56,18 +76,12 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             }
             else if (rol == "Vendedor")
             {
-                // Restricciones visuales para el perfil Vendedor
+                // El vendedor solo visualiza sus operaciones nativas
                 btnPuntoVenta.Visible = true;
                 btnInventario.Visible = true;
 
-                // Ocultamos módulos sensibles
-                btnProveedores.Visible = false;
-                btnGastos.Visible = false;
-                btnReportes.Visible = false;
-                btnUsuarios.Visible = false;
-
-                // NOTA: La validación de "Solo Lectura" para el Inventario
-                // se programará directamente dentro del formulario de Inventario al abrirlo.
+                // NOTA: Recuerda que las restricciones CRUD del Inventario (ocultar botones Añadir/Editar)
+                // se ejecutarán en el Load del 'FrmInventario' validando si Session.ActiveUser.Role == "Vendedor".
             }
         }
 
@@ -75,6 +89,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             // Limpiamos la sesión activa
             Session.ActiveUser = null;
+            Session.IsMasterKeyLogin = false;
             tmrReloj.Stop();
 
             // Buscamos el formulario de Login abierto y lo volvemos a mostrar
@@ -91,7 +106,8 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         // Para evitar que la aplicación se quede corriendo en segundo plano si cierran con la "X"
         private void FrmMainMenu_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (Session.ActiveUser != null) // Si no fue un cierre de sesión manual
+            // Si el usuario cierra desde la 'X' de Windows sin cerrar sesión de forma manual
+            if (Session.ActiveUser != null || Session.IsMasterKeyLogin)
             {
                 Application.Exit();
             }
@@ -104,9 +120,34 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             lblFecha.Text = DateTime.Now.ToLongDateString(); // Ejemplo: "lunes, 24 de mayo de 2026"
         }
 
-        private void lblUsuarioActivo_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Incrusta un formulario dentro del panel contenedor.
+        /// </summary>
+        private void AbrirModuloEnPanel(Form moduloHijo)
         {
+            // Cerrar el formulario anterior si existe
+            if (formularioActivo != null)
+            {
+                formularioActivo.Close();
+            }
 
+            formularioActivo = moduloHijo;
+
+            // Configuraciones para que el form actúe como un control dentro del panel
+            moduloHijo.TopLevel = false;
+            moduloHijo.FormBorderStyle = FormBorderStyle.None;
+            moduloHijo.Dock = DockStyle.Fill;
+
+            pnlContenedorPrincipal.Controls.Add(moduloHijo);
+            pnlContenedorPrincipal.Tag = moduloHijo;
+
+            moduloHijo.BringToFront();
+            moduloHijo.Show();
+        }
+
+        private void btnPuntoVenta_Click(object sender, EventArgs e)
+        {
+            AbrirModuloEnPanel(new FrmPuntoVenta());
         }
     }
 }

@@ -3,128 +3,71 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data;
-using Microsoft.Data.SqlClient;
 using CevicheSys_Pro_2.Domain;
 
 namespace CevicheSys_Pro_2.Services.BusinessLogic
 {
     /// <summary>
-    ///Gestiona la autenticación y el ciclo CRUD completo de los usuarios del sistema.
+    ///Controlador de lógica de negocio para la gestión de usuarios y autenticación.
     /// </summary>
     public class UserBusiness
     {
-        private readonly string _connectionString;
+        private User user;
 
-        public UserBusiness(string connectionString) => _connectionString = connectionString;
+        public UserBusiness()
+        {
+            user = new User();
+        }
 
-        public User Login(string username, string password)
+        /// <summary>
+        /// Valida las credenciales de acceso.
+        /// </summary>
+        public User AuthenticateUser(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                throw new ArgumentException("El usuario y contraseña no pueden estar vacíos.");
+                return null;
 
-            string query = "SELECT Id_Usuario, Nombre_Usuario, Contraseña, Rol, Enable FROM Usuario WHERE Nombre_Usuario = @user AND Contraseña = @pass AND Enable = 1";
-
-            try
-            {
-                using (var conn = new SqlConnection(_connectionString))
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@user", username);
-                    cmd.Parameters.AddWithValue("@pass", password);
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new User(
-                                Convert.ToInt32(reader["Id_Usuario"]),
-                                reader["Nombre_Usuario"].ToString(),
-                                reader["Contraseña"].ToString(),
-                                reader["Rol"].ToString(),
-                                Convert.ToBoolean(reader["Enable"])
-                            );
-                        }
-                    }
-                }
-            }
-            catch (SqlException) { /* Fallback a lista en memoria si no hay BD */ }
-
-            return User.MockAuthenticate(username, password);
+            return user.Authenticate(username, password);
         }
 
-        public List<User> ObtainAllUsers()
+        public int InsertUser(User newUser)
         {
-            var list = new List<User>();
-            string query = "SELECT Id_Usuario, Nombre_Usuario, Contraseña, Rol, Enable FROM Usuario WHERE Enable = 1";
+            // Filtros de negocio
+            if (newUser == null) return 1; // Error genérico de objeto nulo
+            if (string.IsNullOrWhiteSpace(newUser.Username)) return 2; // El usuario es obligatorio
+            if (string.IsNullOrWhiteSpace(newUser.Password)) return 3; // La contraseña es obligatoria
 
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                conn.Open();
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        list.Add(new User(
-                            Convert.ToInt32(reader["Id_Usuario"]),
-                            reader["Nombre_Usuario"].ToString(),
-                            reader["Contraseña"].ToString(),
-                            reader["Rol"].ToString(),
-                            Convert.ToBoolean(reader["Enable"])
-                        ));
-                    }
-                }
-            }
-            return list;
+            // Ejecución del dominio
+            if (newUser.AddUser() > 0)
+                return 0; // Éxito
+            else
+                return 4; // Error al insertar en la base de datos
         }
 
-        public bool RegisterUser(User user)
+        public int UpdateUser(User modifiedUser)
         {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-            if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
-                throw new InvalidOperationException("El nombre de usuario y contraseña son obligatorios.");
+            if (modifiedUser == null || modifiedUser.User_Id <= 0) return 1;
+            if (string.IsNullOrWhiteSpace(modifiedUser.Username)) return 2;
 
-            string query = "INSERT INTO Usuario (Nombre_Usuario, Contraseña, Rol, Enable) VALUES (@name, @pass, @role, @enable)";
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@name", user.Username);
-                cmd.Parameters.AddWithValue("@pass", user.Password);
-                cmd.Parameters.AddWithValue("@role", user.Role);
-                cmd.Parameters.AddWithValue("@enable", user.Enable);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            if (modifiedUser.UpdateUser() > 0)
+                return 0; // Éxito
+            else
+                return 4; // Error al actualizar en la base de datos
         }
 
-        public bool ModifyUser(User user)
+        public int DisableUser(int id)
         {
-            if (user == null || user.User_Id <= 0) throw new ArgumentException("Usuario inválido.");
-            string query = "UPDATE Usuario SET Nombre_Usuario = @name, Contraseña = @pass, Rol = @role WHERE Id_Usuario = @id";
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@id", user.User_Id);
-                cmd.Parameters.AddWithValue("@name", user.Username);
-                cmd.Parameters.AddWithValue("@pass", user.Password);
-                cmd.Parameters.AddWithValue("@role", user.Role);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            if (id <= 0) return 1;
+
+            if (user.DisableUser(id) > 0)
+                return 0;
+            else
+                return 4;
         }
 
-        public bool RemoveUser(int id)
+        public List<User> ListUsers()
         {
-            if (id <= 0) throw new ArgumentException("ID no válido.");
-            string query = "UPDATE Usuario SET Enable = 0 WHERE Id_Usuario = @id";
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@id", id);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            return user.ListAllUsers();
         }
     }
     

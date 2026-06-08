@@ -39,5 +39,32 @@ namespace CevicheSys_Pro_2
             Quantity_Used = quantityUsed;
             Enable = enable;
         }
+
+        /*----------------------------------------------------------------------------------*/
+        /* Métodos de Persistencia (CRUD)                                                   */
+        /*----------------------------------------------------------------------------------*/
+
+        public List<Recipe> GetRecipeByDish(int dishId)
+        {
+            var list = new List<Recipe>();
+            string query = "SELECT Id_Receta, Id_Platillo, Id_Producto, Cantidad_Usada, Enable FROM Receta WHERE Id_Platillo = @dishId AND Enable = 1";
+            SqlParameter[] parameters = { new SqlParameter("@dishId", dishId) };
+
+            using (var select = new SelectQuery())
+            {
+                DataTable dt = select.ExecuteSelect(query, parameters);
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(new Recipe(
+                        Convert.ToInt32(row["Id_Receta"]),
+                        Convert.ToInt32(row["Id_Platillo"]),
+                        Convert.ToInt32(row["Id_Producto"]),
+                        Convert.ToDouble(row["Cantidad_Usada"]),
+                        Convert.ToBoolean(row["Enable"])
+                    ));
+                }
+            }
+            return list;
+        }
     }
 }

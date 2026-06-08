@@ -31,6 +31,7 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMainMenu));
             pnlMenuLateral = new Panel();
+            btnUsuarios = new Button();
             btnCerrarSesion = new Button();
             btnReportes = new Button();
             btnGastos = new Button();
@@ -45,7 +46,6 @@
             lblUsuarioActivo = new Label();
             pnlContenedorPrincipal = new Panel();
             tmrReloj = new System.Windows.Forms.Timer(components);
-            btnUsuarios = new Button();
             pnlMenuLateral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
             pnlEncabezado.SuspendLayout();
@@ -67,6 +67,24 @@
             pnlMenuLateral.Name = "pnlMenuLateral";
             pnlMenuLateral.Size = new Size(300, 673);
             pnlMenuLateral.TabIndex = 0;
+            // 
+            // btnUsuarios
+            // 
+            btnUsuarios.Cursor = Cursors.Hand;
+            btnUsuarios.Dock = DockStyle.Top;
+            btnUsuarios.FlatAppearance.BorderSize = 0;
+            btnUsuarios.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
+            btnUsuarios.FlatStyle = FlatStyle.Flat;
+            btnUsuarios.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnUsuarios.ForeColor = Color.White;
+            btnUsuarios.Location = new Point(0, 415);
+            btnUsuarios.Name = "btnUsuarios";
+            btnUsuarios.Padding = new Padding(20, 0, 0, 0);
+            btnUsuarios.Size = new Size(300, 55);
+            btnUsuarios.TabIndex = 7;
+            btnUsuarios.Text = "👤​ Gestión de Perfiles";
+            btnUsuarios.TextAlign = ContentAlignment.MiddleLeft;
+            btnUsuarios.UseVisualStyleBackColor = true;
             // 
             // btnCerrarSesion
             // 
@@ -176,6 +194,7 @@
             btnPuntoVenta.Text = "\U0001f6d2 ​Punto de Venta";
             btnPuntoVenta.TextAlign = ContentAlignment.MiddleLeft;
             btnPuntoVenta.UseVisualStyleBackColor = true;
+            btnPuntoVenta.Click += btnPuntoVenta_Click;
             // 
             // picLogo
             // 
@@ -243,7 +262,6 @@
             lblUsuarioActivo.Size = new Size(324, 23);
             lblUsuarioActivo.TabIndex = 0;
             lblUsuarioActivo.Text = "Sesión iniciada como: [Nombre]";
-            lblUsuarioActivo.Click += lblUsuarioActivo_Click;
             // 
             // pnlContenedorPrincipal
             // 
@@ -259,24 +277,6 @@
             tmrReloj.Enabled = true;
             tmrReloj.Interval = 1000;
             tmrReloj.Tick += tmrReloj_Tick;
-            // 
-            // btnUsuarios
-            // 
-            btnUsuarios.Cursor = Cursors.Hand;
-            btnUsuarios.Dock = DockStyle.Top;
-            btnUsuarios.FlatAppearance.BorderSize = 0;
-            btnUsuarios.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
-            btnUsuarios.FlatStyle = FlatStyle.Flat;
-            btnUsuarios.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnUsuarios.ForeColor = Color.White;
-            btnUsuarios.Location = new Point(0, 415);
-            btnUsuarios.Name = "btnUsuarios";
-            btnUsuarios.Padding = new Padding(20, 0, 0, 0);
-            btnUsuarios.Size = new Size(300, 55);
-            btnUsuarios.TabIndex = 7;
-            btnUsuarios.Text = "👤​ Control de Perfiles";
-            btnUsuarios.TextAlign = ContentAlignment.MiddleLeft;
-            btnUsuarios.UseVisualStyleBackColor = true;
             // 
             // FrmMainMenu
             // 

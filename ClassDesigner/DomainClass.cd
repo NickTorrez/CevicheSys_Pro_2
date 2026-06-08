@@ -3,92 +3,92 @@
   <Class Name="CevicheSys_Pro_2.Supplier">
     <Position X="2.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIIAAACAAIAQAAIAAAAARBIEAAAACAABAMEBAABM=</HashCode>
+      <HashCode>AAAAAEBAACAAAIAAEAAAAAAAABAAAAACAAAAAAAwAAk=</HashCode>
       <FileName>Domain\Supplier.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Category">
     <Position X="4.25" Y="0.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>iAAAAIAAAAAAAEAAAgAAAAAABAAAACQAAAAACAAAAAI=</HashCode>
+      <HashCode>AAAAAAEAAAQCAAAAggAACAAAAAAAAAQAAAAAAAAAAAg=</HashCode>
       <FileName>Domain\Category.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Expense">
     <Position X="7" Y="0.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAACAgAEAEAAAAAAGABAGAAAQAAABAEAAAAAI=</HashCode>
+      <HashCode>AAAAAEAAAAAgAAAACBAACAGAAAKAAAQAAAAAAAAAAAA=</HashCode>
       <FileName>Domain\Expense.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Product">
     <Position X="9.25" Y="0.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EoAAAIAAABAAAEABAAAAAAAgBgEAAAQEABABEQBAAAI=</HashCode>
+      <HashCode>AAAAAAIAAAAAAAABAAAASACgAAAAAAQAABAAUQBAAAA=</HashCode>
       <FileName>Domain\Product.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Dish">
     <Position X="0.5" Y="7.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AgAAgIAAAQEAgAAAAAAAAAAAFAEAAAAABAAABAIAAAI=</HashCode>
+      <HashCode>AAABgAAAAQAAgAAAIAQACAAAEAAAAAAAAAAABAEAAAA=</HashCode>
       <FileName>Domain\Dish.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Recipe">
     <Position X="2.5" Y="7.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EgAAIIAAAAAAAAAAAAAAACAAFAEMAAAgAAAAAABAAAI=</HashCode>
+      <HashCode>AAAAAAAgAAAAAAAAAAAACCAAEAAEAAAAAAAAAABAAAA=</HashCode>
       <FileName>Domain\Recipe.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CevicheSys_Pro_2.Sale_Detail">
-    <Position X="7" Y="7.5" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AgAEAIAAAIAAAAABAAAAAAAAFAEAIACAAAAAgAAAAEI=</HashCode>
-      <FileName>Domain\Sale_Detail.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CevicheSys_Pro_2.FinancialReport">
-    <Position X="9.5" Y="7.5" Width="2.25" />
+    <Position X="8.75" Y="7.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAIAIAACAAACAAAAAACAAABAAAAACAAAA=</HashCode>
+      <HashCode>AAAAAAgCCAAAAAAAAAAEAAAgABACAAAAAAAEAEAAAAA=</HashCode>
       <FileName>Domain\FinancialReport.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Sale">
     <Position X="5" Y="7.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>ACAUAAgAQEAAAAAAAAAAAQAABAUgEABAAUEAAAAAAEI=</HashCode>
+      <HashCode>ACAQAAgAAAAAAAAAAAAACQAAAAAAAABAAEEAAAAAAEA=</HashCode>
       <FileName>Domain\Sale.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CevicheSys_Pro_2.Cash_Closure">
-    <Position X="11.75" Y="0.75" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>ACEQKBAAAAAAgAAAAAAAAAAABAAAAAQQAAQAAAAAAAI=</HashCode>
-      <FileName>Domain\Cash_Closure.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.User">
     <Position X="0.5" Y="0.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>ACQAAIAAAAAAAAAAEQAAAAIAAAAAEAACAAIBAAAAAAI=</HashCode>
+      <HashCode>ACAAAAAAgAAAAAAAEQAACAICCQQAAAAiAAAIAAAgAAA=</HashCode>
       <FileName>Domain\User.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.DetailedSaleDTO">
-    <Position X="12" Y="7.5" Width="2" />
+    <Position X="11.5" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAEQgAgAAQAAgAAAAAAAAAAAAAAAAAABBAEAgAAAAEA=</HashCode>
       <FileName>Domain\FinancialReport.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CevicheSys_Pro_2.Customer">
-    <Position X="14.5" Y="0.75" Width="2.25" />
+    <Position X="11.75" Y="4" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>CAgAAIAAAAEAAAAAAAAAAAAAAgAAAAAAAAAAIAAAABI=</HashCode>
-      <FileName>Customer.cs</FileName>
+      <HashCode>AAAAAAAAAQAAAIAAEACAAAAAACCAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Domain\Customer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CevicheSys_Pro_2.SaleDetail">
+    <Position X="7" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAACAAAAAgAAAAEA=</HashCode>
+      <FileName>Domain\SaleDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CevicheSys_Pro_2.CashClosure">
+    <Position X="11.75" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAIBAAAAAAgAAAAAAACAAAAAAAAAAQIAQAAAAAAAA=</HashCode>
+      <FileName>Domain\CashClosure.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

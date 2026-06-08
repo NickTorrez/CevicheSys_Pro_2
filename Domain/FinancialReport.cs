@@ -13,56 +13,47 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class FinancialReport
     {
-        /* --------------------------------------------------------------------- */
-        /* Atributos y Propiedades de Control de Tiempo                          */
-        /* --------------------------------------------------------------------- */
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
-
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de los Paneles Numéricos Principales                     */
-        /* --------------------------------------------------------------------- */
         public double TotalIncome { get; set; }
         public double TotalExpenses { get; set; }
-
-        /// <summary>
-        /// Propiedad calculada en base a las reglas de negocio del dominio: Ganancia = Ingresos - Gastos.
-        /// </summary>
         public double TotalProfit => TotalIncome - TotalExpenses;
-
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de los Paneles Analíticos Secundarios                     */
-        /* --------------------------------------------------------------------- */
         public Dish MostSoldDish { get; set; }
         public string MostFrequentExpense { get; set; }
-
-        /* --------------------------------------------------------------------- */
-        /* Listas de Detalles para Componentes de UI                             */
-        /* --------------------------------------------------------------------- */
         public List<DetailedSaleDTO> SalesHistory { get; set; }
 
-        /* --------------------------------------------------------------------- */
-        /* Constructor                                                           */
-        /* --------------------------------------------------------------------- */
-        /// <summary>
-        /// Inicializa el reporte financiero normalizando el filtro de tiempo.
-        /// </summary>
-        /// <param name="startDate">Fecha desde donde inicia el filtro.</param>
-        /// <param name="endDate">Fecha límite del filtro.</param>
         public FinancialReport(DateTime startDate, DateTime endDate)
         {
             StartDate = startDate.Date;
-            EndDate = endDate.Date.AddDays(1).AddTicks(-1); // Incluye el último día completo
-
-            // Inicializamos la lista para evitar referencias nulas en el dominio
+            EndDate = endDate.Date.AddDays(1).AddTicks(-1);
             SalesHistory = new List<DetailedSaleDTO>();
             MostFrequentExpense = "Sin registros";
         }
-    }
 
-    /* ===================================================================== */
-    /* ESTRUCTURA DTO SOPORTE DE REPORTES                                    */
-    /* ===================================================================== */
+        
+        public void LoadReportData()
+        {
+            // 1. Calcular Ingresos del Periodo
+            string incomeQuery = "SELECT ISNULL(SUM(Total_Pagar), 0) FROM Venta WHERE Fecha_Registro BETWEEN @start AND @end AND Enable = 1";
+            SqlParameter[] parameters = { new SqlParameter("@start", StartDate), new SqlParameter("@end", EndDate) };
+
+            using (var select = new SelectQuery())
+            {
+                DataTable dt = select.ExecuteSelect(incomeQuery, parameters);
+                if (dt.Rows.Count > 0) TotalIncome = Convert.ToDouble(dt.Rows[0][0]);
+            }
+
+            // 2. Calcular Gastos Operativos del Periodo
+            string expenseQuery = "SELECT ISNULL(SUM(Monto), 0) FROM Gasto WHERE Fecha_Gasto BETWEEN @start AND @end AND Enable = 1";
+            SqlParameter[] parameters2 = { new SqlParameter("@start", StartDate), new SqlParameter("@end", EndDate) };
+
+            using (var select = new SelectQuery())
+            {
+                DataTable dt = select.ExecuteSelect(expenseQuery, parameters2);
+                if (dt.Rows.Count > 0) TotalExpenses = Convert.ToDouble(dt.Rows[0][0]);
+            }
+        }
+    }
 
     /// <summary>
     /// Estructura DTO diseñada exclusivamente para formatear automáticamente las columnas del DataGridView.

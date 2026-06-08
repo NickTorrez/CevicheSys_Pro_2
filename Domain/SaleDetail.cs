@@ -9,24 +9,24 @@ namespace CevicheSys_Pro_2
     /// <summary>
     /// Entidad intermedia que rompe la relación N a N entre Ventas y Platillos (Representa cada línea del boucher).
     /// </summary>
-    public class Sale_Detail
+    public class SaleDetail
     {
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Detail_Id { get; set; } // Id_Detalle (PK) [cite: 668]
-        public int Sale_Id { get; set; }   // Id_Venta (FK) [cite: 667]
-        public int Dish_Id { get; set; }   // Id_Platillo (FK) [cite: 667]
-        public int Quantity { get; set; }  // Cantidad [cite: 667]
+        public int Detail_Id { get; set; } // Id_Detalle (PK) 
+        public int Sale_Id { get; set; }   // Id_Venta (FK)
+        public int Dish_Id { get; set; }   // Id_Platillo (FK)
+        public int Quantity { get; set; }  // Cantidad 
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
-        public Sale_Detail()
+        public SaleDetail()
         {
         }
 
-        public Sale_Detail(int detailId, int saleId, int dishId, int quantity)
+        public SaleDetail(int detailId, int saleId, int dishId, int quantity)
         {
             Detail_Id = detailId;
             Sale_Id = saleId;

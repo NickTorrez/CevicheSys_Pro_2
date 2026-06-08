@@ -3,105 +3,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data;
-using Microsoft.Data.SqlClient;
 using CevicheSys_Pro_2.Domain;
 
 namespace CevicheSys_Pro_2.Services.BusinessLogic
 {
     /// <summary>
-    /// Gestiona el catálogo de insumos, stock y su ciclo de vida (CRUD) en el inventario.
+    /// Controlador de lógica de negocio para la gestión de insumos y materia prima.
     /// </summary>
     public class ProductBusiness
     {
-        private readonly string _connectionString;
+        private Product product;
 
-        public ProductBusiness(string connectionString) => _connectionString = connectionString;
-
-        public List<Product> ObtainAllProducts()
+        public ProductBusiness()
         {
-            var list = new List<Product>();
-            string query = "SELECT Id_Producto, Nombre, Id_Proveedor, Id_Categoria, Stock_Actual, Minimum_Stock, Fecha_Vencimiento, Enable FROM Producto WHERE Enable = 1";
-
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                conn.Open();
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                    {
-                        list.Add(new Product(
-                            Convert.ToInt32(r["Id_Producto"]),
-                            r["Nombre"].ToString(),
-                            Convert.ToInt32(r["Id_Proveedor"]),
-                            Convert.ToInt32(r["Id_Categoria"]),
-                            Convert.ToDouble(r["Stock_Actual"]),
-                            Convert.ToDouble(r["Minimum_Stock"]),
-                            r["Fecha_Vencimiento"] != DBNull.Value ? Convert.ToDateTime(r["Fecha_Vencimiento"]) : (DateTime?)null,
-                            Convert.ToBoolean(r["Enable"])
-                        ));
-                    }
-                }
-            }
-            return list;
+            product = new Product();
         }
 
-        public List<Product> GetLowStockProducts() => ObtainAllProducts().FindAll(p => p.RequiresRestock());
-
-        public bool RegisterProduct(Product product)
+        public int InsertProduct(Product newProduct)
         {
-            if (product == null) throw new ArgumentNullException(nameof(product));
+            if (newProduct == null) return 1;
 
-            string query = @"INSERT INTO Producto (Nombre, Id_Proveedor, Id_Categoria, Stock_Actual, Minimum_Stock, Fecha_Vencimiento, Enable) 
-                             VALUES (@name, @provId, @catId, @stock, @min, @exp, @enable)";
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@name", product.Product_Name);
-                cmd.Parameters.AddWithValue("@provId", product.Supplier_Id); 
-                cmd.Parameters.AddWithValue("@catId", product.Category_Id);
-                cmd.Parameters.AddWithValue("@stock", product.Current_Stock);
-                cmd.Parameters.AddWithValue("@min", product.Minimum_Stock);
-                cmd.Parameters.AddWithValue("@exp", product.Expiration_Date.HasValue ? (object)product.Expiration_Date.Value : DBNull.Value);
-                cmd.Parameters.AddWithValue("@enable", product.Enable);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            // Reglas lógicas de inventario
+            if (string.IsNullOrWhiteSpace(newProduct.Product_Name)) return 2;
+            if (newProduct.Current_Stock < 0) return 3; // El stock inicial no puede ser negativo
+            if (newProduct.Minimum_Stock < 0) return 4;
+
+            if (newProduct.AddProduct() > 0)
+                return 0;
+            else
+                return 5;
         }
 
-        public bool ModifyProduct(Product product)
+        public int UpdateProduct(Product modifiedProduct)
         {
-            if (product == null || product.Product_Id <= 0) throw new ArgumentException("Producto inválido.");
+            if (modifiedProduct == null || modifiedProduct.Product_Id <= 0) return 1;
+            if (modifiedProduct.Current_Stock < 0) return 3;
 
-            string query = @"UPDATE Producto SET Nombre = @name, Id_Proveedor = @provId, Id_Categoria = @catId, 
-                             Stock_Actual = @stock, Minimum_Stock = @min, Fecha_Vencimiento = @exp WHERE Id_Producto = @id";
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@id", product.Product_Id);
-                cmd.Parameters.AddWithValue("@name", product.Product_Name);
-                cmd.Parameters.AddWithValue("@provId", product.Supplier_Id);
-                cmd.Parameters.AddWithValue("@catId", product.Category_Id);
-                cmd.Parameters.AddWithValue("@stock", product.Current_Stock);
-                cmd.Parameters.AddWithValue("@min", product.Minimum_Stock);
-                cmd.Parameters.AddWithValue("@exp", product.Expiration_Date.HasValue ? (object)product.Expiration_Date.Value : DBNull.Value);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            if (modifiedProduct.UpdateProduct() > 0)
+                return 0;
+            else
+                return 5;
         }
 
-        public bool RemoveProduct(int id)
+        public int DisableProduct(int id)
         {
-            if (id <= 0) throw new ArgumentException("ID no válido.");
-            string query = "UPDATE Producto SET Enable = 0 WHERE Id_Producto = @id";
-            using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@id", id);
-                conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            if (id <= 0) return 1;
+
+            if (product.DisableProduct(id) > 0)
+                return 0;
+            else
+                return 5;
+        }
+
+        public List<Product> ListProducts()
+        {
+            return product.ListAllProducts();
+        }
+
+        /// <summary>
+        /// Aplica la regla de negocio del dominio para filtrar productos que requieren reabastecimiento.
+        /// </summary>
+        public List<Product> ListLowStockProducts()
+        {
+            List<Product> allProducts = product.ListAllProducts();
+            return allProducts.FindAll(p => p.RequiresRestock());
         }
     }
 }
