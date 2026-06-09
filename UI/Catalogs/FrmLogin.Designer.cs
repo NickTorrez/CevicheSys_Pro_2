@@ -47,6 +47,7 @@
             panel2 = new Panel();
             label2 = new Label();
             label1 = new Label();
+            btnCerrarApp = new Button();
             pnlRegistro = new Panel();
             ((System.ComponentModel.ISupportInitialize)pbUser).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbLogo).BeginInit();
@@ -263,9 +264,25 @@
             label1.TabIndex = 2;
             label1.Text = "Sistema de Gestion";
             // 
+            // btnCerrarApp
+            // 
+            btnCerrarApp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCerrarApp.BackColor = Color.Red;
+            btnCerrarApp.FlatStyle = FlatStyle.Flat;
+            btnCerrarApp.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCerrarApp.ForeColor = Color.White;
+            btnCerrarApp.Location = new Point(625, 0);
+            btnCerrarApp.Name = "btnCerrarApp";
+            btnCerrarApp.Size = new Size(137, 60);
+            btnCerrarApp.TabIndex = 1;
+            btnCerrarApp.Text = "❌​ Close";
+            btnCerrarApp.UseVisualStyleBackColor = false;
+            btnCerrarApp.Click += button1_Click;
+            // 
             // pnlRegistro
             // 
             pnlRegistro.BackColor = Color.Linen;
+            pnlRegistro.Controls.Add(btnCerrarApp);
             pnlRegistro.Controls.Add(pnlTarjetaLogin);
             pnlRegistro.Dock = DockStyle.Fill;
             pnlRegistro.Location = new Point(500, 0);
@@ -282,6 +299,7 @@
             Controls.Add(pnlRegistro);
             Controls.Add(panel2);
             Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
             Name = "FrmLogin";
@@ -320,5 +338,6 @@
         private PictureBox pbPassword;
         private TextBox txtPassword;
         private Panel panel3;
+        private Button btnCerrarApp;
     }
 }

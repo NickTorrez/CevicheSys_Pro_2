@@ -50,16 +50,16 @@
             // 
             // txtNombreCliente
             // 
-            txtNombreCliente.Location = new Point(167, 27);
+            txtNombreCliente.Location = new Point(152, 27);
             txtNombreCliente.Name = "txtNombreCliente";
-            txtNombreCliente.Size = new Size(171, 28);
+            txtNombreCliente.Size = new Size(186, 28);
             txtNombreCliente.TabIndex = 0;
             // 
             // txtTelefono
             // 
-            txtTelefono.Location = new Point(167, 61);
+            txtTelefono.Location = new Point(152, 61);
             txtTelefono.Name = "txtTelefono";
-            txtTelefono.Size = new Size(171, 28);
+            txtTelefono.Size = new Size(186, 28);
             txtTelefono.TabIndex = 1;
             // 
             // groupBox1
@@ -99,7 +99,7 @@
             // 
             // btnGenerarFactura
             // 
-            btnGenerarFactura.BackColor = Color.Green;
+            btnGenerarFactura.BackColor = Color.FromArgb(40, 167, 69);
             btnGenerarFactura.FlatStyle = FlatStyle.Flat;
             btnGenerarFactura.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnGenerarFactura.ForeColor = Color.White;
@@ -109,6 +109,7 @@
             btnGenerarFactura.TabIndex = 10;
             btnGenerarFactura.Text = "Generar Factura";
             btnGenerarFactura.UseVisualStyleBackColor = false;
+            btnGenerarFactura.Click += btnGenerarFactura_Click;
             // 
             // pnlEfectivo
             // 
@@ -146,6 +147,7 @@
             txtMontoEntregado.Name = "txtMontoEntregado";
             txtMontoEntregado.Size = new Size(171, 28);
             txtMontoEntregado.TabIndex = 0;
+            txtMontoEntregado.TextChanged += txtMontoEntregado_TextChanged;
             // 
             // lblTotalPagar
             // 
@@ -161,10 +163,10 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label4.Location = new Point(25, 132);
+            label4.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label4.Location = new Point(6, 132);
             label4.Name = "label4";
-            label4.Size = new Size(136, 18);
+            label4.Size = new Size(152, 19);
             label4.TabIndex = 7;
             label4.Text = " Metodo de Pago";
             // 
@@ -172,7 +174,7 @@
             // 
             cmbMetodoPago.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbMetodoPago.FormattingEnabled = true;
-            cmbMetodoPago.Items.AddRange(new object[] { "Efectivo", "Tarjeta" });
+            cmbMetodoPago.Items.AddRange(new object[] { "Efectivo", "Transferencia" });
             cmbMetodoPago.Location = new Point(167, 128);
             cmbMetodoPago.Name = "cmbMetodoPago";
             cmbMetodoPago.Size = new Size(171, 27);
@@ -192,7 +194,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(31, 99);
+            label3.Location = new Point(12, 98);
             label3.Name = "label3";
             label3.Size = new Size(141, 19);
             label3.TabIndex = 4;
@@ -202,7 +204,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(34, 65);
+            label2.Location = new Point(12, 64);
             label2.Name = "label2";
             label2.Size = new Size(79, 19);
             label2.TabIndex = 3;
@@ -212,7 +214,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(31, 31);
+            label1.Location = new Point(12, 30);
             label1.Name = "label1";
             label1.Size = new Size(66, 19);
             label1.TabIndex = 2;
@@ -229,6 +231,7 @@
             Name = "FrmFacturacion";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Facturación del Producto";
+            Load += FrmFacturacion_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             pnlEfectivo.ResumeLayout(false);

@@ -134,7 +134,7 @@
             // 
             // btnFinalizarVenta
             // 
-            btnFinalizarVenta.BackColor = Color.Green;
+            btnFinalizarVenta.BackColor = Color.FromArgb(40, 167, 69);
             btnFinalizarVenta.FlatStyle = FlatStyle.Flat;
             btnFinalizarVenta.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnFinalizarVenta.ForeColor = Color.White;
@@ -144,6 +144,7 @@
             btnFinalizarVenta.TabIndex = 1;
             btnFinalizarVenta.Text = "Finalizar Venta";
             btnFinalizarVenta.UseVisualStyleBackColor = false;
+            btnFinalizarVenta.Click += btnFinalizarVenta_Click;
             // 
             // btnCierreCaja
             // 
@@ -165,7 +166,7 @@
             lblTotal.Anchor = AnchorStyles.None;
             lblTotal.AutoSize = true;
             lblTotal.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotal.ForeColor = Color.Green;
+            lblTotal.ForeColor = Color.FromArgb(40, 167, 69);
             lblTotal.Location = new Point(89, 16);
             lblTotal.Name = "lblTotal";
             lblTotal.Size = new Size(196, 34);

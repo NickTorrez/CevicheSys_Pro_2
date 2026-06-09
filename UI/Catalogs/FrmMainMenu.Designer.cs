@@ -40,6 +40,7 @@
             btnPuntoVenta = new Button();
             picLogo = new PictureBox();
             pnlEncabezado = new Panel();
+            btnCerrarModulo = new Button();
             lblFecha = new Label();
             lblHora = new Label();
             panel1 = new Panel();
@@ -210,6 +211,7 @@
             // pnlEncabezado
             // 
             pnlEncabezado.BackColor = Color.White;
+            pnlEncabezado.Controls.Add(btnCerrarModulo);
             pnlEncabezado.Controls.Add(lblFecha);
             pnlEncabezado.Controls.Add(lblHora);
             pnlEncabezado.Controls.Add(panel1);
@@ -219,6 +221,21 @@
             pnlEncabezado.Name = "pnlEncabezado";
             pnlEncabezado.Size = new Size(962, 70);
             pnlEncabezado.TabIndex = 0;
+            // 
+            // btnCerrarModulo
+            // 
+            btnCerrarModulo.BackColor = Color.Red;
+            btnCerrarModulo.FlatStyle = FlatStyle.Flat;
+            btnCerrarModulo.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCerrarModulo.ForeColor = Color.White;
+            btnCerrarModulo.Location = new Point(6, 12);
+            btnCerrarModulo.Name = "btnCerrarModulo";
+            btnCerrarModulo.Size = new Size(164, 43);
+            btnCerrarModulo.TabIndex = 4;
+            btnCerrarModulo.Text = "❌​ Cerrar Módulo";
+            btnCerrarModulo.UseVisualStyleBackColor = false;
+            btnCerrarModulo.Visible = false;
+            btnCerrarModulo.Click += btnCerrarModulo_Click;
             // 
             // lblFecha
             // 
@@ -254,6 +271,7 @@
             // 
             // lblUsuarioActivo
             // 
+            lblUsuarioActivo.Anchor = AnchorStyles.None;
             lblUsuarioActivo.AutoSize = true;
             lblUsuarioActivo.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblUsuarioActivo.ForeColor = Color.FromArgb(51, 51, 51);
@@ -286,6 +304,7 @@
             Controls.Add(pnlContenedorPrincipal);
             Controls.Add(pnlEncabezado);
             Controls.Add(pnlMenuLateral);
+            FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmMainMenu";
             Text = "CEVICHESYS-PRO";
@@ -316,5 +335,6 @@
         private Label lblFecha;
         private System.Windows.Forms.Timer tmrReloj;
         private Button btnUsuarios;
+        private Button btnCerrarModulo;
     }
 }

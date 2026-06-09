@@ -172,6 +172,11 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 btnTogglePassword.Text = "👁";
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }
 

@@ -143,11 +143,36 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 
             moduloHijo.BringToFront();
             moduloHijo.Show();
+
+            // Como acabamos de abrir un módulo, hacemos que el botón APAREZCA
+            btnCerrarModulo.Visible = true;
         }
 
         private void btnPuntoVenta_Click(object sender, EventArgs e)
         {
             AbrirModuloEnPanel(new FrmPuntoVenta());
+        }
+
+        private void btnCerrarModulo_Click(object sender, EventArgs e)
+        {
+            // Verificamos si realmente hay algo abierto
+            if (pnlContenedorPrincipal.Controls.Count > 0)
+            {
+                DialogResult respuesta = MessageBox.Show(
+                    "¿Desea cerrar el módulo actual? Se perderán los datos no guardados.",
+                    "Cerrar Módulo",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.Yes)
+                {
+                    // 1. Vaciamos el panel contenedor
+                    pnlContenedorPrincipal.Controls.Clear();
+
+                    // 2. Ocultamos el botón automáticamente ya que volvimos al "Home" vacío
+                    btnCerrarModulo.Visible = false;
+                }
+            }
         }
     }
 }
