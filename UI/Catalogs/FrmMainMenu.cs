@@ -174,5 +174,20 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 }
             }
         }
+
+        private void btnInventario_Click(object sender, EventArgs e)
+        {
+            AbrirModuloEnPanel(new FrmInventario());
+        }
+
+        private void btnProveedores_Click(object sender, EventArgs e)
+        {
+            AbrirModuloEnPanel(new FrmProveedores());
+        }
+
+        private void btnGastos_Click(object sender, EventArgs e)
+        {
+            AbrirModuloEnPanel(new FrmGastos());
+        }
     }
 }

@@ -217,6 +217,7 @@
             // btnRegistrarCierre
             // 
             btnRegistrarCierre.BackColor = Color.FromArgb(40, 167, 69);
+            btnRegistrarCierre.Cursor = Cursors.Hand;
             btnRegistrarCierre.FlatStyle = FlatStyle.Flat;
             btnRegistrarCierre.Font = new Font("Century Gothic", 12F, FontStyle.Bold);
             btnRegistrarCierre.ForeColor = Color.White;
@@ -231,6 +232,7 @@
             // btnCancelar
             // 
             btnCancelar.BackColor = Color.Red;
+            btnCancelar.Cursor = Cursors.Hand;
             btnCancelar.FlatStyle = FlatStyle.Flat;
             btnCancelar.Font = new Font("Century Gothic", 12F, FontStyle.Bold);
             btnCancelar.ForeColor = Color.White;

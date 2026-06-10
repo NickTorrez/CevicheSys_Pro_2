@@ -76,12 +76,12 @@
             btnUsuarios.FlatAppearance.BorderSize = 0;
             btnUsuarios.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
             btnUsuarios.FlatStyle = FlatStyle.Flat;
-            btnUsuarios.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnUsuarios.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnUsuarios.ForeColor = Color.White;
-            btnUsuarios.Location = new Point(0, 415);
+            btnUsuarios.Location = new Point(0, 480);
             btnUsuarios.Name = "btnUsuarios";
             btnUsuarios.Padding = new Padding(20, 0, 0, 0);
-            btnUsuarios.Size = new Size(300, 55);
+            btnUsuarios.Size = new Size(300, 68);
             btnUsuarios.TabIndex = 7;
             btnUsuarios.Text = "👤​ Gestión de Perfiles";
             btnUsuarios.TextAlign = ContentAlignment.MiddleLeft;
@@ -94,12 +94,12 @@
             btnCerrarSesion.Dock = DockStyle.Bottom;
             btnCerrarSesion.FlatAppearance.BorderSize = 0;
             btnCerrarSesion.FlatStyle = FlatStyle.Flat;
-            btnCerrarSesion.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnCerrarSesion.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCerrarSesion.ForeColor = Color.White;
-            btnCerrarSesion.Location = new Point(0, 618);
+            btnCerrarSesion.Location = new Point(0, 604);
             btnCerrarSesion.Name = "btnCerrarSesion";
             btnCerrarSesion.Padding = new Padding(20, 0, 0, 0);
-            btnCerrarSesion.Size = new Size(300, 55);
+            btnCerrarSesion.Size = new Size(300, 69);
             btnCerrarSesion.TabIndex = 5;
             btnCerrarSesion.Text = "​​ ❌​ Cerrar Cesión";
             btnCerrarSesion.TextAlign = ContentAlignment.MiddleLeft;
@@ -113,12 +113,12 @@
             btnReportes.FlatAppearance.BorderSize = 0;
             btnReportes.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
             btnReportes.FlatStyle = FlatStyle.Flat;
-            btnReportes.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnReportes.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnReportes.ForeColor = Color.White;
-            btnReportes.Location = new Point(0, 360);
+            btnReportes.Location = new Point(0, 412);
             btnReportes.Name = "btnReportes";
             btnReportes.Padding = new Padding(20, 0, 0, 0);
-            btnReportes.Size = new Size(300, 55);
+            btnReportes.Size = new Size(300, 68);
             btnReportes.TabIndex = 4;
             btnReportes.Text = "​​​📜​​ Reportes Financieros";
             btnReportes.TextAlign = ContentAlignment.MiddleLeft;
@@ -131,16 +131,17 @@
             btnGastos.FlatAppearance.BorderSize = 0;
             btnGastos.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
             btnGastos.FlatStyle = FlatStyle.Flat;
-            btnGastos.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnGastos.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnGastos.ForeColor = Color.White;
-            btnGastos.Location = new Point(0, 305);
+            btnGastos.Location = new Point(0, 344);
             btnGastos.Name = "btnGastos";
             btnGastos.Padding = new Padding(20, 0, 0, 0);
-            btnGastos.Size = new Size(300, 55);
+            btnGastos.Size = new Size(300, 68);
             btnGastos.TabIndex = 3;
             btnGastos.Text = "💸 ​Gastos";
             btnGastos.TextAlign = ContentAlignment.MiddleLeft;
             btnGastos.UseVisualStyleBackColor = true;
+            btnGastos.Click += btnGastos_Click;
             // 
             // btnProveedores
             // 
@@ -149,16 +150,17 @@
             btnProveedores.FlatAppearance.BorderSize = 0;
             btnProveedores.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
             btnProveedores.FlatStyle = FlatStyle.Flat;
-            btnProveedores.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnProveedores.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnProveedores.ForeColor = Color.White;
-            btnProveedores.Location = new Point(0, 250);
+            btnProveedores.Location = new Point(0, 276);
             btnProveedores.Name = "btnProveedores";
             btnProveedores.Padding = new Padding(20, 0, 0, 0);
-            btnProveedores.Size = new Size(300, 55);
+            btnProveedores.Size = new Size(300, 68);
             btnProveedores.TabIndex = 2;
             btnProveedores.Text = "🚚 ​Proveedores";
             btnProveedores.TextAlign = ContentAlignment.MiddleLeft;
             btnProveedores.UseVisualStyleBackColor = true;
+            btnProveedores.Click += btnProveedores_Click;
             // 
             // btnInventario
             // 
@@ -167,16 +169,17 @@
             btnInventario.FlatAppearance.BorderSize = 0;
             btnInventario.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
             btnInventario.FlatStyle = FlatStyle.Flat;
-            btnInventario.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnInventario.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnInventario.ForeColor = Color.White;
-            btnInventario.Location = new Point(0, 195);
+            btnInventario.Location = new Point(0, 208);
             btnInventario.Name = "btnInventario";
             btnInventario.Padding = new Padding(20, 0, 0, 0);
-            btnInventario.Size = new Size(300, 55);
+            btnInventario.Size = new Size(300, 68);
             btnInventario.TabIndex = 1;
             btnInventario.Text = "📦 ​Inventario";
             btnInventario.TextAlign = ContentAlignment.MiddleLeft;
             btnInventario.UseVisualStyleBackColor = true;
+            btnInventario.Click += btnInventario_Click;
             // 
             // btnPuntoVenta
             // 
@@ -185,12 +188,12 @@
             btnPuntoVenta.FlatAppearance.BorderSize = 0;
             btnPuntoVenta.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 216);
             btnPuntoVenta.FlatStyle = FlatStyle.Flat;
-            btnPuntoVenta.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnPuntoVenta.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnPuntoVenta.ForeColor = Color.White;
             btnPuntoVenta.Location = new Point(0, 140);
             btnPuntoVenta.Name = "btnPuntoVenta";
             btnPuntoVenta.Padding = new Padding(20, 0, 0, 0);
-            btnPuntoVenta.Size = new Size(300, 55);
+            btnPuntoVenta.Size = new Size(300, 68);
             btnPuntoVenta.TabIndex = 0;
             btnPuntoVenta.Text = "\U0001f6d2 ​Punto de Venta";
             btnPuntoVenta.TextAlign = ContentAlignment.MiddleLeft;
@@ -225,6 +228,7 @@
             // btnCerrarModulo
             // 
             btnCerrarModulo.BackColor = Color.Red;
+            btnCerrarModulo.Cursor = Cursors.Hand;
             btnCerrarModulo.FlatStyle = FlatStyle.Flat;
             btnCerrarModulo.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCerrarModulo.ForeColor = Color.White;

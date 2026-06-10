@@ -135,6 +135,7 @@
             // btnFinalizarVenta
             // 
             btnFinalizarVenta.BackColor = Color.FromArgb(40, 167, 69);
+            btnFinalizarVenta.Cursor = Cursors.Hand;
             btnFinalizarVenta.FlatStyle = FlatStyle.Flat;
             btnFinalizarVenta.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnFinalizarVenta.ForeColor = Color.White;
@@ -150,6 +151,7 @@
             // 
             btnCierreCaja.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnCierreCaja.BackColor = Color.FromArgb(10, 25, 47);
+            btnCierreCaja.Cursor = Cursors.Hand;
             btnCierreCaja.FlatStyle = FlatStyle.Flat;
             btnCierreCaja.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCierreCaja.ForeColor = Color.White;

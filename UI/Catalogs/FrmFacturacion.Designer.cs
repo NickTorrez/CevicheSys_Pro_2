@@ -87,6 +87,7 @@
             // btnCancelar
             // 
             btnCancelar.BackColor = Color.Red;
+            btnCancelar.Cursor = Cursors.Hand;
             btnCancelar.FlatStyle = FlatStyle.Flat;
             btnCancelar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCancelar.ForeColor = Color.White;
@@ -100,6 +101,7 @@
             // btnGenerarFactura
             // 
             btnGenerarFactura.BackColor = Color.FromArgb(40, 167, 69);
+            btnGenerarFactura.Cursor = Cursors.Hand;
             btnGenerarFactura.FlatStyle = FlatStyle.Flat;
             btnGenerarFactura.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnGenerarFactura.ForeColor = Color.White;
