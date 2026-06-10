@@ -31,29 +31,31 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistro = new Panel();
-            pnlLista = new Panel();
-            pnlFiltrar = new Panel();
-            btnLimpiar = new Button();
-            btnEliminar = new Button();
-            btnGuardar = new Button();
-            label2 = new Label();
-            dtpFechaGasto = new DateTimePicker();
-            label1 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
-            comboBox1 = new ComboBox();
-            textBox1 = new TextBox();
             textBox2 = new TextBox();
-            dtpInicio = new DateTimePicker();
-            dtpFin = new DateTimePicker();
-            btnFiltrar = new Button();
+            textBox1 = new TextBox();
+            comboBox1 = new ComboBox();
+            label5 = new Label();
+            label4 = new Label();
+            label3 = new Label();
+            label1 = new Label();
+            dtpFechaGasto = new DateTimePicker();
+            label2 = new Label();
+            btnLimpiarEgreso = new Button();
+            btnEliminarEgreso = new Button();
+            btnGuardarEgreso = new Button();
+            pnlLista = new Panel();
             dataGridView1 = new DataGridView();
+            pnlFiltrar = new Panel();
+            btnFiltrarEgreso = new Button();
+            dtpFin = new DateTimePicker();
+            dtpInicio = new DateTimePicker();
+            label6 = new Label();
+            comboBox2 = new ComboBox();
             tableLayoutPanel1.SuspendLayout();
             pnlRegistro.SuspendLayout();
             pnlLista.SuspendLayout();
-            pnlFiltrar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            pnlFiltrar.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -73,6 +75,9 @@
             // 
             // pnlRegistro
             // 
+            pnlRegistro.BorderStyle = BorderStyle.FixedSingle;
+            pnlRegistro.Controls.Add(comboBox2);
+            pnlRegistro.Controls.Add(label6);
             pnlRegistro.Controls.Add(textBox2);
             pnlRegistro.Controls.Add(textBox1);
             pnlRegistro.Controls.Add(comboBox1);
@@ -82,9 +87,9 @@
             pnlRegistro.Controls.Add(label1);
             pnlRegistro.Controls.Add(dtpFechaGasto);
             pnlRegistro.Controls.Add(label2);
-            pnlRegistro.Controls.Add(btnLimpiar);
-            pnlRegistro.Controls.Add(btnEliminar);
-            pnlRegistro.Controls.Add(btnGuardar);
+            pnlRegistro.Controls.Add(btnLimpiarEgreso);
+            pnlRegistro.Controls.Add(btnEliminarEgreso);
+            pnlRegistro.Controls.Add(btnGuardarEgreso);
             pnlRegistro.Dock = DockStyle.Fill;
             pnlRegistro.Location = new Point(3, 3);
             pnlRegistro.Name = "pnlRegistro";
@@ -92,118 +97,41 @@
             pnlRegistro.TabIndex = 0;
             pnlRegistro.Paint += pnlRegistro_Paint;
             // 
-            // pnlLista
+            // textBox2
             // 
-            pnlLista.Controls.Add(dataGridView1);
-            pnlLista.Controls.Add(pnlFiltrar);
-            pnlLista.Dock = DockStyle.Fill;
-            pnlLista.Location = new Point(339, 3);
-            pnlLista.Name = "pnlLista";
-            pnlLista.Size = new Size(620, 597);
-            pnlLista.TabIndex = 1;
+            textBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            textBox2.Font = new Font("Century Gothic", 9F);
+            textBox2.Location = new Point(123, 366);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(195, 26);
+            textBox2.TabIndex = 19;
             // 
-            // pnlFiltrar
+            // textBox1
             // 
-            pnlFiltrar.Controls.Add(btnFiltrar);
-            pnlFiltrar.Controls.Add(dtpFin);
-            pnlFiltrar.Controls.Add(dtpInicio);
-            pnlFiltrar.Dock = DockStyle.Top;
-            pnlFiltrar.Location = new Point(0, 0);
-            pnlFiltrar.Name = "pnlFiltrar";
-            pnlFiltrar.Size = new Size(620, 115);
-            pnlFiltrar.TabIndex = 0;
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            textBox1.Font = new Font("Century Gothic", 9F);
+            textBox1.Location = new Point(12, 245);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(306, 100);
+            textBox1.TabIndex = 18;
             // 
-            // btnLimpiar
+            // comboBox1
             // 
-            btnLimpiar.BackColor = Color.FromArgb(108, 117, 125);
-            btnLimpiar.Cursor = Cursors.Hand;
-            btnLimpiar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnLimpiar.ForeColor = Color.White;
-            btnLimpiar.Location = new Point(168, 512);
-            btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(150, 70);
-            btnLimpiar.TabIndex = 10;
-            btnLimpiar.Text = "Limpiar";
-            btnLimpiar.UseVisualStyleBackColor = false;
-            // 
-            // btnEliminar
-            // 
-            btnEliminar.BackColor = Color.FromArgb(220, 53, 69);
-            btnEliminar.Cursor = Cursors.Hand;
-            btnEliminar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnEliminar.ForeColor = Color.White;
-            btnEliminar.Location = new Point(12, 512);
-            btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(150, 70);
-            btnEliminar.TabIndex = 9;
-            btnEliminar.Text = "Anular Gasto";
-            btnEliminar.UseVisualStyleBackColor = false;
-            // 
-            // btnGuardar
-            // 
-            btnGuardar.BackColor = Color.FromArgb(40, 167, 69);
-            btnGuardar.Cursor = Cursors.Hand;
-            btnGuardar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnGuardar.ForeColor = Color.White;
-            btnGuardar.Location = new Point(90, 432);
-            btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(150, 70);
-            btnGuardar.TabIndex = 8;
-            btnGuardar.Text = "Registrar Egreso";
-            btnGuardar.UseVisualStyleBackColor = false;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(56, 28);
-            label2.Name = "label2";
-            label2.Size = new Size(218, 27);
-            label2.TabIndex = 11;
-            label2.Text = "Registro de Gastos";
-            // 
-            // dtpFechaGasto
-            // 
-            dtpFechaGasto.Format = DateTimePickerFormat.Short;
-            dtpFechaGasto.Location = new Point(123, 109);
-            dtpFechaGasto.Name = "dtpFechaGasto";
-            dtpFechaGasto.RightToLeft = RightToLeft.No;
-            dtpFechaGasto.Size = new Size(195, 27);
-            dtpFechaGasto.TabIndex = 12;
-            dtpFechaGasto.ValueChanged += dtpFechaGasto_ValueChanged;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label1.Location = new Point(12, 115);
-            label1.Name = "label1";
-            label1.Size = new Size(54, 18);
-            label1.TabIndex = 13;
-            label1.Text = "Fecha";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label3.Location = new Point(12, 165);
-            label3.Name = "label3";
-            label3.Size = new Size(109, 18);
-            label3.TabIndex = 14;
-            label3.Text = "Tipo de Gasto";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label4.Location = new Point(9, 216);
-            label4.Name = "label4";
-            label4.Size = new Size(97, 18);
-            label4.TabIndex = 15;
-            label4.Text = "Descripción";
+            comboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.Font = new Font("Century Gothic", 9F);
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Compras", "Servicios Basicos", "Salarios" });
+            comboBox1.Location = new Point(123, 119);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(195, 28);
+            comboBox1.TabIndex = 17;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // label5
             // 
+            label5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
             label5.Location = new Point(12, 370);
@@ -212,60 +140,118 @@
             label5.TabIndex = 16;
             label5.Text = "Monto Total";
             // 
-            // comboBox1
+            // label4
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(123, 161);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(195, 28);
-            comboBox1.TabIndex = 17;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            label4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
+            label4.Location = new Point(9, 216);
+            label4.Name = "label4";
+            label4.Size = new Size(83, 18);
+            label4.TabIndex = 15;
+            label4.Text = "Concepto";
             // 
-            // textBox1
+            // label3
             // 
-            textBox1.Location = new Point(12, 245);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(306, 100);
-            textBox1.TabIndex = 18;
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
+            label3.Location = new Point(12, 123);
+            label3.Name = "label3";
+            label3.Size = new Size(109, 18);
+            label3.TabIndex = 14;
+            label3.Text = "Tipo de Gasto";
             // 
-            // textBox2
+            // label1
             // 
-            textBox2.Location = new Point(123, 366);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(195, 27);
-            textBox2.TabIndex = 19;
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
+            label1.Location = new Point(12, 75);
+            label1.Name = "label1";
+            label1.Size = new Size(54, 18);
+            label1.TabIndex = 13;
+            label1.Text = "Fecha";
             // 
-            // dtpInicio
+            // dtpFechaGasto
             // 
-            dtpInicio.Format = DateTimePickerFormat.Short;
-            dtpInicio.Location = new Point(27, 17);
-            dtpInicio.Name = "dtpInicio";
-            dtpInicio.Size = new Size(250, 27);
-            dtpInicio.TabIndex = 0;
+            dtpFechaGasto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpFechaGasto.Font = new Font("Century Gothic", 9F);
+            dtpFechaGasto.Format = DateTimePickerFormat.Short;
+            dtpFechaGasto.Location = new Point(123, 69);
+            dtpFechaGasto.Name = "dtpFechaGasto";
+            dtpFechaGasto.RightToLeft = RightToLeft.No;
+            dtpFechaGasto.Size = new Size(195, 26);
+            dtpFechaGasto.TabIndex = 12;
+            dtpFechaGasto.ValueChanged += dtpFechaGasto_ValueChanged;
             // 
-            // dtpFin
+            // label2
             // 
-            dtpFin.Format = DateTimePickerFormat.Short;
-            dtpFin.Location = new Point(344, 17);
-            dtpFin.Name = "dtpFin";
-            dtpFin.Size = new Size(250, 27);
-            dtpFin.TabIndex = 1;
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(56, 17);
+            label2.Name = "label2";
+            label2.Size = new Size(218, 27);
+            label2.TabIndex = 11;
+            label2.Text = "Registro de Gastos";
             // 
-            // btnFiltrar
+            // btnLimpiarEgreso
             // 
-            btnFiltrar.BackColor = Color.FromArgb(247, 127, 0);
-            btnFiltrar.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnFiltrar.ForeColor = Color.White;
-            btnFiltrar.Location = new Point(233, 54);
-            btnFiltrar.Name = "btnFiltrar";
-            btnFiltrar.Size = new Size(154, 51);
-            btnFiltrar.TabIndex = 2;
-            btnFiltrar.Text = "Filtrar Gastos";
-            btnFiltrar.UseVisualStyleBackColor = false;
+            btnLimpiarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnLimpiarEgreso.BackColor = Color.FromArgb(108, 117, 125);
+            btnLimpiarEgreso.Cursor = Cursors.Hand;
+            btnLimpiarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnLimpiarEgreso.ForeColor = Color.White;
+            btnLimpiarEgreso.Location = new Point(168, 512);
+            btnLimpiarEgreso.Name = "btnLimpiarEgreso";
+            btnLimpiarEgreso.Size = new Size(150, 70);
+            btnLimpiarEgreso.TabIndex = 10;
+            btnLimpiarEgreso.Text = "Limpiar";
+            btnLimpiarEgreso.UseVisualStyleBackColor = false;
+            // 
+            // btnEliminarEgreso
+            // 
+            btnEliminarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnEliminarEgreso.BackColor = Color.FromArgb(220, 53, 69);
+            btnEliminarEgreso.Cursor = Cursors.Hand;
+            btnEliminarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnEliminarEgreso.ForeColor = Color.White;
+            btnEliminarEgreso.Location = new Point(12, 512);
+            btnEliminarEgreso.Name = "btnEliminarEgreso";
+            btnEliminarEgreso.Size = new Size(150, 70);
+            btnEliminarEgreso.TabIndex = 9;
+            btnEliminarEgreso.Text = "Anular Gasto";
+            btnEliminarEgreso.UseVisualStyleBackColor = false;
+            // 
+            // btnGuardarEgreso
+            // 
+            btnGuardarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnGuardarEgreso.BackColor = Color.FromArgb(40, 167, 69);
+            btnGuardarEgreso.Cursor = Cursors.Hand;
+            btnGuardarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnGuardarEgreso.ForeColor = Color.White;
+            btnGuardarEgreso.Location = new Point(90, 432);
+            btnGuardarEgreso.Name = "btnGuardarEgreso";
+            btnGuardarEgreso.Size = new Size(150, 70);
+            btnGuardarEgreso.TabIndex = 8;
+            btnGuardarEgreso.Text = "Registrar Egreso";
+            btnGuardarEgreso.UseVisualStyleBackColor = false;
+            // 
+            // pnlLista
+            // 
+            pnlLista.BorderStyle = BorderStyle.FixedSingle;
+            pnlLista.Controls.Add(dataGridView1);
+            pnlLista.Controls.Add(pnlFiltrar);
+            pnlLista.Dock = DockStyle.Fill;
+            pnlLista.Location = new Point(339, 3);
+            pnlLista.Name = "pnlLista";
+            pnlLista.Size = new Size(620, 597);
+            pnlLista.TabIndex = 1;
             // 
             // dataGridView1
             // 
+            dataGridView1.BackgroundColor = Color.WhiteSmoke;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(0, 91, 150);
             dataGridViewCellStyle1.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -280,8 +266,74 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(620, 482);
+            dataGridView1.Size = new Size(618, 480);
             dataGridView1.TabIndex = 1;
+            // 
+            // pnlFiltrar
+            // 
+            pnlFiltrar.Controls.Add(btnFiltrarEgreso);
+            pnlFiltrar.Controls.Add(dtpFin);
+            pnlFiltrar.Controls.Add(dtpInicio);
+            pnlFiltrar.Dock = DockStyle.Top;
+            pnlFiltrar.Location = new Point(0, 0);
+            pnlFiltrar.Name = "pnlFiltrar";
+            pnlFiltrar.Size = new Size(618, 115);
+            pnlFiltrar.TabIndex = 0;
+            // 
+            // btnFiltrarEgreso
+            // 
+            btnFiltrarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnFiltrarEgreso.BackColor = Color.FromArgb(247, 127, 0);
+            btnFiltrarEgreso.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnFiltrarEgreso.ForeColor = Color.White;
+            btnFiltrarEgreso.Location = new Point(233, 54);
+            btnFiltrarEgreso.Name = "btnFiltrarEgreso";
+            btnFiltrarEgreso.Size = new Size(154, 51);
+            btnFiltrarEgreso.TabIndex = 2;
+            btnFiltrarEgreso.Text = "Filtrar Gastos";
+            btnFiltrarEgreso.UseVisualStyleBackColor = false;
+            // 
+            // dtpFin
+            // 
+            dtpFin.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpFin.Font = new Font("Century Gothic", 9F);
+            dtpFin.Format = DateTimePickerFormat.Short;
+            dtpFin.Location = new Point(344, 17);
+            dtpFin.Name = "dtpFin";
+            dtpFin.Size = new Size(250, 26);
+            dtpFin.TabIndex = 1;
+            // 
+            // dtpInicio
+            // 
+            dtpInicio.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpInicio.Font = new Font("Century Gothic", 9F);
+            dtpInicio.Format = DateTimePickerFormat.Short;
+            dtpInicio.Location = new Point(27, 17);
+            dtpInicio.Name = "dtpInicio";
+            dtpInicio.Size = new Size(250, 26);
+            dtpInicio.TabIndex = 0;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Location = new Point(12, 175);
+            label6.Name = "label6";
+            label6.Size = new Size(84, 18);
+            label6.TabIndex = 20;
+            label6.Text = "Proveedor";
+            // 
+            // comboBox2
+            // 
+            comboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox2.Font = new Font("Century Gothic", 9F);
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Location = new Point(123, 172);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(195, 28);
+            comboBox2.TabIndex = 21;
             // 
             // FrmGastos
             // 
@@ -297,8 +349,8 @@
             pnlRegistro.ResumeLayout(false);
             pnlRegistro.PerformLayout();
             pnlLista.ResumeLayout(false);
-            pnlFiltrar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            pnlFiltrar.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -308,9 +360,9 @@
         private Panel pnlRegistro;
         private Panel pnlLista;
         private Panel pnlFiltrar;
-        private Button btnLimpiar;
-        private Button btnEliminar;
-        private Button btnGuardar;
+        private Button btnLimpiarEgreso;
+        private Button btnEliminarEgreso;
+        private Button btnGuardarEgreso;
         private Label label2;
         private TextBox textBox2;
         private TextBox textBox1;
@@ -320,9 +372,11 @@
         private Label label3;
         private Label label1;
         private DateTimePicker dtpFechaGasto;
-        private Button btnFiltrar;
+        private Button btnFiltrarEgreso;
         private DateTimePicker dtpFin;
         private DateTimePicker dtpInicio;
         private DataGridView dataGridView1;
+        private ComboBox comboBox2;
+        private Label label6;
     }
 }

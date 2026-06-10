@@ -16,5 +16,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             InitializeComponent();
         }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

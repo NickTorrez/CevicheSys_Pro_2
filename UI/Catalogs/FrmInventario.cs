@@ -21,5 +21,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
 
         }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

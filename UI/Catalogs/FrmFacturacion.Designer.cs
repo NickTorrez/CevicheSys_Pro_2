@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFacturacion));
             txtNombreCliente = new TextBox();
             txtTelefono = new TextBox();
             groupBox1 = new GroupBox();
@@ -229,10 +230,11 @@
             ClientSize = new Size(432, 503);
             Controls.Add(groupBox1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "FrmFacturacion";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Facturación del Producto";
+            Text = "Facturación de la Compra";
             Load += FrmFacturacion_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

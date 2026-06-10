@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCierreCaja));
             groupBox1 = new GroupBox();
             label6 = new Label();
             label5 = new Label();
@@ -264,10 +265,11 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "FrmCierreCaja";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "FrmCierreCaja";
+            Text = "Cierre de Caja";
             Load += FrmCierreCaja_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
