@@ -30,6 +30,7 @@
         {
             tcReportes = new TabControl();
             tabDashboard = new TabPage();
+            pnlGraficoContenedor = new Panel();
             tlpReportes = new TableLayoutPanel();
             panel1 = new Panel();
             lblTotalIngresos = new Label();
@@ -49,10 +50,10 @@
             tabHistorial = new TabPage();
             dgvHistorial = new DataGridView();
             pnlTipoReporte = new Panel();
+            btnAnularVenta = new Button();
             btnExportarExcel = new Button();
             cmbTipoReporte = new ComboBox();
             label6 = new Label();
-            btnAnularVenta = new Button();
             tcReportes.SuspendLayout();
             tabDashboard.SuspendLayout();
             tlpReportes.SuspendLayout();
@@ -79,6 +80,7 @@
             // tabDashboard
             // 
             tabDashboard.BackColor = Color.White;
+            tabDashboard.Controls.Add(pnlGraficoContenedor);
             tabDashboard.Controls.Add(tlpReportes);
             tabDashboard.Controls.Add(pnlFiltro);
             tabDashboard.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -88,6 +90,14 @@
             tabDashboard.Size = new Size(954, 570);
             tabDashboard.TabIndex = 0;
             tabDashboard.Text = "Dashboard Financiero";
+            // 
+            // pnlGraficoContenedor
+            // 
+            pnlGraficoContenedor.Dock = DockStyle.Fill;
+            pnlGraficoContenedor.Location = new Point(3, 193);
+            pnlGraficoContenedor.Name = "pnlGraficoContenedor";
+            pnlGraficoContenedor.Size = new Size(948, 374);
+            pnlGraficoContenedor.TabIndex = 2;
             // 
             // tlpReportes
             // 
@@ -301,6 +311,19 @@
             pnlTipoReporte.Size = new Size(948, 60);
             pnlTipoReporte.TabIndex = 0;
             // 
+            // btnAnularVenta
+            // 
+            btnAnularVenta.BackColor = Color.FromArgb(220, 53, 69);
+            btnAnularVenta.Cursor = Cursors.Hand;
+            btnAnularVenta.FlatStyle = FlatStyle.Flat;
+            btnAnularVenta.ForeColor = Color.White;
+            btnAnularVenta.Location = new Point(661, 11);
+            btnAnularVenta.Name = "btnAnularVenta";
+            btnAnularVenta.Size = new Size(237, 40);
+            btnAnularVenta.TabIndex = 3;
+            btnAnularVenta.Text = "Anular Venta Seleccionada";
+            btnAnularVenta.UseVisualStyleBackColor = false;
+            // 
             // btnExportarExcel
             // 
             btnExportarExcel.BackColor = Color.FromArgb(40, 167, 69);
@@ -334,19 +357,6 @@
             label6.TabIndex = 0;
             label6.Text = "Tipo de Reporte";
             // 
-            // btnAnularVenta
-            // 
-            btnAnularVenta.BackColor = Color.FromArgb(220, 53, 69);
-            btnAnularVenta.Cursor = Cursors.Hand;
-            btnAnularVenta.FlatStyle = FlatStyle.Flat;
-            btnAnularVenta.ForeColor = Color.White;
-            btnAnularVenta.Location = new Point(661, 11);
-            btnAnularVenta.Name = "btnAnularVenta";
-            btnAnularVenta.Size = new Size(237, 40);
-            btnAnularVenta.TabIndex = 3;
-            btnAnularVenta.Text = "Anular Venta Seleccionada";
-            btnAnularVenta.UseVisualStyleBackColor = false;
-            // 
             // FrmReportes
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -357,6 +367,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmReportes";
             Text = "FrmReportes";
+            Load += FrmReportes_Load;
             tcReportes.ResumeLayout(false);
             tabDashboard.ResumeLayout(false);
             tlpReportes.ResumeLayout(false);
@@ -402,5 +413,6 @@
         private DataGridView dgvHistorial;
         private Button btnExportarExcel;
         private Button btnAnularVenta;
+        private Panel pnlGraficoContenedor;
     }
 }

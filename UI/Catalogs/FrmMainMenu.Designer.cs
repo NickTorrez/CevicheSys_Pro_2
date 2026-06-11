@@ -123,6 +123,7 @@
             btnReportes.Text = "​​​📜​​ Reportes Financieros";
             btnReportes.TextAlign = ContentAlignment.MiddleLeft;
             btnReportes.UseVisualStyleBackColor = true;
+            btnReportes.Click += btnReportes_Click;
             // 
             // btnGastos
             // 
