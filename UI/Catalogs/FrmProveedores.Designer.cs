@@ -29,8 +29,13 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistro = new Panel();
+            txtCorreo = new TextBox();
+            txtApellidoProveedor = new TextBox();
+            label8 = new Label();
+            label7 = new Label();
             txtDireccion = new TextBox();
             txtTelefono = new TextBox();
             txtNombreProveedor = new TextBox();
@@ -49,10 +54,6 @@
             pnlBuscar = new Panel();
             txtBuscarProveedor = new TextBox();
             label1 = new Label();
-            label7 = new Label();
-            label8 = new Label();
-            txtApellidoProveedor = new TextBox();
-            txtCorreo = new TextBox();
             tableLayoutPanel1.SuspendLayout();
             pnlRegistro.SuspendLayout();
             pnlLista.SuspendLayout();
@@ -101,42 +102,100 @@
             pnlRegistro.Size = new Size(330, 597);
             pnlRegistro.TabIndex = 0;
             // 
+            // txtCorreo
+            // 
+            txtCorreo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtCorreo.Font = new Font("Century Gothic", 9F);
+            txtCorreo.Location = new Point(116, 270);
+            txtCorreo.MaxLength = 100;
+            txtCorreo.Name = "txtCorreo";
+            txtCorreo.Size = new Size(202, 26);
+            txtCorreo.TabIndex = 20;
+            txtCorreo.Enter += TextBox_Enter;
+            txtCorreo.Leave += TextBox_Leave;
+            // 
+            // txtApellidoProveedor
+            // 
+            txtApellidoProveedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtApellidoProveedor.Font = new Font("Century Gothic", 9F);
+            txtApellidoProveedor.Location = new Point(116, 170);
+            txtApellidoProveedor.MaxLength = 50;
+            txtApellidoProveedor.Name = "txtApellidoProveedor";
+            txtApellidoProveedor.Size = new Size(202, 26);
+            txtApellidoProveedor.TabIndex = 19;
+            txtApellidoProveedor.Enter += TextBox_Enter;
+            txtApellidoProveedor.Leave += TextBox_Leave;
+            // 
+            // label8
+            // 
+            label8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label8.AutoSize = true;
+            label8.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
+            label8.Location = new Point(12, 274);
+            label8.Name = "label8";
+            label8.Size = new Size(48, 18);
+            label8.TabIndex = 18;
+            label8.Text = "Email";
+            // 
+            // label7
+            // 
+            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
+            label7.Location = new Point(12, 170);
+            label7.Name = "label7";
+            label7.Size = new Size(103, 36);
+            label7.TabIndex = 17;
+            label7.Text = "Apellido del \r\nProveedor";
+            // 
             // txtDireccion
             // 
             txtDireccion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtDireccion.Font = new Font("Century Gothic", 9F);
             txtDireccion.Location = new Point(12, 335);
+            txtDireccion.MaxLength = 255;
             txtDireccion.Multiline = true;
             txtDireccion.Name = "txtDireccion";
             txtDireccion.Size = new Size(306, 74);
             txtDireccion.TabIndex = 16;
+            txtDireccion.Enter += TextBox_Enter;
+            txtDireccion.Leave += TextBox_Leave;
             // 
             // txtTelefono
             // 
             txtTelefono.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtTelefono.Font = new Font("Century Gothic", 9F);
-            txtTelefono.Location = new Point(116, 272);
+            txtTelefono.Location = new Point(116, 223);
+            txtTelefono.MaxLength = 20;
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(202, 26);
             txtTelefono.TabIndex = 15;
+            txtTelefono.Enter += TextBox_Enter;
+            txtTelefono.Leave += TextBox_Leave;
             // 
             // txtNombreProveedor
             // 
             txtNombreProveedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtNombreProveedor.Font = new Font("Century Gothic", 9F);
             txtNombreProveedor.Location = new Point(116, 114);
+            txtNombreProveedor.MaxLength = 50;
             txtNombreProveedor.Name = "txtNombreProveedor";
             txtNombreProveedor.Size = new Size(202, 26);
             txtNombreProveedor.TabIndex = 14;
+            txtNombreProveedor.Enter += TextBox_Enter;
+            txtNombreProveedor.Leave += TextBox_Leave;
             // 
             // txtCedulaRuc
             // 
             txtCedulaRuc.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtCedulaRuc.Font = new Font("Century Gothic", 9F);
             txtCedulaRuc.Location = new Point(116, 61);
+            txtCedulaRuc.MaxLength = 20;
             txtCedulaRuc.Name = "txtCedulaRuc";
             txtCedulaRuc.Size = new Size(202, 26);
             txtCedulaRuc.TabIndex = 13;
+            txtCedulaRuc.Enter += TextBox_Enter;
+            txtCedulaRuc.Leave += TextBox_Leave;
             // 
             // label6
             // 
@@ -154,7 +213,7 @@
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label5.Location = new Point(12, 272);
+            label5.Location = new Point(12, 227);
             label5.Name = "label5";
             label5.Size = new Size(71, 18);
             label5.TabIndex = 11;
@@ -195,9 +254,10 @@
             // 
             // btnLimpiar
             // 
-            btnLimpiar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnLimpiar.Anchor = AnchorStyles.None;
             btnLimpiar.BackColor = Color.FromArgb(108, 117, 125);
             btnLimpiar.Cursor = Cursors.Hand;
+            btnLimpiar.FlatStyle = FlatStyle.Flat;
             btnLimpiar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnLimpiar.ForeColor = Color.White;
             btnLimpiar.Location = new Point(168, 511);
@@ -209,9 +269,10 @@
             // 
             // btnEliminar
             // 
-            btnEliminar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnEliminar.Anchor = AnchorStyles.None;
             btnEliminar.BackColor = Color.FromArgb(220, 53, 69);
             btnEliminar.Cursor = Cursors.Hand;
+            btnEliminar.FlatStyle = FlatStyle.Flat;
             btnEliminar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnEliminar.ForeColor = Color.White;
             btnEliminar.Location = new Point(12, 511);
@@ -223,9 +284,10 @@
             // 
             // btnEditar
             // 
-            btnEditar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnEditar.Anchor = AnchorStyles.None;
             btnEditar.BackColor = Color.FromArgb(0, 123, 255);
             btnEditar.Cursor = Cursors.Hand;
+            btnEditar.FlatStyle = FlatStyle.Flat;
             btnEditar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnEditar.ForeColor = Color.White;
             btnEditar.Location = new Point(168, 435);
@@ -237,9 +299,10 @@
             // 
             // btnGuardar
             // 
-            btnGuardar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnGuardar.Anchor = AnchorStyles.None;
             btnGuardar.BackColor = Color.FromArgb(40, 167, 69);
             btnGuardar.Cursor = Cursors.Hand;
+            btnGuardar.FlatStyle = FlatStyle.Flat;
             btnGuardar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnGuardar.ForeColor = Color.White;
             btnGuardar.Location = new Point(12, 435);
@@ -262,15 +325,20 @@
             // 
             // dataGridView1
             // 
+            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.BackgroundColor = Color.WhiteSmoke;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle1.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridView1.BorderStyle = BorderStyle.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 68);
@@ -279,7 +347,6 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(618, 527);
             dataGridView1.TabIndex = 1;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // pnlBuscar
             // 
@@ -310,46 +377,6 @@
             label1.Size = new Size(81, 23);
             label1.TabIndex = 2;
             label1.Text = "Buscar:";
-            // 
-            // label7
-            // 
-            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label7.AutoSize = true;
-            label7.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label7.Location = new Point(12, 170);
-            label7.Name = "label7";
-            label7.Size = new Size(103, 36);
-            label7.TabIndex = 17;
-            label7.Text = "Apellido del \r\nProveedor";
-            // 
-            // label8
-            // 
-            label8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label8.AutoSize = true;
-            label8.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label8.Location = new Point(12, 224);
-            label8.Name = "label8";
-            label8.Size = new Size(48, 18);
-            label8.TabIndex = 18;
-            label8.Text = "Email";
-            // 
-            // txtApellidoProveedor
-            // 
-            txtApellidoProveedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtApellidoProveedor.Font = new Font("Century Gothic", 9F);
-            txtApellidoProveedor.Location = new Point(116, 170);
-            txtApellidoProveedor.Name = "txtApellidoProveedor";
-            txtApellidoProveedor.Size = new Size(202, 26);
-            txtApellidoProveedor.TabIndex = 19;
-            // 
-            // txtCorreo
-            // 
-            txtCorreo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtCorreo.Font = new Font("Century Gothic", 9F);
-            txtCorreo.Location = new Point(116, 220);
-            txtCorreo.Name = "txtCorreo";
-            txtCorreo.Size = new Size(202, 26);
-            txtCorreo.TabIndex = 20;
             // 
             // FrmProveedores
             // 

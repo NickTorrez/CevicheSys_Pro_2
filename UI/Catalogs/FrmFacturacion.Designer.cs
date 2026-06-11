@@ -52,19 +52,26 @@
             // txtNombreCliente
             // 
             txtNombreCliente.Location = new Point(152, 27);
+            txtNombreCliente.MaxLength = 100;
             txtNombreCliente.Name = "txtNombreCliente";
             txtNombreCliente.Size = new Size(186, 28);
-            txtNombreCliente.TabIndex = 0;
+            txtNombreCliente.TabIndex = 1;
+            txtNombreCliente.Enter += TextBox_Enter;
+            txtNombreCliente.Leave += TextBox_Leave;
             // 
             // txtTelefono
             // 
             txtTelefono.Location = new Point(152, 61);
+            txtTelefono.MaxLength = 20;
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(186, 28);
             txtTelefono.TabIndex = 1;
+            txtTelefono.Enter += TextBox_Enter;
+            txtTelefono.Leave += TextBox_Leave;
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(btnCancelar);
             groupBox1.Controls.Add(btnGenerarFactura);
             groupBox1.Controls.Add(pnlEfectivo);
@@ -147,10 +154,14 @@
             // txtMontoEntregado
             // 
             txtMontoEntregado.Location = new Point(156, 15);
+            txtMontoEntregado.MaxLength = 12;
             txtMontoEntregado.Name = "txtMontoEntregado";
             txtMontoEntregado.Size = new Size(171, 28);
             txtMontoEntregado.TabIndex = 0;
+            txtMontoEntregado.TextAlign = HorizontalAlignment.Right;
             txtMontoEntregado.TextChanged += txtMontoEntregado_TextChanged;
+            txtMontoEntregado.Enter += TextBox_Enter;
+            txtMontoEntregado.Leave += TextBox_Leave;
             // 
             // lblTotalPagar
             // 
@@ -182,6 +193,8 @@
             cmbMetodoPago.Name = "cmbMetodoPago";
             cmbMetodoPago.Size = new Size(171, 27);
             cmbMetodoPago.TabIndex = 6;
+            cmbMetodoPago.Enter += TextBox_Enter;
+            cmbMetodoPago.Leave += TextBox_Leave;
             // 
             // cmbTipoCompra
             // 
@@ -192,6 +205,8 @@
             cmbTipoCompra.Name = "cmbTipoCompra";
             cmbTipoCompra.Size = new Size(171, 27);
             cmbTipoCompra.TabIndex = 5;
+            cmbTipoCompra.Enter += TextBox_Enter;
+            cmbTipoCompra.Leave += TextBox_Leave;
             // 
             // label3
             // 

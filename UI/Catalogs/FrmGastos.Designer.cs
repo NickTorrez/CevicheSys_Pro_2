@@ -29,8 +29,11 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistro = new Panel();
+            comboBox2 = new ComboBox();
+            label6 = new Label();
             textBox2 = new TextBox();
             textBox1 = new TextBox();
             comboBox1 = new ComboBox();
@@ -49,8 +52,6 @@
             btnFiltrarEgreso = new Button();
             dtpFin = new DateTimePicker();
             dtpInicio = new DateTimePicker();
-            label6 = new Label();
-            comboBox2 = new ComboBox();
             tableLayoutPanel1.SuspendLayout();
             pnlRegistro.SuspendLayout();
             pnlLista.SuspendLayout();
@@ -95,26 +96,56 @@
             pnlRegistro.Name = "pnlRegistro";
             pnlRegistro.Size = new Size(330, 597);
             pnlRegistro.TabIndex = 0;
-            pnlRegistro.Paint += pnlRegistro_Paint;
+            // 
+            // comboBox2
+            // 
+            comboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox2.Font = new Font("Century Gothic", 9F);
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Location = new Point(123, 172);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(195, 28);
+            comboBox2.TabIndex = 21;
+            comboBox2.Enter += TextBox_Enter;
+            comboBox2.Leave += TextBox_Leave;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Location = new Point(12, 175);
+            label6.Name = "label6";
+            label6.Size = new Size(84, 18);
+            label6.TabIndex = 20;
+            label6.Text = "Proveedor";
             // 
             // textBox2
             // 
             textBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBox2.Font = new Font("Century Gothic", 9F);
             textBox2.Location = new Point(123, 366);
+            textBox2.MaxLength = 12;
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(195, 26);
             textBox2.TabIndex = 19;
+            textBox2.TextAlign = HorizontalAlignment.Right;
+            textBox2.Enter += TextBox_Enter;
+            textBox2.Leave += TextBox_Leave;
             // 
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBox1.Font = new Font("Century Gothic", 9F);
             textBox1.Location = new Point(12, 245);
+            textBox1.MaxLength = 255;
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(306, 100);
             textBox1.TabIndex = 18;
+            textBox1.Enter += TextBox_Enter;
+            textBox1.Leave += TextBox_Leave;
             // 
             // comboBox1
             // 
@@ -127,7 +158,8 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(195, 28);
             comboBox1.TabIndex = 17;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox1.Enter += TextBox_Enter;
+            comboBox1.Leave += TextBox_Leave;
             // 
             // label5
             // 
@@ -183,11 +215,12 @@
             dtpFechaGasto.RightToLeft = RightToLeft.No;
             dtpFechaGasto.Size = new Size(195, 26);
             dtpFechaGasto.TabIndex = 12;
-            dtpFechaGasto.ValueChanged += dtpFechaGasto_ValueChanged;
+            dtpFechaGasto.Enter += TextBox_Enter;
+            dtpFechaGasto.Leave += TextBox_Leave;
             // 
             // label2
             // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label2.Anchor = AnchorStyles.None;
             label2.AutoSize = true;
             label2.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(56, 17);
@@ -198,9 +231,10 @@
             // 
             // btnLimpiarEgreso
             // 
-            btnLimpiarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnLimpiarEgreso.Anchor = AnchorStyles.None;
             btnLimpiarEgreso.BackColor = Color.FromArgb(108, 117, 125);
             btnLimpiarEgreso.Cursor = Cursors.Hand;
+            btnLimpiarEgreso.FlatStyle = FlatStyle.Flat;
             btnLimpiarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnLimpiarEgreso.ForeColor = Color.White;
             btnLimpiarEgreso.Location = new Point(168, 512);
@@ -212,9 +246,10 @@
             // 
             // btnEliminarEgreso
             // 
-            btnEliminarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnEliminarEgreso.Anchor = AnchorStyles.None;
             btnEliminarEgreso.BackColor = Color.FromArgb(220, 53, 69);
             btnEliminarEgreso.Cursor = Cursors.Hand;
+            btnEliminarEgreso.FlatStyle = FlatStyle.Flat;
             btnEliminarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnEliminarEgreso.ForeColor = Color.White;
             btnEliminarEgreso.Location = new Point(12, 512);
@@ -226,9 +261,10 @@
             // 
             // btnGuardarEgreso
             // 
-            btnGuardarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnGuardarEgreso.Anchor = AnchorStyles.None;
             btnGuardarEgreso.BackColor = Color.FromArgb(40, 167, 69);
             btnGuardarEgreso.Cursor = Cursors.Hand;
+            btnGuardarEgreso.FlatStyle = FlatStyle.Flat;
             btnGuardarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnGuardarEgreso.ForeColor = Color.White;
             btnGuardarEgreso.Location = new Point(90, 432);
@@ -251,15 +287,20 @@
             // 
             // dataGridView1
             // 
+            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.BackgroundColor = Color.WhiteSmoke;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle1.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridView1.BorderStyle = BorderStyle.None;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 115);
@@ -284,6 +325,7 @@
             // 
             btnFiltrarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             btnFiltrarEgreso.BackColor = Color.FromArgb(247, 127, 0);
+            btnFiltrarEgreso.FlatStyle = FlatStyle.Flat;
             btnFiltrarEgreso.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnFiltrarEgreso.ForeColor = Color.White;
             btnFiltrarEgreso.Location = new Point(233, 54);
@@ -295,7 +337,7 @@
             // 
             // dtpFin
             // 
-            dtpFin.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpFin.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dtpFin.Font = new Font("Century Gothic", 9F);
             dtpFin.Format = DateTimePickerFormat.Short;
             dtpFin.Location = new Point(344, 17);
@@ -305,35 +347,12 @@
             // 
             // dtpInicio
             // 
-            dtpInicio.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dtpInicio.Font = new Font("Century Gothic", 9F);
             dtpInicio.Format = DateTimePickerFormat.Short;
             dtpInicio.Location = new Point(27, 17);
             dtpInicio.Name = "dtpInicio";
             dtpInicio.Size = new Size(250, 26);
             dtpInicio.TabIndex = 0;
-            // 
-            // label6
-            // 
-            label6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label6.AutoSize = true;
-            label6.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(12, 175);
-            label6.Name = "label6";
-            label6.Size = new Size(84, 18);
-            label6.TabIndex = 20;
-            label6.Text = "Proveedor";
-            // 
-            // comboBox2
-            // 
-            comboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox2.Font = new Font("Century Gothic", 9F);
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(123, 172);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(195, 28);
-            comboBox2.TabIndex = 21;
             // 
             // FrmGastos
             // 

@@ -17,19 +17,23 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             InitializeComponent();
         }
 
-        private void dtpFechaGasto_ValueChanged(object sender, EventArgs e)
+        private void TextBox_Enter(object sender, EventArgs e)
         {
-
+            // Evaluamos si el elemento es un control válido
+            if (sender is Control ctrl)
+            {
+                // Cambia a celeste claro marino al entrar
+                ctrl.BackColor = Color.FromArgb(227, 242, 253);
+            }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void TextBox_Leave(object sender, EventArgs e)
         {
-
-        }
-
-        private void pnlRegistro_Paint(object sender, PaintEventArgs e)
-        {
-
+            if (sender is Control ctrl)
+            {
+                // Regresa a blanco al salir
+                ctrl.BackColor = Color.White;
+            }
         }
     }
 }

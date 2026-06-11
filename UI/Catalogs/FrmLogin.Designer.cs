@@ -113,6 +113,7 @@
             txtUsername.Font = new Font("Century Gothic", 12F, FontStyle.Bold);
             txtUsername.ForeColor = Color.FromArgb(15, 23, 42);
             txtUsername.Location = new Point(161, 240);
+            txtUsername.MaxLength = 50;
             txtUsername.Multiline = true;
             txtUsername.Name = "txtUsername";
             txtUsername.Size = new Size(265, 30);
@@ -224,6 +225,7 @@
             // 
             txtPassword.BorderStyle = BorderStyle.None;
             txtPassword.Location = new Point(161, 332);
+            txtPassword.MaxLength = 255;
             txtPassword.Multiline = true;
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(265, 30);

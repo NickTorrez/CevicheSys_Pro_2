@@ -173,10 +173,13 @@
             // 
             txtObservaciones.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtObservaciones.Location = new Point(9, 213);
+            txtObservaciones.MaxLength = 0;
             txtObservaciones.Multiline = true;
             txtObservaciones.Name = "txtObservaciones";
             txtObservaciones.Size = new Size(273, 258);
             txtObservaciones.TabIndex = 4;
+            txtObservaciones.Enter += TextBox_Enter;
+            txtObservaciones.Leave += TextBox_Leave;
             // 
             // label2
             // 
@@ -189,7 +192,7 @@
             // 
             // lblDescuadre
             // 
-            lblDescuadre.Anchor = AnchorStyles.None;
+            lblDescuadre.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lblDescuadre.AutoSize = true;
             lblDescuadre.Location = new Point(39, 133);
             lblDescuadre.Name = "lblDescuadre";
@@ -200,10 +203,14 @@
             // txtEfectivoReal
             // 
             txtEfectivoReal.Location = new Point(39, 78);
+            txtEfectivoReal.MaxLength = 12;
             txtEfectivoReal.Name = "txtEfectivoReal";
             txtEfectivoReal.Size = new Size(213, 28);
             txtEfectivoReal.TabIndex = 1;
+            txtEfectivoReal.TextAlign = HorizontalAlignment.Right;
             txtEfectivoReal.TextChanged += txtEfectivoReal_TextChanged;
+            txtEfectivoReal.Enter += TextBox_Enter;
+            txtEfectivoReal.Leave += TextBox_Leave;
             // 
             // label1
             // 
