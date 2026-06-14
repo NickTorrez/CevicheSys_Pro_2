@@ -194,5 +194,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             AbrirModuloEnPanel(new FrmReportes());
         }
+
+        private void btnUsuarios_Click(object sender, EventArgs e)
+        {
+            AbrirModuloEnPanel(new FrmUsuarios());
+        }
     }
 }

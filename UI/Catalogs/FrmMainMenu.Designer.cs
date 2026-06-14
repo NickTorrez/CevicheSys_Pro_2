@@ -86,6 +86,7 @@
             btnUsuarios.Text = "👤​ Gestión de Perfiles";
             btnUsuarios.TextAlign = ContentAlignment.MiddleLeft;
             btnUsuarios.UseVisualStyleBackColor = true;
+            btnUsuarios.Click += btnUsuarios_Click;
             // 
             // btnCerrarSesion
             // 
