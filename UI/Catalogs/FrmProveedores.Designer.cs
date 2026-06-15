@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistro = new Panel();
             txtCorreo = new TextBox();
@@ -50,14 +50,14 @@
             btnEditar = new Button();
             btnGuardar = new Button();
             pnlLista = new Panel();
-            dataGridView1 = new DataGridView();
+            dgvProveedores = new DataGridView();
             pnlBuscar = new Panel();
             txtBuscarProveedor = new TextBox();
             label1 = new Label();
             tableLayoutPanel1.SuspendLayout();
             pnlRegistro.SuspendLayout();
             pnlLista.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvProveedores).BeginInit();
             pnlBuscar.SuspendLayout();
             SuspendLayout();
             // 
@@ -177,7 +177,7 @@
             // 
             txtNombreProveedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtNombreProveedor.Font = new Font("Century Gothic", 9F);
-            txtNombreProveedor.Location = new Point(116, 114);
+            txtNombreProveedor.Location = new Point(114, 111);
             txtNombreProveedor.MaxLength = 50;
             txtNombreProveedor.Name = "txtNombreProveedor";
             txtNombreProveedor.Size = new Size(202, 26);
@@ -266,6 +266,7 @@
             btnLimpiar.TabIndex = 7;
             btnLimpiar.Text = "Nuevo";
             btnLimpiar.UseVisualStyleBackColor = false;
+            btnLimpiar.Click += btnLimpiar_Click;
             // 
             // btnEliminar
             // 
@@ -281,6 +282,7 @@
             btnEliminar.TabIndex = 6;
             btnEliminar.Text = "Eliminar/\r\nInactivar";
             btnEliminar.UseVisualStyleBackColor = false;
+            btnEliminar.Click += btnEliminar_Click;
             // 
             // btnEditar
             // 
@@ -296,6 +298,7 @@
             btnEditar.TabIndex = 5;
             btnEditar.Text = "Modificar";
             btnEditar.UseVisualStyleBackColor = false;
+            btnEditar.Click += btnEditar_Click;
             // 
             // btnGuardar
             // 
@@ -311,11 +314,12 @@
             btnGuardar.TabIndex = 4;
             btnGuardar.Text = "Registrar Proveedor";
             btnGuardar.UseVisualStyleBackColor = false;
+            btnGuardar.Click += btnGuardar_Click;
             // 
             // pnlLista
             // 
             pnlLista.BorderStyle = BorderStyle.FixedSingle;
-            pnlLista.Controls.Add(dataGridView1);
+            pnlLista.Controls.Add(dgvProveedores);
             pnlLista.Controls.Add(pnlBuscar);
             pnlLista.Dock = DockStyle.Fill;
             pnlLista.Location = new Point(339, 3);
@@ -323,30 +327,31 @@
             pnlLista.Size = new Size(620, 597);
             pnlLista.TabIndex = 1;
             // 
-            // dataGridView1
+            // dgvProveedores
             // 
-            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
-            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.Black;
-            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView1.BackgroundColor = Color.WhiteSmoke;
-            dataGridView1.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 68);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(618, 527);
-            dataGridView1.TabIndex = 1;
+            dataGridViewCellStyle3.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle3.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dgvProveedores.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dgvProveedores.BackgroundColor = Color.WhiteSmoke;
+            dgvProveedores.BorderStyle = BorderStyle.None;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle4.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvProveedores.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dgvProveedores.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvProveedores.Dock = DockStyle.Fill;
+            dgvProveedores.Location = new Point(0, 68);
+            dgvProveedores.Name = "dgvProveedores";
+            dgvProveedores.RowHeadersWidth = 51;
+            dgvProveedores.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvProveedores.Size = new Size(618, 527);
+            dgvProveedores.TabIndex = 1;
+            dgvProveedores.CellContentClick += dgvProveedores_CellContentClick;
             // 
             // pnlBuscar
             // 
@@ -366,6 +371,7 @@
             txtBuscarProveedor.Name = "txtBuscarProveedor";
             txtBuscarProveedor.Size = new Size(329, 26);
             txtBuscarProveedor.TabIndex = 3;
+            txtBuscarProveedor.TextChanged += txtBuscarProveedor_TextChanged;
             // 
             // label1
             // 
@@ -388,11 +394,12 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmProveedores";
             Text = "FrmProveedores";
+            Load += FrmProveedores_Load;
             tableLayoutPanel1.ResumeLayout(false);
             pnlRegistro.ResumeLayout(false);
             pnlRegistro.PerformLayout();
             pnlLista.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvProveedores).EndInit();
             pnlBuscar.ResumeLayout(false);
             pnlBuscar.PerformLayout();
             ResumeLayout(false);
@@ -406,7 +413,7 @@
         private Panel pnlBuscar;
         private TextBox txtBuscarProveedor;
         private Label label1;
-        private DataGridView dataGridView1;
+        private DataGridView dgvProveedores;
         private Button btnLimpiar;
         private Button btnEliminar;
         private Button btnEditar;

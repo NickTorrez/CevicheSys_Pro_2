@@ -45,8 +45,8 @@
             btnGenerarReporte = new Button();
             label2 = new Label();
             label1 = new Label();
-            dateTimePicker2 = new DateTimePicker();
-            dateTimePicker1 = new DateTimePicker();
+            dtpFechaFin = new DateTimePicker();
+            dtpFechaInicio = new DateTimePicker();
             tabHistorial = new TabPage();
             dgvHistorial = new DataGridView();
             pnlTipoReporte = new Panel();
@@ -217,8 +217,8 @@
             pnlFiltro.Controls.Add(btnGenerarReporte);
             pnlFiltro.Controls.Add(label2);
             pnlFiltro.Controls.Add(label1);
-            pnlFiltro.Controls.Add(dateTimePicker2);
-            pnlFiltro.Controls.Add(dateTimePicker1);
+            pnlFiltro.Controls.Add(dtpFechaFin);
+            pnlFiltro.Controls.Add(dtpFechaInicio);
             pnlFiltro.Dock = DockStyle.Top;
             pnlFiltro.Location = new Point(3, 3);
             pnlFiltro.Name = "pnlFiltro";
@@ -237,6 +237,7 @@
             btnGenerarReporte.TabIndex = 4;
             btnGenerarReporte.Text = "Generar Reporte";
             btnGenerarReporte.UseVisualStyleBackColor = false;
+            btnGenerarReporte.Click += btnGenerarReporte_Click;
             // 
             // label2
             // 
@@ -256,21 +257,21 @@
             label1.TabIndex = 2;
             label1.Text = "Desde";
             // 
-            // dateTimePicker2
+            // dtpFechaFin
             // 
-            dateTimePicker2.Format = DateTimePickerFormat.Short;
-            dateTimePicker2.Location = new Point(432, 25);
-            dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(250, 26);
-            dateTimePicker2.TabIndex = 1;
+            dtpFechaFin.Format = DateTimePickerFormat.Short;
+            dtpFechaFin.Location = new Point(432, 25);
+            dtpFechaFin.Name = "dtpFechaFin";
+            dtpFechaFin.Size = new Size(250, 26);
+            dtpFechaFin.TabIndex = 1;
             // 
-            // dateTimePicker1
+            // dtpFechaInicio
             // 
-            dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker1.Location = new Point(107, 25);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(250, 26);
-            dateTimePicker1.TabIndex = 0;
+            dtpFechaInicio.Format = DateTimePickerFormat.Short;
+            dtpFechaInicio.Location = new Point(107, 25);
+            dtpFechaInicio.Name = "dtpFechaInicio";
+            dtpFechaInicio.Size = new Size(250, 26);
+            dtpFechaInicio.TabIndex = 0;
             // 
             // tabHistorial
             // 
@@ -336,16 +337,17 @@
             btnExportarExcel.TabIndex = 2;
             btnExportarExcel.Text = "Exportar a Excel";
             btnExportarExcel.UseVisualStyleBackColor = false;
+            btnExportarExcel.Click += btnExportarExcel_Click;
             // 
             // cmbTipoReporte
             // 
             cmbTipoReporte.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbTipoReporte.FormattingEnabled = true;
-            cmbTipoReporte.Items.AddRange(new object[] { "Ventas Realizadas", "Gastos Operativos", "Cierres de Caja" });
             cmbTipoReporte.Location = new Point(234, 18);
             cmbTipoReporte.Name = "cmbTipoReporte";
             cmbTipoReporte.Size = new Size(202, 26);
             cmbTipoReporte.TabIndex = 1;
+            cmbTipoReporte.SelectedIndexChanged += cmbTipoReporte_SelectedIndexChanged;
             // 
             // label6
             // 
@@ -394,8 +396,8 @@
         private Panel pnlFiltro;
         private Label label2;
         private Label label1;
-        private DateTimePicker dateTimePicker2;
-        private DateTimePicker dateTimePicker1;
+        private DateTimePicker dtpFechaFin;
+        private DateTimePicker dtpFechaInicio;
         private Button btnGenerarReporte;
         private TableLayoutPanel tlpReportes;
         private Panel panel1;

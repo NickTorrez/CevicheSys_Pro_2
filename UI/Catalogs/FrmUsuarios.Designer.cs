@@ -35,7 +35,7 @@
             btnBajaUsuario = new Button();
             btnLimpiarUsuario = new Button();
             btnGuardarUsuario = new Button();
-            comboBox1 = new ComboBox();
+            cmbRol = new ComboBox();
             label3 = new Label();
             txtPassword = new TextBox();
             label2 = new Label();
@@ -53,7 +53,7 @@
             pnlRegistroUsuario.Controls.Add(btnBajaUsuario);
             pnlRegistroUsuario.Controls.Add(btnLimpiarUsuario);
             pnlRegistroUsuario.Controls.Add(btnGuardarUsuario);
-            pnlRegistroUsuario.Controls.Add(comboBox1);
+            pnlRegistroUsuario.Controls.Add(cmbRol);
             pnlRegistroUsuario.Controls.Add(label3);
             pnlRegistroUsuario.Controls.Add(txtPassword);
             pnlRegistroUsuario.Controls.Add(label2);
@@ -76,6 +76,7 @@
             btnVerPassword.TabIndex = 9;
             btnVerPassword.Text = "👁";
             btnVerPassword.UseVisualStyleBackColor = true;
+            btnVerPassword.Click += btnVerPassword_Click;
             // 
             // btnBajaUsuario
             // 
@@ -89,6 +90,7 @@
             btnBajaUsuario.TabIndex = 8;
             btnBajaUsuario.Text = "Dar de Baja";
             btnBajaUsuario.UseVisualStyleBackColor = false;
+            btnBajaUsuario.Click += btnBajaUsuario_Click;
             // 
             // btnLimpiarUsuario
             // 
@@ -102,6 +104,7 @@
             btnLimpiarUsuario.TabIndex = 7;
             btnLimpiarUsuario.Text = "Nuevo";
             btnLimpiarUsuario.UseVisualStyleBackColor = false;
+            btnLimpiarUsuario.Click += btnLimpiarUsuario_Click;
             // 
             // btnGuardarUsuario
             // 
@@ -115,18 +118,19 @@
             btnGuardarUsuario.TabIndex = 6;
             btnGuardarUsuario.Text = "Guardar Usuario";
             btnGuardarUsuario.UseVisualStyleBackColor = false;
+            btnGuardarUsuario.Click += btnGuardarUsuario_Click;
             // 
-            // comboBox1
+            // cmbRol
             // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Admin", "", "Vendedor" });
-            comboBox1.Location = new Point(29, 277);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(233, 26);
-            comboBox1.TabIndex = 5;
-            comboBox1.Enter += InputControl_Enter;
-            comboBox1.Leave += InputControl_Leave;
+            cmbRol.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbRol.FormattingEnabled = true;
+            cmbRol.Items.AddRange(new object[] { "Admin", "", "Vendedor" });
+            cmbRol.Location = new Point(29, 277);
+            cmbRol.Name = "cmbRol";
+            cmbRol.Size = new Size(233, 26);
+            cmbRol.TabIndex = 5;
+            cmbRol.Enter += InputControl_Enter;
+            cmbRol.Leave += InputControl_Leave;
             // 
             // label3
             // 
@@ -200,6 +204,7 @@
             dgvUsuarios.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvUsuarios.Size = new Size(642, 603);
             dgvUsuarios.TabIndex = 1;
+            dgvUsuarios.CellClick += dgvUsuarios_CellClick;
             // 
             // FrmUsuarios
             // 
@@ -212,6 +217,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FrmUsuarios";
             Text = "FrmUsuarios";
+            Load += FrmUsuarios_Load;
             pnlRegistroUsuario.ResumeLayout(false);
             pnlRegistroUsuario.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvUsuarios).EndInit();
@@ -230,7 +236,7 @@
         private Button btnBajaUsuario;
         private Button btnLimpiarUsuario;
         private Button btnGuardarUsuario;
-        private ComboBox comboBox1;
+        private ComboBox cmbRol;
         private Button btnVerPassword;
     }
 }
