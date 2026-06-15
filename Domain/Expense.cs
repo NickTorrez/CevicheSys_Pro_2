@@ -14,31 +14,40 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Expense_Id { get; set; }     // Id_Gasto (PK)
-        public string Description { get; set; } // Descripcion
-        public double Amount { get; set; }      // Monto
-        public DateTime Expense_Date { get; set; } // Fecha_Gasto
-        public int Category_Id { get; set; }    // Id_Categoria (FK de tipo "Gastos")
-        public bool Enable { get; set; }        // Enable
+        public int Expense_Id { get; set; }
+        public string Concept { get; set; }     // ACTUALIZADO según DB
+        public decimal Amount { get; set; }     // ACTUALIZADO a Decimal
+        public DateTime Date { get; set; }
+        public int Category_Id { get; set; }
+        public int User_Id { get; set; }        // ACTUALIZADO: FK obligatoria en BD
+        public bool Enable { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Instancia un gasto vacío.
+        /// </summary>
         public Expense()
         {
-            Description = string.Empty;
-            Expense_Date = DateTime.Now;
-            Amount = 0.0;
+            Concept = string.Empty;
+            Date = DateTime.Now;
+            Amount = 0.0m;
             Enable = true;
         }
 
-        public Expense(int expenseId, string description, double amount, DateTime expenseDate, int categoryId, bool enable = true)
+        /// <summary>
+        /// Configura el registro contable de salida de efectivo con sus detalles y el usuario auditor.
+        /// </summary>
+        public Expense(int expenseId, string concept, decimal amount, DateTime date, int categoryId, int userId, bool enable = true)
         {
             Expense_Id = expenseId;
-            Description = description;
+            Concept = concept;
             Amount = amount;
-            Expense_Date = expenseDate;
+            Date = date;
             Category_Id = categoryId;
+            User_Id = userId;
             Enable = enable;
         }
 
@@ -46,10 +55,13 @@ namespace CevicheSys_Pro_2
         /* Métodos de Persistencia (CRUD)                                        */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Recupera el historial completo de egresos reportados.
+        /// </summary>
         public List<Expense> ListAllExpenses()
         {
             var list = new List<Expense>();
-            string query = "SELECT Id_Gasto, Descripcion, Monto, Fecha_Gasto, Id_Categoria, Enable FROM Gasto WHERE Enable = 1";
+            string query = "SELECT Expense_Id, Concept, Amount, Date, Category_Id, User_Id, Enable FROM Expense WHERE Enable = 1";
 
             using (var select = new SelectQuery())
             {
@@ -57,11 +69,12 @@ namespace CevicheSys_Pro_2
                 foreach (DataRow row in dt.Rows)
                 {
                     list.Add(new Expense(
-                        Convert.ToInt32(row["Id_Gasto"]),
-                        row["Descripcion"].ToString(),
-                        Convert.ToDouble(row["Monto"]),
-                        Convert.ToDateTime(row["Fecha_Gasto"]),
-                        Convert.ToInt32(row["Id_Categoria"]),
+                        Convert.ToInt32(row["Expense_Id"]),
+                        row["Concept"].ToString(),
+                        Convert.ToDecimal(row["Amount"]),
+                        Convert.ToDateTime(row["Date"]),
+                        Convert.ToInt32(row["Category_Id"]),
+                        Convert.ToInt32(row["User_Id"]),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
@@ -69,14 +82,18 @@ namespace CevicheSys_Pro_2
             return list;
         }
 
+        /// <summary>
+        /// Consolida en la base de datos una nueva salida de efectivo.
+        /// </summary>
         public int AddExpense()
         {
-            string query = "INSERT INTO Gasto (Descripcion, Monto, Fecha_Gasto, Id_Categoria, Enable) VALUES (@desc, @amount, @date, @catId, @enable)";
+            string query = "INSERT INTO Expense (Concept, Amount, Date, Category_Id, User_Id, Enable) VALUES (@concept, @amount, @date, @catId, @userId, @enable)";
             SqlParameter[] parameters = {
-                new SqlParameter("@desc", this.Description),
+                new SqlParameter("@concept", this.Concept),
                 new SqlParameter("@amount", this.Amount),
-                new SqlParameter("@date", this.Expense_Date),
+                new SqlParameter("@date", this.Date),
                 new SqlParameter("@catId", this.Category_Id),
+                new SqlParameter("@userId", this.User_Id),
                 new SqlParameter("@enable", this.Enable)
             };
 
@@ -86,14 +103,17 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Realiza correcciones en la descripción o monto del gasto previamente salvado.
+        /// </summary>
         public int UpdateExpense()
         {
-            string query = "UPDATE Gasto SET Descripcion = @desc, Monto = @amount, Fecha_Gasto = @date, Id_Categoria = @catId WHERE Id_Gasto = @id";
+            string query = "UPDATE Expense SET Concept = @concept, Amount = @amount, Date = @date, Category_Id = @catId WHERE Expense_Id = @id";
             SqlParameter[] parameters = {
                 new SqlParameter("@id", this.Expense_Id),
-                new SqlParameter("@desc", this.Description),
+                new SqlParameter("@concept", this.Concept),
                 new SqlParameter("@amount", this.Amount),
-                new SqlParameter("@date", this.Expense_Date),
+                new SqlParameter("@date", this.Date),
                 new SqlParameter("@catId", this.Category_Id)
             };
 
@@ -103,9 +123,12 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Anula el registro financiero para que deje de afectar los cálculos.
+        /// </summary>
         public int DisableExpense(int id)
         {
-            string query = "UPDATE Gasto SET Enable = 0 WHERE Id_Gasto = @id";
+            string query = "UPDATE Expense SET Enable = 0 WHERE Expense_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
             using (var update = new UpdateCommand())

@@ -35,7 +35,7 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
 
         public int UpdateCustomer(Customer modifiedCustomer)
         {
-            if (modifiedCustomer == null || modifiedCustomer.CustomerId <= 0) return 1;
+            if (modifiedCustomer == null || modifiedCustomer.Customer_Id <= 0) return 1;
 
             if (!modifiedCustomer.ValidateIdentification())
                 return 2;

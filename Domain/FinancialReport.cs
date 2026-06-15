@@ -30,11 +30,11 @@ namespace CevicheSys_Pro_2
             MostFrequentExpense = "Sin registros";
         }
 
-        
+
         public void LoadReportData()
         {
             // 1. Calcular Ingresos del Periodo
-            string incomeQuery = "SELECT ISNULL(SUM(Total_Pagar), 0) FROM Venta WHERE Fecha_Registro BETWEEN @start AND @end AND Enable = 1";
+            string incomeQuery = "SELECT ISNULL(SUM(Total_Amount), 0) FROM Sale WHERE Record_Date BETWEEN @start AND @end AND Enable = 1";
             SqlParameter[] parameters = { new SqlParameter("@start", StartDate), new SqlParameter("@end", EndDate) };
 
             using (var select = new SelectQuery())
@@ -44,7 +44,7 @@ namespace CevicheSys_Pro_2
             }
 
             // 2. Calcular Gastos Operativos del Periodo
-            string expenseQuery = "SELECT ISNULL(SUM(Monto), 0) FROM Gasto WHERE Fecha_Gasto BETWEEN @start AND @end AND Enable = 1";
+            string expenseQuery = "SELECT ISNULL(SUM(Amount), 0) FROM Expense WHERE Date BETWEEN @start AND @end AND Enable = 1";
             SqlParameter[] parameters2 = { new SqlParameter("@start", StartDate), new SqlParameter("@end", EndDate) };
 
             using (var select = new SelectQuery())
@@ -53,6 +53,7 @@ namespace CevicheSys_Pro_2
                 if (dt.Rows.Count > 0) TotalExpenses = Convert.ToDouble(dt.Rows[0][0]);
             }
         }
+
     }
 
     /// <summary>
@@ -71,6 +72,7 @@ namespace CevicheSys_Pro_2
         public string Payment_Method { get; set; }
         public string Purchase_Type { get; set; }
         public string Auditor_User { get; set; }
+
     }
 
 }

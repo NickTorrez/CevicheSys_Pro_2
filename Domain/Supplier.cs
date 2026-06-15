@@ -19,32 +19,39 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades Específicas de la Entidad                                 */
         /* --------------------------------------------------------------------- */
-        public int SupplierId { get; set; }       // Id_Proveedor (PK)
-        public string TaxId { get; set; }         // Cedula_Ruc
-        public string FirstName { get; set; }     // Nombre
-        public string LastName { get; set; }      // Apellido
-        public string Address { get; set; }       // Direccion
-        public string Email { get; set; }         // Correo
+        public int Supplier_Id { get; set; }
+        public string Tax_Id { get; set; }
+        public string First_Name { get; set; }
+        public string Last_Name { get; set; }
+        public string Address { get; set; }
+        public string Email { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores (Llamadas a base() de Person)                           */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa un proveedor vacío por defecto.
+        /// </summary>
         public Supplier() : base()
         {
-            TaxId = string.Empty;
-            FirstName = string.Empty;
-            LastName = string.Empty;
+            Tax_Id = string.Empty;
+            First_Name = string.Empty;
+            Last_Name = string.Empty;
             Address = string.Empty;
             Email = string.Empty;
         }
 
+        /// <summary>
+        /// Inicializa un proveedor con todos los datos legales y de contacto.
+        /// </summary>
         public Supplier(int supplierId, string taxId, string firstName, string lastName, string address, string email, string phone, bool enable)
             : base(phone, enable)
         {
-            SupplierId = supplierId;
-            TaxId = taxId;
-            FirstName = firstName;
-            LastName = lastName;
+            Supplier_Id = supplierId;
+            Tax_Id = taxId;
+            First_Name = firstName;
+            Last_Name = lastName;
             Address = address;
             Email = email;
         }
@@ -52,20 +59,26 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Implementación del Polimorfismo (Regla de Identidad)                  */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Aplica la regla de negocio que verifica que la Cédula/RUC posea al menos 14 caracteres.
+        /// </summary>
         public override bool ValidateIdentification()
         {
-            // Regla estricta para el proveedor: Cédula o RUC válido en Nicaragua (mínimo 14 caracteres)
-            return !string.IsNullOrWhiteSpace(TaxId) && TaxId.Trim().Length >= 14;
+            return !string.IsNullOrWhiteSpace(Tax_Id) && Tax_Id.Trim().Length >= 14;
         }
 
         /* --------------------------------------------------------------------- */
         /* Métodos CRUD (Persistencia desde el Dominio)                          */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Retorna el catálogo completo de proveedores activos.
+        /// </summary>
         public List<Supplier> ListAllSuppliers()
         {
             var suppliers = new List<Supplier>();
-            string query = "SELECT Id_Proveedor, Cedula_Ruc, Nombre, Apellido, Direccion, Telefono, Correo, Enable FROM Proveedor WHERE Enable = 1";
+            string query = "SELECT Supplier_Id, Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable FROM Supplier WHERE Enable = 1";
 
             using (var select = new SelectQuery())
             {
@@ -73,32 +86,35 @@ namespace CevicheSys_Pro_2
                 foreach (DataRow row in dt.Rows)
                 {
                     suppliers.Add(new Supplier(
-                        Convert.ToInt32(row["Id_Proveedor"]),
-                        row["Cedula_Ruc"].ToString(),
-                        row["Nombre"].ToString(),
-                        row["Apellido"].ToString(),
-                        row["Direccion"].ToString(),
-                        row["Correo"].ToString(),
-                        row["Telefono"].ToString(), // Mapea al campo base
-                        Convert.ToBoolean(row["Enable"])   // Mapea al campo base
+                        Convert.ToInt32(row["Supplier_Id"]),
+                        row["Tax_Id"].ToString(),
+                        row["First_Name"].ToString(),
+                        row["Last_Name"].ToString(),
+                        row["Address"].ToString(),
+                        row["Email"].ToString(),
+                        row["Phone"].ToString(),
+                        Convert.ToBoolean(row["Enable"])
                     ));
                 }
             }
             return suppliers;
         }
 
+        /// <summary>
+        /// Inserta un nuevo abastecedor en la base de datos.
+        /// </summary>
         public int AddSupplier()
         {
-            string query = @"INSERT INTO Proveedor (Cedula_Ruc, Nombre, Apellido, Direccion, Telefono, Correo, Enable) 
+            string query = @"INSERT INTO Supplier (Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable) 
                              VALUES (@TaxId, @FirstName, @LastName, @Address, @Phone, @Email, @Enable)";
             SqlParameter[] parameters = {
-                new SqlParameter("@TaxId", this.TaxId),
-                new SqlParameter("@FirstName", this.FirstName),
-                new SqlParameter("@LastName", this.LastName),
+                new SqlParameter("@TaxId", this.Tax_Id),
+                new SqlParameter("@FirstName", this.First_Name),
+                new SqlParameter("@LastName", this.Last_Name),
                 new SqlParameter("@Address", this.Address),
-                new SqlParameter("@Phone", this.Phone),   // Heredado
+                new SqlParameter("@Phone", this.Phone),
                 new SqlParameter("@Email", this.Email),
-                new SqlParameter("@Enable", this.Enable)  // Heredado
+                new SqlParameter("@Enable", this.Enable)
             };
 
             using (var insert = new InsertCommand())
@@ -107,15 +123,18 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Sobreescribe los datos del proveedor especificado.
+        /// </summary>
         public int UpdateSupplier()
         {
-            string query = @"UPDATE Proveedor SET Cedula_Ruc = @TaxId, Nombre = @FirstName, Apellido = @LastName, 
-                             Direccion = @Address, Telefono = @Phone, Correo = @Email WHERE Id_Proveedor = @Id";
+            string query = @"UPDATE Supplier SET Tax_Id = @TaxId, First_Name = @FirstName, Last_Name = @LastName, 
+                             Address = @Address, Phone = @Phone, Email = @Email WHERE Supplier_Id = @Id";
             SqlParameter[] parameters = {
-                new SqlParameter("@Id", this.SupplierId),
-                new SqlParameter("@TaxId", this.TaxId),
-                new SqlParameter("@FirstName", this.FirstName),
-                new SqlParameter("@LastName", this.LastName),
+                new SqlParameter("@Id", this.Supplier_Id),
+                new SqlParameter("@TaxId", this.Tax_Id),
+                new SqlParameter("@FirstName", this.First_Name),
+                new SqlParameter("@LastName", this.Last_Name),
                 new SqlParameter("@Address", this.Address),
                 new SqlParameter("@Phone", this.Phone),
                 new SqlParameter("@Email", this.Email)
@@ -127,9 +146,12 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Inhabilita al proveedor mediante borrado lógico.
+        /// </summary>
         public int DisableSupplier(int id)
         {
-            string query = "UPDATE Proveedor SET Enable = 0 WHERE Id_Proveedor = @Id";
+            string query = "UPDATE Supplier SET Enable = 0 WHERE Supplier_Id = @Id";
             SqlParameter[] parameters = { new SqlParameter("@Id", id) };
 
             using (var update = new UpdateCommand())

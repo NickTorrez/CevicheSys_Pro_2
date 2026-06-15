@@ -14,32 +14,39 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Sale_Id { get; set; }             // Id_Venta (PK)
-        public string Customer_Name { get; set; }     // Nombre o descripción rápida del cliente
-        public string Payment_Method { get; set; }    // Metodo_Pago ("Efectivo" o "Tarjeta")
-        public string Purchase_Type { get; set; }     // Tipo_Compra ("Local" o "Delivery")
-        public double Total_Amount { get; set; }      // Total_Pagar
-        public DateTime Record_Date { get; set; }     // Fecha_Registro
-        public int User_Id { get; set; }             // Id_Usuario (FK)
-        public bool Enable { get; set; }              // Enable (1 = Válida, 0 = Anulada)
+        public int Sale_Id { get; set; }
+        public int? Customer_Id { get; set; }         // ACTUALIZADO: FK opcional a la tabla Customer
+        public string Payment_Method { get; set; }
+        public string Purchase_Type { get; set; }
+        public decimal Total_Amount { get; set; }     // ACTUALIZADO: Manejo financiero preciso
+        public DateTime Record_Date { get; set; }
+        public int User_Id { get; set; }
+        public bool Enable { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa un ticket de factura predeterminado.
+        /// </summary>
         public Sale()
         {
-            Customer_Name = string.Empty;
             Payment_Method = string.Empty;
             Purchase_Type = string.Empty;
             Record_Date = DateTime.Now;
+            Total_Amount = 0.0m;
             Enable = true;
         }
 
-        public Sale(int saleId, string customerName, string paymentMethod, string purchaseType,
-                    double totalAmount, DateTime recordDate, int userId, bool enable = true)
+        /// <summary>
+        /// Arma los encabezados de la transacción de venta completada en caja.
+        /// </summary>
+        public Sale(int saleId, int? customerId, string paymentMethod, string purchaseType,
+                    decimal totalAmount, DateTime recordDate, int userId, bool enable = true)
         {
             Sale_Id = saleId;
-            Customer_Name = customerName;
+            Customer_Id = customerId;
             Payment_Method = paymentMethod;
             Purchase_Type = purchaseType;
             Total_Amount = totalAmount;
@@ -52,15 +59,17 @@ namespace CevicheSys_Pro_2
         /* Métodos de Persistencia (CRUD)                                                   */
         /*----------------------------------------------------------------------------------*/
 
+        /// <summary>
+        /// Orquesta la inserción atómica de la cabecera de la venta junto con sus múltiples líneas de detalle.
+        /// </summary>
         public int ProcessSaleWithDetails(List<SaleDetail> details)
         {
-            // Primero insertamos la cabecera y obtenemos el ID generado (SCOPE_IDENTITY)
-            string masterQuery = @"INSERT INTO Venta (Nombre_Cliente, Metodo_Pago, Tipo_Compra, Total_Pagar, Fecha_Registro, Id_Usuario, Enable) 
+            string masterQuery = @"INSERT INTO Sale (Customer_Id, Payment_Method, Purchase_Type, Total_Amount, Record_Date, User_Id, Enable) 
                                    VALUES (@cust, @pay, @type, @total, @date, @userId, @enable);
                                    SELECT SCOPE_IDENTITY();";
 
             SqlParameter[] masterParams = {
-                new SqlParameter("@cust", this.Customer_Name),
+                new SqlParameter("@cust", (object)this.Customer_Id ?? DBNull.Value),
                 new SqlParameter("@pay", this.Payment_Method),
                 new SqlParameter("@type", this.Purchase_Type),
                 new SqlParameter("@total", this.Total_Amount),
@@ -71,11 +80,10 @@ namespace CevicheSys_Pro_2
 
             using (var insertMaster = new InsertCommand())
             {
-                int generatedSaleId = insertMaster.ExecuteInsert(masterQuery, masterParams);
+                int generatedSaleId = insertMaster.ExecuteInsertReturnId(masterQuery, masterParams);
                 if (generatedSaleId <= 0) return 0;
 
-                // Insertamos cada elemento del detalle usando el ID de venta obtenido
-                string detailQuery = "INSERT INTO Detalle_Venta (Id_Venta, Id_Platillo, Cantidad) VALUES (@saleId, @dishId, @qty)";
+                string detailQuery = "INSERT INTO Sale_Detail (Sale_Id, Dish_Id, Quantity, Enable) VALUES (@saleId, @dishId, @qty, 1)";
 
                 foreach (var item in details)
                 {
@@ -90,7 +98,7 @@ namespace CevicheSys_Pro_2
                         insertDetail.ExecuteInsert(detailQuery, detailParams);
                     }
                 }
-                return generatedSaleId; // Retorna éxito con ID transaccional
+                return generatedSaleId;
             }
         }
     }

@@ -1,13 +1,14 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
+﻿using CevicheSys_Pro_2.Services.Persistence;
+using Microsoft.Data.SqlClient;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using CevicheSys_Pro_2.Services.Persistence;
 
 namespace CevicheSys_Pro_2
 {
@@ -28,6 +29,10 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase User con valores por defecto.
+        /// </summary>
         public User()
         {
             Username = string.Empty;
@@ -36,6 +41,9 @@ namespace CevicheSys_Pro_2
             Enable = true;
         }
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase User con los datos especificados.
+        /// </summary>
         public User(int userId, string username, string password, string role, bool enable = true)
         {
             User_Id = userId;
@@ -48,21 +56,45 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Métodos de Validación e Internos                                      */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Verifica si el usuario actual posee privilegios de Administrador.
+        /// </summary>
         public bool IsAdmin()
         {
             return Role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Aplica criptografía SHA-256 a la cadena de texto proporcionada para proteger contraseñas.
+        /// </summary>
+        private string ComputeSha256Hash(string rawData)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
 
         /* --------------------------------------------------------------------- */
         /* Métodos de Persistencia (CRUD SQL Server)                             */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Autentica al usuario comparando el Hash de su contraseña con el registro en base de datos.
+        /// </summary>
         public User Authenticate(string username, string password)
         {
-            string query = "SELECT Id_Usuario, Nombre_Usuario, Contraseña, Rol, Enable FROM Usuario WHERE Nombre_Usuario = @user AND Contraseña = @pass AND Enable = 1";
+            string query = "SELECT User_Id, Username, Password, Role, Enable FROM Users WHERE Username = @user AND Password = @pass AND Enable = 1";
             SqlParameter[] parameters = {
                 new SqlParameter("@user", username),
-                new SqlParameter("@pass", password)
+                new SqlParameter("@pass", ComputeSha256Hash(password))
             };
 
             using (var select = new SelectQuery())
@@ -72,21 +104,24 @@ namespace CevicheSys_Pro_2
                 {
                     DataRow row = dt.Rows[0];
                     return new User(
-                        Convert.ToInt32(row["Id_Usuario"]),
-                        row["Nombre_Usuario"].ToString(),
-                        row["Contraseña"].ToString(),
-                        row["Rol"].ToString(),
+                        Convert.ToInt32(row["User_Id"]),
+                        row["Username"].ToString(),
+                        row["Password"].ToString(),
+                        row["Role"].ToString(),
                         Convert.ToBoolean(row["Enable"])
                     );
                 }
             }
-            return null; // Credenciales incorrectas
+            return null;
         }
 
+        /// <summary>
+        /// Recupera la lista completa de usuarios activos en el sistema.
+        /// </summary>
         public List<User> ListAllUsers()
         {
             var list = new List<User>();
-            string query = "SELECT Id_Usuario, Nombre_Usuario, Contraseña, Rol, Enable FROM Usuario WHERE Enable = 1";
+            string query = "SELECT User_Id, Username, Password, Role, Enable FROM Users WHERE Enable = 1";
 
             using (var select = new SelectQuery())
             {
@@ -94,10 +129,10 @@ namespace CevicheSys_Pro_2
                 foreach (DataRow row in dt.Rows)
                 {
                     list.Add(new User(
-                        Convert.ToInt32(row["Id_Usuario"]),
-                        row["Nombre_Usuario"].ToString(),
-                        row["Contraseña"].ToString(),
-                        row["Rol"].ToString(),
+                        Convert.ToInt32(row["User_Id"]),
+                        row["Username"].ToString(),
+                        row["Password"].ToString(),
+                        row["Role"].ToString(),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
@@ -105,12 +140,15 @@ namespace CevicheSys_Pro_2
             return list;
         }
 
+        /// <summary>
+        /// Inserta un nuevo usuario en la base de datos aplicando encriptación a la contraseña.
+        /// </summary>
         public int AddUser()
         {
-            string query = "INSERT INTO Usuario (Nombre_Usuario, Contraseña, Rol, Enable) VALUES (@username, @password, @role, @enable)";
+            string query = "INSERT INTO Users (Username, Password, Role, Enable) VALUES (@username, @password, @role, @enable)";
             SqlParameter[] parameters = {
                 new SqlParameter("@username", this.Username),
-                new SqlParameter("@password", this.Password),
+                new SqlParameter("@password", ComputeSha256Hash(this.Password)),
                 new SqlParameter("@role", this.Role),
                 new SqlParameter("@enable", this.Enable)
             };
@@ -121,13 +159,16 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Actualiza los datos de un usuario existente, sobreescribiendo su Hash de contraseña.
+        /// </summary>
         public int UpdateUser()
         {
-            string query = "UPDATE Usuario SET Nombre_Usuario = @username, Contraseña = @password, Rol = @role WHERE Id_Usuario = @id";
+            string query = "UPDATE Users SET Username = @username, Password = @password, Role = @role WHERE User_Id = @id";
             SqlParameter[] parameters = {
                 new SqlParameter("@id", this.User_Id),
                 new SqlParameter("@username", this.Username),
-                new SqlParameter("@password", this.Password),
+                new SqlParameter("@password", ComputeSha256Hash(this.Password)),
                 new SqlParameter("@role", this.Role)
             };
 
@@ -137,9 +178,12 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Desactiva lógicamente a un usuario en el sistema.
+        /// </summary>
         public int DisableUser(int id)
         {
-            string query = "UPDATE Usuario SET Enable = 0 WHERE Id_Usuario = @id";
+            string query = "UPDATE Users SET Enable = 0 WHERE User_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
             using (var update = new UpdateCommand())
@@ -147,7 +191,6 @@ namespace CevicheSys_Pro_2
                 return update.ExecuteUpdate(query, parameters);
             }
         }
-
         /* --------------------------------------------------------------------- */
         /* #region ESPACIO TEMPORAL (SIMULACIÓN PARA PRUEBAS DE LOGIN DE UI)     */
         /* --------------------------------------------------------------------- */

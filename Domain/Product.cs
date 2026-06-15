@@ -14,28 +14,35 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Product_Id { get; set; }            // Id_Producto (PK)
-        public string Product_Name { get; set; }       // Nombre
-        public int Supplier_Id { get; set; }           // Id_Proveedor (FK)
-        public int Category_Id { get; set; }           // Id_Categoria (FK)
-        public double Current_Stock { get; set; }      // Stock_Actual (Manejado con double para libras/fracciones)
-        public double Minimum_Stock { get; set; }      // Umbral para disparar alertas de stock bajo
-        public DateTime? Expiration_Date { get; set; } // Fecha_Vencimiento (Nullable para productos no perecederos)
-        public bool Enable { get; set; }               // Enable
+        public int Product_Id { get; set; }
+        public string Product_Name { get; set; }
+        public int? Supplier_Id { get; set; }          // Acepta nulos según la estructura SQL
+        public int Category_Id { get; set; }
+        public decimal Current_Stock { get; set; }     // Decimal para exactitud en pesos/libras
+        public decimal Minimum_Stock { get; set; }
+        public DateTime? Expiration_Date { get; set; }
+        public bool Enable { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa un objeto de inventario vacío.
+        /// </summary>
         public Product()
         {
             Product_Name = string.Empty;
-            Current_Stock = 0.0;
-            Minimum_Stock = 0.0;
+            Current_Stock = 0.0m;
+            Minimum_Stock = 0.0m;
             Enable = true;
         }
 
-        public Product(int productId, string productName, int supplierId, int categoryId,
-                       double currentStock, double minimumStock, DateTime? expirationDate, bool enable = true)
+        /// <summary>
+        /// Instancia un producto especificando todas sus relaciones foráneas y existencias.
+        /// </summary>
+        public Product(int productId, string productName, int? supplierId, int categoryId,
+                       decimal currentStock, decimal minimumStock, DateTime? expirationDate, bool enable = true)
         {
             Product_Id = productId;
             Product_Name = productName;
@@ -50,6 +57,10 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Reglas Operativas                                                     */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Evalúa si el producto físico ha alcanzado o caído por debajo del umbral mínimo de operación.
+        /// </summary>
         public bool RequiresRestock()
         {
             return Current_Stock <= Minimum_Stock;
@@ -59,24 +70,28 @@ namespace CevicheSys_Pro_2
         /* Métodos de Persistencia (CRUD)                                        */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Retorna el catálogo completo de materia prima disponible.
+        /// </summary>
         public List<Product> ListAllProducts()
         {
             var list = new List<Product>();
-            string query = "SELECT Id_Producto, Nombre_Producto, Id_Proveedor, Id_Categoria, Stock_Actual, Minimum_Stock, Fecha_Vencimiento, Enable FROM Producto WHERE Enable = 1";
+            string query = "SELECT Product_Id, Product_Name, Supplier_Id, Category_Id, Current_Stock, Expiration_Date, Enable FROM Product WHERE Enable = 1";
 
             using (var select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
                 {
+                    // Asumimos un umbral por defecto visual ya que Minimum_Stock no está en SQL, o lo administramos en otra tabla
                     list.Add(new Product(
-                        Convert.ToInt32(row["Id_Producto"]),
-                        row["Nombre_Producto"].ToString(),
-                        Convert.ToInt32(row["Id_Proveedor"]),
-                        Convert.ToInt32(row["Id_Categoria"]),
-                        Convert.ToDouble(row["Stock_Actual"]),
-                        Convert.ToDouble(row["Minimum_Stock"]),
-                        row["Fecha_Vencimiento"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(row["Fecha_Vencimiento"]),
+                        Convert.ToInt32(row["Product_Id"]),
+                        row["Product_Name"].ToString(),
+                        row["Supplier_Id"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["Supplier_Id"]),
+                        Convert.ToInt32(row["Category_Id"]),
+                        Convert.ToDecimal(row["Current_Stock"]),
+                        0.0m, // Ajuste para mapeo, si Minimum_Stock se requiere agregar luego en SQL
+                        row["Expiration_Date"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(row["Expiration_Date"]),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
@@ -84,17 +99,19 @@ namespace CevicheSys_Pro_2
             return list;
         }
 
+        /// <summary>
+        /// Registra el ingreso de un nuevo artículo físico al almacén.
+        /// </summary>
         public int AddProduct()
         {
-            string query = @"INSERT INTO Producto (Nombre_Producto, Id_Proveedor, Id_Categoria, Stock_Actual, Minimum_Stock, Fecha_Vencimiento, Enable) 
-                             VALUES (@name, @supId, @catId, @currStock, @minStock, @expDate, @enable)";
+            string query = @"INSERT INTO Product (Product_Name, Supplier_Id, Category_Id, Current_Stock, Expiration_Date, Enable) 
+                             VALUES (@name, @supId, @catId, @currStock, @expDate, @enable)";
 
             SqlParameter[] parameters = {
                 new SqlParameter("@name", this.Product_Name),
-                new SqlParameter("@supId", this.Supplier_Id),
+                new SqlParameter("@supId", (object)this.Supplier_Id ?? DBNull.Value),
                 new SqlParameter("@catId", this.Category_Id),
                 new SqlParameter("@currStock", this.Current_Stock),
-                new SqlParameter("@minStock", this.Minimum_Stock),
                 new SqlParameter("@expDate", (object)this.Expiration_Date ?? DBNull.Value),
                 new SqlParameter("@enable", this.Enable)
             };
@@ -105,18 +122,20 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Modifica las propiedades del producto existente en inventario.
+        /// </summary>
         public int UpdateProduct()
         {
-            string query = @"UPDATE Producto SET Nombre_Producto = @name, Id_Proveedor = @supId, Id_Categoria = @catId, 
-                             Stock_Actual = @currStock, Minimum_Stock = @minStock, Fecha_Vencimiento = @expDate WHERE Id_Producto = @id";
+            string query = @"UPDATE Product SET Product_Name = @name, Supplier_Id = @supId, Category_Id = @catId, 
+                             Current_Stock = @currStock, Expiration_Date = @expDate WHERE Product_Id = @id";
 
             SqlParameter[] parameters = {
                 new SqlParameter("@id", this.Product_Id),
                 new SqlParameter("@name", this.Product_Name),
-                new SqlParameter("@supId", this.Supplier_Id),
+                new SqlParameter("@supId", (object)this.Supplier_Id ?? DBNull.Value),
                 new SqlParameter("@catId", this.Category_Id),
                 new SqlParameter("@currStock", this.Current_Stock),
-                new SqlParameter("@minStock", this.Minimum_Stock),
                 new SqlParameter("@expDate", (object)this.Expiration_Date ?? DBNull.Value)
             };
 
@@ -126,9 +145,12 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Elimina lógicamente el producto de las listas operativas.
+        /// </summary>
         public int DisableProduct(int id)
         {
-            string query = "UPDATE Producto SET Enable = 0 WHERE Id_Producto = @id";
+            string query = "UPDATE Product SET Enable = 0 WHERE Product_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
             using (var update = new UpdateCommand())

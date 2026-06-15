@@ -12,6 +12,10 @@ using CevicheSys_Pro_2.UI.Catalogs;
 
 namespace CevicheSys_Pro_2.Domain
 {
+    /// <summary>
+    /// Clase base abstracta que define las propiedades y comportamientos comunes para personas o entidades de contacto.
+    /// Solo existe en la lógica de C#, no tiene tabla directa en SQL (Table-Per-Concrete-Class).
+    /// </summary>
     public abstract class Person
     {
         /* --------------------------------------------------------------------- */
@@ -23,13 +27,20 @@ namespace CevicheSys_Pro_2.Domain
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
-        public Person()
+
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase base con valores por defecto.
+        /// </summary>
+        protected Person()
         {
             Phone = string.Empty;
             Enable = true;
         }
 
-        public Person(string phone, bool enable)
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase base con los valores proporcionados.
+        /// </summary>
+        protected Person(string phone, bool enable)
         {
             Phone = phone;
             Enable = enable;
@@ -40,7 +51,7 @@ namespace CevicheSys_Pro_2.Domain
         /* --------------------------------------------------------------------- */
 
         /// <summary>
-        /// Obliga a las clases derivadas a definir su propia regla de validación de identidad.
+        /// Método polimórfico que obliga a las clases derivadas a definir su propia regla de validación de identidad.
         /// </summary>
         public abstract bool ValidateIdentification();
     }

@@ -24,7 +24,7 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
             if (newCategory == null) return 1;
 
             if (string.IsNullOrWhiteSpace(newCategory.Category_Name)) return 2;
-            if (string.IsNullOrWhiteSpace(newCategory.Applied_Module)) return 3;
+            if (string.IsNullOrWhiteSpace(newCategory.Target_Module)) return 3;
 
             if (newCategory.AddCategory() > 0)
                 return 0;

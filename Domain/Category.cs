@@ -14,26 +14,33 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Category_Id { get; set; }       // Id_Categoria (PK)
-        public string Category_Name { get; set; }  // Nombre_Categoria
-        public string Applied_Module { get; set; } // Modulo_Aplica ("Inventario" o "Gastos")
-        public bool Enable { get; set; }           // Enable
+        public int Category_Id { get; set; }
+        public string Category_Name { get; set; }
+        public string Target_Module { get; set; } // Ejemplo: "Inventario", "Gastos"
+        public bool Enable { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa una categoría vacía.
+        /// </summary>
         public Category()
         {
             Category_Name = string.Empty;
-            Applied_Module = string.Empty;
+            Target_Module = string.Empty;
             Enable = true;
         }
 
-        public Category(int categoryId, string categoryName, string appliedModule, bool enable = true)
+        /// <summary>
+        /// Inicializa una categoría completa.
+        /// </summary>
+        public Category(int categoryId, string categoryName, string targetModule, bool enable = true)
         {
             Category_Id = categoryId;
             Category_Name = categoryName;
-            Applied_Module = appliedModule;
+            Target_Module = targetModule;
             Enable = enable;
         }
 
@@ -41,10 +48,13 @@ namespace CevicheSys_Pro_2
         /* Métodos de Persistencia (CRUD)                                        */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Retorna todas las categorías activas en el sistema.
+        /// </summary>
         public List<Category> ListAllCategories()
         {
             var list = new List<Category>();
-            string query = "SELECT Id_Categoria, Nombre_Categoria, Modulo_Aplica, Enable FROM Categoria WHERE Enable = 1";
+            string query = "SELECT Category_Id, Category_Name, Target_Module, Enable FROM Category WHERE Enable = 1";
 
             using (var select = new SelectQuery())
             {
@@ -52,9 +62,9 @@ namespace CevicheSys_Pro_2
                 foreach (DataRow row in dt.Rows)
                 {
                     list.Add(new Category(
-                        Convert.ToInt32(row["Id_Categoria"]),
-                        row["Nombre_Categoria"].ToString(),
-                        row["Modulo_Aplica"].ToString(),
+                        Convert.ToInt32(row["Category_Id"]),
+                        row["Category_Name"].ToString(),
+                        row["Target_Module"].ToString(),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
@@ -62,12 +72,15 @@ namespace CevicheSys_Pro_2
             return list;
         }
 
+        /// <summary>
+        /// Registra una nueva categoría en la base de datos.
+        /// </summary>
         public int AddCategory()
         {
-            string query = "INSERT INTO Categoria (Nombre_Categoria, Modulo_Aplica, Enable) VALUES (@name, @module, @enable)";
+            string query = "INSERT INTO Category (Category_Name, Target_Module, Enable) VALUES (@name, @module, @enable)";
             SqlParameter[] parameters = {
                 new SqlParameter("@name", this.Category_Name),
-                new SqlParameter("@module", this.Applied_Module),
+                new SqlParameter("@module", this.Target_Module),
                 new SqlParameter("@enable", this.Enable)
             };
 
@@ -77,13 +90,16 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Actualiza el nombre o módulo de una categoría existente.
+        /// </summary>
         public int UpdateCategory()
         {
-            string query = "UPDATE Categoria SET Nombre_Categoria = @name, Modulo_Aplica = @module WHERE Id_Categoria = @id";
+            string query = "UPDATE Category SET Category_Name = @name, Target_Module = @module WHERE Category_Id = @id";
             SqlParameter[] parameters = {
                 new SqlParameter("@id", this.Category_Id),
                 new SqlParameter("@name", this.Category_Name),
-                new SqlParameter("@module", this.Applied_Module)
+                new SqlParameter("@module", this.Target_Module)
             };
 
             using (var update = new UpdateCommand())
@@ -92,9 +108,12 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Desactiva una categoría (borrado lógico).
+        /// </summary>
         public int DisableCategory(int id)
         {
-            string query = "UPDATE Categoria SET Enable = 0 WHERE Id_Categoria = @id";
+            string query = "UPDATE Category SET Enable = 0 WHERE Category_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
             using (var update = new UpdateCommand())

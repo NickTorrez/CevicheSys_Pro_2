@@ -14,29 +14,44 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Closure_Id { get; set; }          // Id_Cierre (PK)
-        public DateTime Closure_Date { get; set; }   // Fecha_Cierre
-        public double Real_Cash { get; set; }        // Efectivo_Real (Físico en caja)
-        public double Calculated_Income { get; set; } // Ingresos_Calculados por el sistema
-        public double Cash_Discrepancy { get; set; }  // Descuadre (Monto Real - Monto Calculado)
-        public bool Enable { get; set; }             // Enable
+        public int Closure_Id { get; set; }
+        public int User_Id { get; set; }             // ACTUALIZADO: FK obligatoria
+        public DateTime Closure_Date { get; set; }
+        public decimal Initial_Cash { get; set; }    // ACTUALIZADO: Fondo de caja ingresado en la mañana
+        public decimal Calculated_Income { get; set; }
+        public decimal Real_Cash { get; set; }
+        public string Notes_Remarks { get; set; }    // ACTUALIZADO: Para soportar las observaciones
+
+        // Propiedad matemática excluida de SQL Server (Regla 3NF)
+        public decimal Cash_Discrepancy { get; set; }
+        public bool Enable { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa un informe de arqueo de caja con la fecha del sistema.
+        /// </summary>
         public CashClosure()
         {
             Closure_Date = DateTime.Now;
+            Notes_Remarks = string.Empty;
             Enable = true;
         }
 
-        public CashClosure(int closureId, DateTime closureDate, double realCash, double calculatedIncome, bool enable = true)
+        /// <summary>
+        /// Crea una transacción de cierre precomputando de forma automática el descuadre sin romper la integridad 3NF.
+        /// </summary>
+        public CashClosure(int closureId, int userId, DateTime closureDate, decimal initialCash, decimal calculatedIncome, decimal realCash, string notes, bool enable = true)
         {
             Closure_Id = closureId;
+            User_Id = userId;
             Closure_Date = closureDate;
-            Real_Cash = realCash;
+            Initial_Cash = initialCash;
             Calculated_Income = calculatedIncome;
-            // El descuadre se calcula automáticamente protegiendo la integridad matemática
+            Real_Cash = realCash;
+            Notes_Remarks = notes;
             Cash_Discrepancy = realCash - calculatedIncome;
             Enable = enable;
         }
@@ -45,10 +60,13 @@ namespace CevicheSys_Pro_2
         /* Métodos de Persistencia (CRUD)                                        */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Extrae el historial forense de todos los balances diarios efectuados.
+        /// </summary>
         public List<CashClosure> ListAllClosures()
         {
             var list = new List<CashClosure>();
-            string query = "SELECT Id_Cierre, Fecha_Cierre, Efectivo_Real, Ingresos_Calculados, Descuadre, Enable FROM Cierre_Caja WHERE Enable = 1 ORDER BY Fecha_Cierre DESC";
+            string query = "SELECT Closure_Id, User_Id, Closure_Date, Initial_Cash, Calculated_Income, Real_Cash, Notes_Remarks, Enable FROM Cash_Closure WHERE Enable = 1 ORDER BY Closure_Date DESC";
 
             using (var select = new SelectQuery())
             {
@@ -56,10 +74,13 @@ namespace CevicheSys_Pro_2
                 foreach (DataRow row in dt.Rows)
                 {
                     list.Add(new CashClosure(
-                        Convert.ToInt32(row["Id_Cierre"]),
-                        Convert.ToDateTime(row["Fecha_Cierre"]),
-                        Convert.ToDouble(row["Efectivo_Real"]),
-                        Convert.ToDouble(row["Ingresos_Calculados"]),
+                        Convert.ToInt32(row["Closure_Id"]),
+                        Convert.ToInt32(row["User_Id"]),
+                        Convert.ToDateTime(row["Closure_Date"]),
+                        Convert.ToDecimal(row["Initial_Cash"]),
+                        Convert.ToDecimal(row["Calculated_Income"]),
+                        Convert.ToDecimal(row["Real_Cash"]),
+                        row["Notes_Remarks"].ToString(),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
@@ -67,15 +88,20 @@ namespace CevicheSys_Pro_2
             return list;
         }
 
+        /// <summary>
+        /// Graba el arqueo físico del empleado en la tabla Cash_Closure, respetando la omisión del cálculo aritmético.
+        /// </summary>
         public int AddCashClosure()
         {
-            string query = @"INSERT INTO Cierre_Caja (Fecha_Cierre, Efectivo_Real, Ingresos_Calculados, Descuadre, Enable) 
-                             VALUES (@date, @real, @calc, @disc, @enable)";
+            string query = @"INSERT INTO Cash_Closure (User_Id, Closure_Date, Initial_Cash, Calculated_Income, Real_Cash, Notes_Remarks, Enable) 
+                             VALUES (@userId, @date, @initial, @calc, @real, @notes, @enable)";
             SqlParameter[] parameters = {
+                new SqlParameter("@userId", this.User_Id),
                 new SqlParameter("@date", this.Closure_Date),
-                new SqlParameter("@real", this.Real_Cash),
+                new SqlParameter("@initial", this.Initial_Cash),
                 new SqlParameter("@calc", this.Calculated_Income),
-                new SqlParameter("@disc", this.Cash_Discrepancy),
+                new SqlParameter("@real", this.Real_Cash),
+                new SqlParameter("@notes", (object)this.Notes_Remarks ?? DBNull.Value),
                 new SqlParameter("@enable", this.Enable)
             };
 

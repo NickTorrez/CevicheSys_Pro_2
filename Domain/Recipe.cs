@@ -16,55 +16,60 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
-        public int Recipe_Id { get; set; }     // Identificador único de la receta
-        public int Dish_Id { get; set; }       // Id_Platillo (FK)
-        public int Product_Id { get; set; }    // Id_Producto (FK) 
-        public double Quantity_Used { get; set; } // Cantidad exacta del insumo que consume el platillo 
-        public bool Enable { get; set; }       // Enable
+        public int Recipe_Id { get; set; }
+        public int Dish_Id { get; set; }
+        public int Ingredient_Id { get; set; }
+        public decimal Quantity { get; set; }
+        public string Unit { get; set; } // Ejemplo: "g", "ml", "unidad"
+        public bool Enable { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
         /* --------------------------------------------------------------------- */
         public Recipe()
         {
-            Quantity_Used = 0.0;
+            Unit = string.Empty;
             Enable = true;
         }
 
-        public Recipe(int recipeId, int dishId, int productId, double quantityUsed, bool enable = true)
+        public Recipe(int recipeId, int dishId, int ingredientId, decimal quantity, string unit, bool enable = true)
         {
             Recipe_Id = recipeId;
             Dish_Id = dishId;
-            Product_Id = productId;
-            Quantity_Used = quantityUsed;
+            Ingredient_Id = ingredientId;
+            Quantity = quantity;
+            Unit = unit;
             Enable = enable;
         }
 
-        /*----------------------------------------------------------------------------------*/
-        /* Métodos de Persistencia (CRUD)                                                   */
-        /*----------------------------------------------------------------------------------*/
-
-        public List<Recipe> GetRecipeByDish(int dishId)
+        /* --------------------------------------------------------------------- */
+        /* Métodos CRUD                                                          */
+        /* --------------------------------------------------------------------- */
+        public int AddRecipe()
         {
-            var list = new List<Recipe>();
-            string query = "SELECT Id_Receta, Id_Platillo, Id_Producto, Cantidad_Usada, Enable FROM Receta WHERE Id_Platillo = @dishId AND Enable = 1";
-            SqlParameter[] parameters = { new SqlParameter("@dishId", dishId) };
+            string query = "INSERT INTO Recipe (Dish_Id, Ingredient_Id, Quantity, Unit, Enable) VALUES (@dishId, @ingId, @qty, @unit, 1)";
+            SqlParameter[] parameters = {
+                new SqlParameter("@dishId", this.Dish_Id),
+                new SqlParameter("@ingId", this.Ingredient_Id),
+                new SqlParameter("@qty", this.Quantity),
+                new SqlParameter("@unit", this.Unit)
+            };
 
-            using (var select = new SelectQuery())
+            using (var insert = new InsertCommand())
             {
-                DataTable dt = select.ExecuteSelect(query, parameters);
-                foreach (DataRow row in dt.Rows)
-                {
-                    list.Add(new Recipe(
-                        Convert.ToInt32(row["Id_Receta"]),
-                        Convert.ToInt32(row["Id_Platillo"]),
-                        Convert.ToInt32(row["Id_Producto"]),
-                        Convert.ToDouble(row["Cantidad_Usada"]),
-                        Convert.ToBoolean(row["Enable"])
-                    ));
-                }
+                return insert.ExecuteInsert(query, parameters);
             }
-            return list;
+        }
+
+        public int RemoveRecipe(int recipeId)
+        {
+            string query = "UPDATE Recipe SET Enable = 0 WHERE Recipe_Id = @id";
+            SqlParameter[] parameters = { new SqlParameter("@id", recipeId) };
+
+            using (var update = new UpdateCommand())
+            {
+                return update.ExecuteUpdate(query, parameters);
+            }
         }
     }
 }

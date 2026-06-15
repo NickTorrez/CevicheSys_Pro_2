@@ -15,40 +15,53 @@ namespace CevicheSys_Pro_2
         /* --------------------------------------------------------------------- */
         /* Propiedades Específicas de la Entidad                                 */
         /* --------------------------------------------------------------------- */
-        public int CustomerId { get; set; }      // Id_Cliente (PK)
-        public string FullName { get; set; }     // Nombre_Completo
+        public int Customer_Id { get; set; }
+        public string Full_Name { get; set; }
 
         /* --------------------------------------------------------------------- */
         /* Constructores (Llamadas a base() de Person)                           */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Inicializa un nuevo cliente vacío.
+        /// </summary>
         public Customer() : base()
         {
-            FullName = string.Empty;
+            Full_Name = string.Empty;
         }
 
+        /// <summary>
+        /// Inicializa un cliente con la información completa.
+        /// </summary>
         public Customer(int customerId, string fullName, string phone, bool enable) : base(phone, enable)
         {
-            CustomerId = customerId;
-            FullName = fullName;
+            Customer_Id = customerId;
+            Full_Name = fullName;
         }
 
         /* --------------------------------------------------------------------- */
         /* Implementación del Polimorfismo (Regla de Identidad)                  */
         /* --------------------------------------------------------------------- */
+
+        /// <summary>
+        /// Valida que el nombre completo del cliente cumpla con el estándar mínimo de longitud.
+        /// </summary>
         public override bool ValidateIdentification()
         {
-            // Regla para el cliente: El nombre completo debe tener datos válidos
-            return !string.IsNullOrWhiteSpace(FullName) && FullName.Trim().Length >= 3;
+            return !string.IsNullOrWhiteSpace(Full_Name) && Full_Name.Trim().Length >= 3;
         }
 
         /* --------------------------------------------------------------------- */
         /* Métodos CRUD (Persistencia desde el Dominio)                          */
         /* --------------------------------------------------------------------- */
 
+        /// <summary>
+        /// Obtiene el catálogo completo de clientes activos.
+        /// </summary>
         public List<Customer> ListAllCustomers()
         {
             var customers = new List<Customer>();
-            string query = "SELECT Id_Cliente, Nombre_Completo, Telefono, Enable FROM Cliente WHERE Enable = 1";
+            string query = "SELECT Customer_Id, Full_Name, Phone, Enable FROM Customer WHERE Enable = 1";
 
             using (var select = new SelectQuery())
             {
@@ -56,9 +69,9 @@ namespace CevicheSys_Pro_2
                 foreach (DataRow row in dt.Rows)
                 {
                     customers.Add(new Customer(
-                        Convert.ToInt32(row["Id_Cliente"]),
-                        row["Nombre_Completo"].ToString(),
-                        row["Telefono"].ToString(),
+                        Convert.ToInt32(row["Customer_Id"]),
+                        row["Full_Name"].ToString(),
+                        row["Phone"].ToString(),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
@@ -66,27 +79,33 @@ namespace CevicheSys_Pro_2
             return customers;
         }
 
+        /// <summary>
+        /// Inserta el cliente en la base de datos SQL Server.
+        /// </summary>
         public int AddCustomer()
         {
-            string query = "INSERT INTO Cliente (Nombre_Completo, Telefono, Enable) VALUES (@FullName, @Phone, @Enable)";
+            string query = "INSERT INTO Customer (Full_Name, Phone, Enable) VALUES (@FullName, @Phone, @Enable)";
             SqlParameter[] parameters = {
-                new SqlParameter("@FullName", this.FullName),
-                new SqlParameter("@Phone", this.Phone), // Heredado de Person
-                new SqlParameter("@Enable", this.Enable) // Heredado de Person
+                new SqlParameter("@FullName", this.Full_Name),
+                new SqlParameter("@Phone", this.Phone),
+                new SqlParameter("@Enable", this.Enable)
             };
 
             using (var insert = new InsertCommand())
             {
-                return insert.ExecuteInsert(query, parameters); // Retorna filas afectadas
+                return insert.ExecuteInsert(query, parameters);
             }
         }
 
+        /// <summary>
+        /// Actualiza la información personal del cliente.
+        /// </summary>
         public int UpdateCustomer()
         {
-            string query = "UPDATE Cliente SET Nombre_Completo = @FullName, Telefono = @Phone WHERE Id_Cliente = @Id";
+            string query = "UPDATE Customer SET Full_Name = @FullName, Phone = @Phone WHERE Customer_Id = @Id";
             SqlParameter[] parameters = {
-                new SqlParameter("@Id", this.CustomerId),
-                new SqlParameter("@FullName", this.FullName),
+                new SqlParameter("@Id", this.Customer_Id),
+                new SqlParameter("@FullName", this.Full_Name),
                 new SqlParameter("@Phone", this.Phone)
             };
 
@@ -96,9 +115,12 @@ namespace CevicheSys_Pro_2
             }
         }
 
+        /// <summary>
+        /// Realiza un borrado lógico del cliente ocultándolo del sistema.
+        /// </summary>
         public int DisableCustomer(int id)
         {
-            string query = "UPDATE Cliente SET Enable = 0 WHERE Id_Cliente = @Id";
+            string query = "UPDATE Customer SET Enable = 0 WHERE Customer_Id = @Id";
             SqlParameter[] parameters = { new SqlParameter("@Id", id) };
 
             using (var update = new UpdateCommand())

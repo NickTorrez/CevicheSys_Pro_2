@@ -26,7 +26,7 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
 
             // Reglas de negocio contables
             if (newExpense.Amount <= 0) return 2; // Un egreso no puede ser cero o negativo
-            if (string.IsNullOrWhiteSpace(newExpense.Description)) return 3; // Debe justificarse la salida
+            if (string.IsNullOrWhiteSpace(newExpense.Concept)) return 3; // Debe justificarse la salida
 
             if (newExpense.AddExpense() > 0)
                 return 0;

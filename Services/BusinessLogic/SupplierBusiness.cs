@@ -32,7 +32,7 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
             if (!newSupplier.ValidateIdentification())
                 return 2; // Código 2: Cédula o RUC inválido (Menor a 14 dígitos)
 
-            if (string.IsNullOrWhiteSpace(newSupplier.FirstName) || string.IsNullOrWhiteSpace(newSupplier.LastName))
+            if (string.IsNullOrWhiteSpace(newSupplier.First_Name) || string.IsNullOrWhiteSpace(newSupplier.Last_Name))
                 return 3; // Código 3: Nombre o Apellido vacío
 
             // Ordena al dominio ejecutar la inserción
@@ -44,7 +44,7 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
 
         public int ModifySupplier(Supplier modifiedSupplier)
         {
-            if (modifiedSupplier == null || modifiedSupplier.SupplierId <= 0) return 1;
+            if (modifiedSupplier == null || modifiedSupplier.Supplier_Id <= 0) return 1;
 
             if (!modifiedSupplier.ValidateIdentification())
                 return 2;
