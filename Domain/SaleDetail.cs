@@ -11,30 +11,20 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class SaleDetail
     {
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de la Entidad                                             */
-        /* --------------------------------------------------------------------- */
+        #region Propiedades
         public int Detail_Id { get; set; }
         public int Sale_Id { get; set; }
         public int Dish_Id { get; set; }
         public int Quantity { get; set; }
         public bool Enable { get; set; }
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Constructores                                                         */
-        /* --------------------------------------------------------------------- */
-
-        /// <summary>
-        /// Inicializa un detalle de venta vacío.
-        /// </summary>
+        #region Constructores
         public SaleDetail()
         {
             Enable = true;
         }
 
-        /// <summary>
-        /// Inicializa una línea de detalle con sus referencias a venta y platillo.
-        /// </summary>
         public SaleDetail(int detailId, int saleId, int dishId, int quantity, bool enable = true)
         {
             Detail_Id = detailId;
@@ -43,5 +33,8 @@ namespace CevicheSys_Pro_2
             Quantity = quantity;
             Enable = enable;
         }
+        #endregion
+
+        // Nota: Los métodos de persistencia para SaleDetail se ejecutan en transacción desde Sale.ProcessSaleWithDetails()
     }
 }

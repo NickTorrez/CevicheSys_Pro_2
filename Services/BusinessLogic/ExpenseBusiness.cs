@@ -13,43 +13,34 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class ExpenseBusiness
     {
-        private readonly Expense expense = new Expense();
-
         public int InsertExpense(Expense newExpense)
         {
             if (newExpense == null) return 1;
             if (string.IsNullOrWhiteSpace(newExpense.Concept)) return 2;
             if (newExpense.Amount <= 0) return 3;
-            if (newExpense.Category_Id <= 0) return 4;
-            if (newExpense.User_Id <= 0) return 4;
+            if (newExpense.Category_Id <= 0 || newExpense.User_Id <= 0) return 4;
 
-            newExpense.Concept = newExpense.Concept.Trim();
-            newExpense.Enable = true;
-
-            return newExpense.AddExpense() > 0 ? 0 : 5;
+            bool success = newExpense.InsertExpense();
+            return success ? 0 : 5;
         }
 
-        public int UpdateExpense(Expense modifiedExpense)
+        public int UpdateExpense(Expense existingExpense)
         {
-            if (modifiedExpense == null || modifiedExpense.Expense_Id <= 0) return 1;
-            if (string.IsNullOrWhiteSpace(modifiedExpense.Concept)) return 2;
-            if (modifiedExpense.Amount <= 0) return 3;
-            if (modifiedExpense.Category_Id <= 0) return 4;
+            if (existingExpense == null || existingExpense.Expense_Id <= 0) return 1;
+            if (string.IsNullOrWhiteSpace(existingExpense.Concept)) return 2;
+            if (existingExpense.Amount <= 0) return 3;
+            if (existingExpense.Category_Id <= 0) return 4;
 
-            modifiedExpense.Concept = modifiedExpense.Concept.Trim();
-
-            return modifiedExpense.UpdateExpense() > 0 ? 0 : 5;
+            bool success = existingExpense.UpdateExpense();
+            return success ? 0 : 5;
         }
 
-        public int DisableExpense(int id)
+        public int DeleteExpense(int id)
         {
             if (id <= 0) return 1;
-            return expense.DisableExpense(id) > 0 ? 0 : 5;
-        }
-
-        public List<Expense> ListExpenses()
-        {
-            return expense.ListAllExpenses();
+            Expense expenseToDelete = new Expense { Expense_Id = id };
+            bool success = expenseToDelete.DeleteExpense();
+            return success ? 0 : 5;
         }
     }
 }

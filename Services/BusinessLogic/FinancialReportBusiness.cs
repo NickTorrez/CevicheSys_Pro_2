@@ -12,14 +12,31 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class FinancialReportBusiness
     {
+        #region Constructores
+        public FinancialReportBusiness()
+        {
+            // Sin dependencias iniciales requeridas
+        }
+        #endregion
+
+        #region Métodos
         public FinancialReport GenerateReport(DateTime start, DateTime end)
         {
-            if (start.Date > end.Date)
-                throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha final.");
+            try
+            {
+                if (start.Date > end.Date)
+                    throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha final.");
 
-            FinancialReport report = new FinancialReport(start, end);
-            report.LoadReportData();
-            return report;
+                FinancialReport report = new FinancialReport(start, end);
+                report.LoadReportData();
+
+                return report;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error en la generación y cálculo del reporte financiero.", ex);
+            }
         }
+        #endregion
     }
 }

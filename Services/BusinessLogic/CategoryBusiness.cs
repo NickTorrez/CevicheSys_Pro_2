@@ -12,42 +12,48 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class CategoryBusiness
     {
-        private readonly Category category = new Category();
+        private readonly Category _categoryDomain = new Category();
 
+        /// <summary>
+        /// Valida y procesa el registro de un nuevo usuario en el sistema.
+        /// </summary>
+        /// <returns>
+        /// 0 = Éxito.
+        /// 1 = El objeto de usuario es nulo.
+        /// 2 = Nombre de usuario o contraseña vacíos.
+        /// 3 = Formato de nombre de usuario inválido.
+        /// 4 = El nombre de usuario ya se encuentra registrado.
+        /// 5 = Error al guardar en la base de datos.
+        /// </returns>
+        /// 
         public int InsertCategory(Category newCategory)
         {
             if (newCategory == null) return 1;
-            if (string.IsNullOrWhiteSpace(newCategory.Category_Name)) return 2;
-            if (string.IsNullOrWhiteSpace(newCategory.Target_Module)) return 3;
+            if (string.IsNullOrWhiteSpace(newCategory.Category_Name) || string.IsNullOrWhiteSpace(newCategory.Target_Module)) return 2;
 
-            newCategory.Category_Name = newCategory.Category_Name.Trim();
-            newCategory.Target_Module = newCategory.Target_Module.Trim();
-            newCategory.Enable = true;
+            if (_categoryDomain.ExistsByName(newCategory.Category_Name, newCategory.Target_Module)) return 4;
 
-            return newCategory.AddCategory() > 0 ? 0 : 5;
+            bool success = newCategory.InsertCategory();
+            return success ? 0 : 5;
         }
 
-        public int UpdateCategory(Category modifiedCategory)
+        public int UpdateCategory(Category existingCategory)
         {
-            if (modifiedCategory == null || modifiedCategory.Category_Id <= 0) return 1;
-            if (string.IsNullOrWhiteSpace(modifiedCategory.Category_Name)) return 2;
-            if (string.IsNullOrWhiteSpace(modifiedCategory.Target_Module)) return 3;
+            if (existingCategory == null || existingCategory.Category_Id <= 0) return 1;
+            if (string.IsNullOrWhiteSpace(existingCategory.Category_Name) || string.IsNullOrWhiteSpace(existingCategory.Target_Module)) return 2;
 
-            modifiedCategory.Category_Name = modifiedCategory.Category_Name.Trim();
-            modifiedCategory.Target_Module = modifiedCategory.Target_Module.Trim();
+            if (_categoryDomain.ExistsByName(existingCategory.Category_Name, existingCategory.Target_Module, existingCategory.Category_Id)) return 4;
 
-            return modifiedCategory.UpdateCategory() > 0 ? 0 : 5;
+            bool success = existingCategory.UpdateCategory();
+            return success ? 0 : 5;
         }
 
-        public int DisableCategory(int id)
+        public int DeleteCategory(int id)
         {
             if (id <= 0) return 1;
-            return category.DisableCategory(id) > 0 ? 0 : 5;
-        }
-
-        public List<Category> ListCategories()
-        {
-            return category.ListAllCategories();
+            Category categoryToDelete = new Category { Category_Id = id };
+            bool success = categoryToDelete.DeleteCategory();
+            return success ? 0 : 5;
         }
     }
 }

@@ -11,35 +11,21 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class Dish
     {
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de la Entidad                                             */
-        /* --------------------------------------------------------------------- */
+        #region Properties
         public int Dish_Id { get; set; }
-        public string Dish_Type { get; set; }
-        public string Size { get; set; }
-        public decimal Price { get; set; }        // ACTUALIZADO: Manejo financiero preciso
-        public bool Is_Available { get; set; }
-        public bool Enable { get; set; }
+        public string Dish_Type { get; set; } = string.Empty;
+        public string Size { get; set; } = string.Empty;
+        public decimal Price { get; set; } = 0m;
+        public bool Is_Available { get; set; } = true;
+        public bool Enable { get; set; } = true;
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Constructores                                                         */
-        /* --------------------------------------------------------------------- */
-
-        /// <summary>
-        /// Crea una instancia predeterminada de un Platillo.
-        /// </summary>
-        public Dish()
+        #region Constructors
+        public Dish() 
         {
-            Dish_Type = string.Empty;
-            Size = string.Empty;
-            Price = 0.0m;
-            Is_Available = true;
-            Enable = true;
+ 
         }
 
-        /// <summary>
-        /// Crea un platillo asignando todos sus atributos comerciales.
-        /// </summary>
         public Dish(int dishId, string dishType, string size, decimal price, bool isAvailable, bool enable = true)
         {
             Dish_Id = dishId;
@@ -50,90 +36,63 @@ namespace CevicheSys_Pro_2
             Enable = enable;
         }
 
-        /* --------------------------------------------------------------------- */
-        /* Métodos de Persistencia (CRUD)                                        */
-        /* --------------------------------------------------------------------- */
+        #endregion
 
-        /// <summary>
-        /// Obtiene el menú activo para su visualización en el Punto de Venta.
-        /// </summary>
-        public List<Dish> ListAllDishes()
+        #region Persistence Methods
+        public bool ExistsByTypeAndSize(string type, string size, int currentId = 0)
         {
-            List<Dish> list = new List<Dish>();
-            string query = "SELECT Dish_Id, Dish_Type, Size, Price, Is_Available, Enable FROM Dish WHERE Enable = 1";
-
-            using (SelectQuery select = new SelectQuery())
+            string sql = "SELECT CASE WHEN EXISTS(SELECT 1 FROM Dish WHERE Dish_Type = @Type AND Size = @Size AND Dish_Id <> @Id AND Enable = 1) THEN 1 ELSE 0 END";
+            using SelectQuery select = new SelectQuery();
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                DataTable dt = select.ExecuteSelect(query);
-                foreach (DataRow row in dt.Rows)
-                {
-                    list.Add(new Dish(
-                        Convert.ToInt32(row["Dish_Id"]),
-                        row["Dish_Type"].ToString(),
-                        row["Size"].ToString(),
-                        Convert.ToDecimal(row["Price"]),
-                        Convert.ToBoolean(row["Is_Available"]),
-                        Convert.ToBoolean(row["Enable"])
-                    ));
-                }
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// Registra el platillo configurado en el catálogo.
-        /// </summary>
-        public int AddDish()
-        {
-            string query = "INSERT INTO Dish (Dish_Type, Size, Price, Is_Available, Enable) VALUES (@type, @size, @price, @available, @enable)";
-
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@type", Dish_Type),
-                new SqlParameter("@size", Size),
-                new SqlParameter("@price", Price),
-                new SqlParameter("@available", Is_Available),
-                new SqlParameter("@enable", Enable)
+                new SqlParameter("@Type", SqlDbType.VarChar) { Value = type.Trim() },
+                new SqlParameter("@Size", SqlDbType.VarChar) { Value = size.Trim() },
+                new SqlParameter("@Id", SqlDbType.Int) { Value = currentId }
             };
-
-            using (InsertCommand insert = new InsertCommand())
-                return insert.ExecuteInsert(query, parameters);
+            return select.IsDuplicate(sql, parameters);
         }
 
-        /// <summary>
-        /// Aplica los cambios de precio, tamaño o disponibilidad al registro.
-        /// </summary>
-        public int UpdateDish()
+        public bool InsertDish()
         {
-            string query = @"UPDATE Dish
-                             SET Dish_Type = @type, Size = @size, Price = @price, Is_Available = @available
-                             WHERE Dish_Id = @id";
-
-            SqlParameter[] parameters =
+            string sql = @"INSERT INTO Dish (Dish_Type, Size, Price, Is_Available, Enable) 
+                           VALUES (@Type, @Size, @Price, @Available, 1)";
+            using InsertCommand insert = new InsertCommand();
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@id", Dish_Id),
-                new SqlParameter("@type", Dish_Type),
-                new SqlParameter("@size", Size),
-                new SqlParameter("@price", Price),
-                new SqlParameter("@available", Is_Available)
+                new SqlParameter("@Type", SqlDbType.VarChar) { Value = this.Dish_Type.Trim() },
+                new SqlParameter("@Size", SqlDbType.VarChar) { Value = this.Size.Trim() },
+                new SqlParameter("@Price", SqlDbType.Decimal) { Value = this.Price },
+                new SqlParameter("@Available", SqlDbType.Bit) { Value = this.Is_Available }
             };
-
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
+            return insert.ExecuteInsert(sql, parameters) > 0;
         }
 
-        /// <summary>
-        /// Retira el platillo del menú activo.
-        /// </summary>
-        public int DisableDish(int id)
+        public bool UpdateDish()
         {
-            string query = "UPDATE Dish SET Enable = 0 WHERE Dish_Id = @id";
-            SqlParameter[] parameters = { new SqlParameter("@id", id) };
-
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
+            string sql = @"UPDATE Dish SET Dish_Type = @Type, Size = @Size, Price = @Price, Is_Available = @Available 
+                           WHERE Dish_Id = @Id AND Enable = 1";
+            using UpdateCommand update = new UpdateCommand();
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", SqlDbType.Int) { Value = this.Dish_Id },
+                new SqlParameter("@Type", SqlDbType.VarChar) { Value = this.Dish_Type.Trim() },
+                new SqlParameter("@Size", SqlDbType.VarChar) { Value = this.Size.Trim() },
+                new SqlParameter("@Price", SqlDbType.Decimal) { Value = this.Price },
+                new SqlParameter("@Available", SqlDbType.Bit) { Value = this.Is_Available }
+            };
+            return update.ExecuteUpdate(sql, parameters) > 0;
         }
 
+        public bool DeleteDish()
+        {
+            string sql = "UPDATE Dish SET Enable = 0 WHERE Dish_Id = @Id";
+            using DeleteCommand delete = new DeleteCommand();
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", SqlDbType.Int) { Value = this.Dish_Id }
+            };
+            return delete.ExecuteDelete(sql, parameters) > 0;
+        }
+        #endregion
     }
 }

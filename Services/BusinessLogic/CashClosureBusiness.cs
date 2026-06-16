@@ -18,20 +18,15 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
         {
             if (newClosure == null) return 1;
             if (newClosure.User_Id <= 0) return 2;
-            if (newClosure.Initial_Cash < 0) return 3;
-            if (newClosure.Calculated_Income < 0) return 3;
-            if (newClosure.Real_Cash < 0) return 3;
 
-            newClosure.Notes_Remarks = newClosure.Notes_Remarks?.Trim() ?? string.Empty;
+            // Los montos financieros no deben ser negativos (aunque el real podría ser cero si hubo robo/pérdida total)
+            if (newClosure.Initial_Cash < 0 || newClosure.Calculated_Income < 0 || newClosure.Real_Cash < 0) return 3;
+
+            // Se calcula el descuadre internamente antes de insertar para asegurar integridad lógica
             newClosure.Cash_Discrepancy = newClosure.Real_Cash - newClosure.Calculated_Income;
-            newClosure.Enable = true;
 
-            return newClosure.AddCashClosure() > 0 ? 0 : 5;
-        }
-
-        public List<CashClosure> ListClosures()
-        {
-            return closure.ListAllClosures();
+            bool success = newClosure.InsertClosure();
+            return success ? 0 : 4;
         }
     }
 }

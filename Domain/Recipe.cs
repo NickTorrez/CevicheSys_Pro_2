@@ -13,18 +13,15 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class Recipe
     {
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de la Entidad                                             */
-        /* --------------------------------------------------------------------- */
+        #region Propiedades
         public int Recipe_Id { get; set; }
         public int Dish_Id { get; set; }
         public int Product_Id { get; set; }
         public decimal Quantity_Used { get; set; }
         public bool Enable { get; set; }
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Constructores                                                         */
-        /* --------------------------------------------------------------------- */
+        #region Constructores
         public Recipe()
         {
             Enable = true;
@@ -38,34 +35,37 @@ namespace CevicheSys_Pro_2
             Quantity_Used = quantityUsed;
             Enable = enable;
         }
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Métodos CRUD                                                          */
-        /* --------------------------------------------------------------------- */
+        #region Métodos
         public int AddRecipe()
         {
-            string query = @"INSERT INTO Recipe (Dish_Id, Product_Id, Quantity_Used, Enable)
-                             VALUES (@dishId, @productId, @quantity, @enable)";
+            string sql = @"INSERT INTO Recipe (Dish_Id, Product_Id, Quantity_Used, Enable) 
+                           VALUES (@dishId, @productId, @quantity, @enable)";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@dishId", Dish_Id),
-                new SqlParameter("@productId", Product_Id),
-                new SqlParameter("@quantity", Quantity_Used),
-                new SqlParameter("@enable", Enable)
+            SqlParameter[] parameters = {
+                new SqlParameter("@dishId", SqlDbType.Int) { Value = Dish_Id },
+                new SqlParameter("@productId", SqlDbType.Int) { Value = Product_Id },
+                new SqlParameter("@quantity", SqlDbType.Decimal) { Value = Quantity_Used },
+                new SqlParameter("@enable", SqlDbType.Bit) { Value = Enable }
             };
 
-            using (InsertCommand insert = new InsertCommand())
-                return insert.ExecuteInsert(query, parameters);
+            using InsertCommand insert = new InsertCommand();
+            return insert.ExecuteInsert(sql, parameters);
         }
 
         public int DisableRecipe(int recipeId)
         {
-            string query = "UPDATE Recipe SET Enable = 0 WHERE Recipe_Id = @id";
-            SqlParameter[] parameters = { new SqlParameter("@id", recipeId) };
+            string sql = "UPDATE Recipe SET Enable = @enable WHERE Recipe_Id = @id";
 
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
+            SqlParameter[] parameters = {
+                new SqlParameter("@id", SqlDbType.Int) { Value = recipeId },
+                new SqlParameter("@enable", SqlDbType.Bit) { Value = false }
+            };
+
+            using UpdateCommand update = new UpdateCommand();
+            return update.ExecuteUpdate(sql, parameters);
         }
+        #endregion
     }
 }

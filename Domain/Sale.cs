@@ -11,98 +11,67 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class Sale
     {
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de la Entidad                                             */
-        /* --------------------------------------------------------------------- */
+        #region Properties
         public int Sale_Id { get; set; }
-        public int? Customer_Id { get; set; }         // ACTUALIZADO: FK opcional a la tabla Customer
-        public string Payment_Method { get; set; }
-        public string Purchase_Type { get; set; }
-        public decimal Total_Amount { get; set; }     // ACTUALIZADO: Manejo financiero preciso
-        public DateTime Record_Date { get; set; }
+        public int? Customer_Id { get; set; }
+        public string Payment_Method { get; set; } = string.Empty;
+        public string Purchase_Type { get; set; } = string.Empty;
+        public decimal Total_Amount { get; set; } = 0m;
+        public DateTime Record_Date { get; set; } = DateTime.Now;
         public int User_Id { get; set; }
-        public bool Enable { get; set; }
+        public bool Enable { get; set; } = true;
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Constructores                                                         */
-        /* --------------------------------------------------------------------- */
+        #region Constructors
+        public Sale() { }
+        #endregion
 
+        #region Persistence Methods
         /// <summary>
-        /// Inicializa un ticket de factura predeterminado.
+        /// Inserta la cabecera de la venta y sus detalles correspondientes.
         /// </summary>
-        public Sale()
-        {
-            Payment_Method = string.Empty;
-            Purchase_Type = string.Empty;
-            Record_Date = DateTime.Now;
-            Total_Amount = 0m;
-            Enable = true;
-        }
-
-        /// <summary>
-        /// Arma los encabezados de la transacción de venta completada en caja.
-        /// </summary>
-        public Sale(int saleId, int? customerId, string paymentMethod, string purchaseType,
-                    decimal totalAmount, DateTime recordDate, int userId, bool enable = true)
-        {
-            Sale_Id = saleId;
-            Customer_Id = customerId;
-            Payment_Method = paymentMethod;
-            Purchase_Type = purchaseType;
-            Total_Amount = totalAmount;
-            Record_Date = recordDate;
-            User_Id = userId;
-            Enable = enable;
-        }
-
-        /*----------------------------------------------------------------------------------*/
-        /* Métodos de Persistencia (CRUD)                                                   */
-        /*----------------------------------------------------------------------------------*/
-
-        /// <summary>
-        /// Orquesta la inserción atómica de la cabecera de la venta junto con sus múltiples líneas de detalle.
-        /// </summary>
-        public int ProcessSaleWithDetails(List<SaleDetail> details)
+        public bool ProcessSaleWithDetails(List<SaleDetail> details)
         {
             string masterQuery = @"INSERT INTO Sale (User_Id, Customer_Id, Payment_Method, Purchase_Type, Total_Amount, Record_Date, Enable)
-                                   VALUES (@userId, @customerId, @paymentMethod, @purchaseType, @totalAmount, @recordDate, @enable);
-                                   SELECT SCOPE_IDENTITY();";
+                                   VALUES (@UserId, @CustomerId, @PaymentMethod, @PurchaseType, @TotalAmount, @RecordDate, 1)";
 
-            SqlParameter[] masterParams =
-            {
-                new SqlParameter("@userId", User_Id),
-                new SqlParameter("@customerId", (object)Customer_Id ?? DBNull.Value),
-                new SqlParameter("@paymentMethod", Payment_Method),
-                new SqlParameter("@purchaseType", Purchase_Type),
-                new SqlParameter("@totalAmount", Total_Amount),
-                new SqlParameter("@recordDate", Record_Date),
-                new SqlParameter("@enable", Enable)
-            };
+            int generatedSaleId = 0;
 
             using (InsertCommand insertMaster = new InsertCommand())
             {
-                int generatedSaleId = insertMaster.ExecuteInsertReturnId(masterQuery, masterParams);
-                if (generatedSaleId <= 0) return 0;
-
-                string detailQuery = @"INSERT INTO Sale_Detail (Dish_Id, Sale_Id, Quantity, Enable)
-                                       VALUES (@dishId, @saleId, @quantity, @enable)";
-
-                foreach (SaleDetail item in details)
+                SqlParameter[] masterParams = new SqlParameter[]
                 {
-                    SqlParameter[] detailParams =
-                    {
-                        new SqlParameter("@dishId", item.Dish_Id),
-                        new SqlParameter("@saleId", generatedSaleId),
-                        new SqlParameter("@quantity", item.Quantity),
-                        new SqlParameter("@enable", true)
-                    };
+                    new SqlParameter("@UserId", SqlDbType.Int) { Value = this.User_Id },
+                    new SqlParameter("@CustomerId", SqlDbType.Int) { Value = (object)this.Customer_Id ?? DBNull.Value },
+                    new SqlParameter("@PaymentMethod", SqlDbType.VarChar) { Value = this.Payment_Method.Trim() },
+                    new SqlParameter("@PurchaseType", SqlDbType.VarChar) { Value = this.Purchase_Type.Trim() },
+                    new SqlParameter("@TotalAmount", SqlDbType.Decimal) { Value = this.Total_Amount },
+                    new SqlParameter("@RecordDate", SqlDbType.DateTime) { Value = this.Record_Date }
+                };
 
-                    using (InsertCommand insertDetail = new InsertCommand())
-                        insertDetail.ExecuteInsert(detailQuery, detailParams);
-                }
-
-                return generatedSaleId;
+                generatedSaleId = insertMaster.ExecuteInsertReturnId(masterQuery, masterParams);
             }
+
+            if (generatedSaleId <= 0) return false;
+
+            string detailQuery = "INSERT INTO Sale_Detail (Dish_Id, Sale_Id, Quantity, Enable) VALUES (@DishId, @SaleId, @Quantity, 1)";
+
+            foreach (var item in details)
+            {
+                using (InsertCommand insertDetail = new InsertCommand())
+                {
+                    SqlParameter[] detailParams = new SqlParameter[]
+                    {
+                        new SqlParameter("@DishId", SqlDbType.Int) { Value = item.Dish_Id },
+                        new SqlParameter("@SaleId", SqlDbType.Int) { Value = generatedSaleId },
+                        new SqlParameter("@Quantity", SqlDbType.Int) { Value = item.Quantity }
+                    };
+                    insertDetail.ExecuteInsert(detailQuery, detailParams);
+                }
+            }
+
+            return true;
         }
+        #endregion
     }
 }

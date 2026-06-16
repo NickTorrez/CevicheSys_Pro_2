@@ -11,134 +11,65 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class Expense
     {
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de la Entidad                                             */
-        /* --------------------------------------------------------------------- */
+        #region Properties
         public int Expense_Id { get; set; }
         public int Category_Id { get; set; }
-        public string Concept { get; set; }
-        public decimal Amount { get; set; }
-        public DateTime Date { get; set; }
-        public bool Enable { get; set; }
+        public string Concept { get; set; } = string.Empty;
+        public decimal Amount { get; set; } = 0m;
+        public DateTime Date { get; set; } = DateTime.Today;
+        public bool Enable { get; set; } = true;
         public int User_Id { get; set; }
+        #endregion
 
+        #region Constructors
+        public Expense() { }
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Constructores                                                         */
-        /* --------------------------------------------------------------------- */
-
-        /// <summary>
-        /// Instancia un gasto vacío.
-        /// </summary>
-        public Expense()
+        #region Persistence Methods
+        public bool InsertExpense()
         {
-            Concept = string.Empty;
-            Date = DateTime.Today;
-            Amount = 0m;
-            Enable = true;
-        }
-
-        /// <summary>
-        /// Configura el registro contable de salida de efectivo con sus detalles y el usuario auditor.
-        /// </summary>
-        public Expense(int expenseId, int categoryId, string concept, decimal amount, DateTime date, int userId, bool enable = true)
-        {
-            Expense_Id = expenseId;
-            Category_Id = categoryId;
-            Concept = concept;
-            Amount = amount;
-            Date = date;
-            User_Id = userId;
-            Enable = enable;
-        }
-
-        /* --------------------------------------------------------------------- */
-        /* Métodos de Persistencia (CRUD)                                        */
-        /* --------------------------------------------------------------------- */
-
-        /// <summary>
-        /// Recupera el historial completo de egresos reportados.
-        /// </summary>
-        public List<Expense> ListAllExpenses()
-        {
-            List<Expense> list = new List<Expense>();
-            string query = "SELECT Expense_Id, Category_Id, Concept, Amount, Date, User_Id, Enable FROM Expense WHERE Enable = 1";
-
-            using (SelectQuery select = new SelectQuery())
+            string sql = @"INSERT INTO Expense (Category_Id, Concept, Amount, Date, Enable, User_Id) 
+                           VALUES (@CategoryId, @Concept, @Amount, @Date, 1, @UserId)";
+            using InsertCommand insert = new InsertCommand();
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                DataTable dt = select.ExecuteSelect(query);
-                foreach (DataRow row in dt.Rows)
-                {
-                    list.Add(new Expense(
-                        Convert.ToInt32(row["Expense_Id"]),
-                        Convert.ToInt32(row["Category_Id"]),
-                        row["Concept"].ToString(),
-                        Convert.ToDecimal(row["Amount"]),
-                        Convert.ToDateTime(row["Date"]),
-                        Convert.ToInt32(row["User_Id"]),
-                        Convert.ToBoolean(row["Enable"])
-                    ));
-                }
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// Consolida en la base de datos una nueva salida de efectivo.
-        /// </summary>
-        public int AddExpense()
-        {
-            string query = @"INSERT INTO Expense (Category_Id, Concept, Amount, Date, Enable, User_Id)
-                             VALUES (@categoryId, @concept, @amount, @date, @enable, @userId)";
-
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@categoryId", Category_Id),
-                new SqlParameter("@concept", Concept),
-                new SqlParameter("@amount", Amount),
-                new SqlParameter("@date", Date.Date),
-                new SqlParameter("@enable", Enable),
-                new SqlParameter("@userId", User_Id)
+                new SqlParameter("@CategoryId", SqlDbType.Int) { Value = this.Category_Id },
+                new SqlParameter("@Concept", SqlDbType.VarChar) { Value = this.Concept.Trim() },
+                new SqlParameter("@Amount", SqlDbType.Decimal) { Value = this.Amount },
+                new SqlParameter("@Date", SqlDbType.Date) { Value = this.Date.Date },
+                new SqlParameter("@UserId", SqlDbType.Int) { Value = this.User_Id }
             };
-
-            using (InsertCommand insert = new InsertCommand())
-                return insert.ExecuteInsert(query, parameters);
+            return insert.ExecuteInsert(sql, parameters) > 0;
         }
 
-        /// <summary>
-        /// Realiza correcciones en la descripción o monto del gasto previamente salvado.
-        /// </summary>
-        public int UpdateExpense()
+        public bool UpdateExpense()
         {
-            string query = @"UPDATE Expense
-                             SET Category_Id = @categoryId, Concept = @concept, Amount = @amount, Date = @date
-                             WHERE Expense_Id = @id";
-
-            SqlParameter[] parameters =
+            string sql = @"UPDATE Expense SET Category_Id = @CategoryId, Concept = @Concept, Amount = @Amount, Date = @Date 
+                           WHERE Expense_Id = @Id AND Enable = 1";
+            using UpdateCommand update = new UpdateCommand();
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@id", Expense_Id),
-                new SqlParameter("@categoryId", Category_Id),
-                new SqlParameter("@concept", Concept),
-                new SqlParameter("@amount", Amount),
-                new SqlParameter("@date", Date.Date)
+                new SqlParameter("@Id", SqlDbType.Int) { Value = this.Expense_Id },
+                new SqlParameter("@CategoryId", SqlDbType.Int) { Value = this.Category_Id },
+                new SqlParameter("@Concept", SqlDbType.VarChar) { Value = this.Concept.Trim() },
+                new SqlParameter("@Amount", SqlDbType.Decimal) { Value = this.Amount },
+                new SqlParameter("@Date", SqlDbType.Date) { Value = this.Date.Date }
             };
-
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
+            return update.ExecuteUpdate(sql, parameters) > 0;
         }
 
-        /// <summary>
-        /// Anula el registro financiero para que deje de afectar los cálculos.
-        /// </summary>
-        public int DisableExpense(int id)
+        public bool DeleteExpense()
         {
-            string query = "UPDATE Expense SET Enable = 0 WHERE Expense_Id = @id";
-            SqlParameter[] parameters = { new SqlParameter("@id", id) };
-
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
+            string sql = "UPDATE Expense SET Enable = 0 WHERE Expense_Id = @Id";
+            using DeleteCommand delete = new DeleteCommand();
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Id", SqlDbType.Int) { Value = this.Expense_Id }
+            };
+            return delete.ExecuteDelete(sql, parameters) > 0;
         }
+        #endregion
+
     }
-    
+
 }

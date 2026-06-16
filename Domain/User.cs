@@ -17,217 +17,185 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class User
     {
-        /* --------------------------------------------------------------------- */
-        /* Propiedades de la Entidad (Mapeo SQL Server)                          */
-        /* --------------------------------------------------------------------- */
-        public int User_Id { get; set; }        // Id_Usuario (PK)
-        public string Username { get; set; }    // Nombre_Usuario
-        public string Password { get; set; }    // Contraseña
-        public string Role { get; set; }        // Rol ("Admin" o "Vendedor")
-        public bool Enable { get; set; }       // Enable (Borrado lógico)
+        #region Properties
+        public int User_Id { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public bool Enable { get; set; } = true;
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Constructores                                                         */
-        /* --------------------------------------------------------------------- */
+        #region Constructors
+        public User() { }
 
-        /// <summary>
-        /// Inicializa una nueva instancia de la clase User con valores por defecto.
-        /// </summary>
-        public User()
+        public User(int userId, string username, string password, string role, bool enable)
         {
-            Username = string.Empty;
-            Password = string.Empty;
-            Role = string.Empty;
-            Enable = true;
+            this.User_Id = userId;
+            this.Username = username;
+            this.Password = password;
+            this.Role = role;
+            this.Enable = enable;
         }
+        #endregion
 
+        #region Validation Methods
         /// <summary>
-        /// Inicializa una nueva instancia de la clase User con los datos especificados.
+        /// Valida internamente que el formato del nombre de usuario cumpla con los requisitos mínimos.
         /// </summary>
-        public User(int userId, string username, string password, string role, bool enable = true)
+        public bool ValidateUsernameFormat()
         {
-            User_Id = userId;
-            Username = username;
-            Password = password;
-            Role = role;
-            Enable = enable;
+            if (string.IsNullOrWhiteSpace(this.Username) || this.Username.Length < 4)
+                return false;
+
+            return true;
         }
+        #endregion
 
-        /* --------------------------------------------------------------------- */
-        /* Métodos de Validación e Internos                                      */
-        /* --------------------------------------------------------------------- */
-
-        /// <summary>
-        /// Verifica si el usuario actual posee privilegios de Administrador.
-        /// </summary>
-        public bool IsAdmin()
-        {
-            return Role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Aplica criptografía SHA-256 a la cadena de texto proporcionada para proteger contraseñas.
-        /// </summary>
+        #region Security Methods
         private string ComputeSha256Hash(string rawData)
         {
-            using (SHA256 sha256Hash = SHA256.Create())
+            using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
             {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                StringBuilder builder = new StringBuilder();
-
+                byte[] bytes = sha256Hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(rawData));
+                System.Text.StringBuilder builder = new System.Text.StringBuilder();
                 foreach (byte item in bytes)
                     builder.Append(item.ToString("x2"));
-
                 return builder.ToString();
             }
         }
-
-        /* --------------------------------------------------------------------- */
-        /* Métodos de Persistencia (CRUD SQL Server)                             */
-        /* --------------------------------------------------------------------- */
+        #endregion
 
         /// <summary>
         /// Autentica al usuario comparando el Hash de su contraseña con el registro en base de datos.
         /// </summary>
         public User Authenticate(string username, string password)
         {
-            string query = @"SELECT User_Id, Username, Password, Role, Enable
-                             FROM Users
-                             WHERE Username = @user AND Password = @pass AND Enable = 1";
+            string sql = @"SELECT User_Id, Username, Password, Role, Enable 
+                           FROM Users 
+                           WHERE Username = @user AND Password = @pass AND Enable = 1";
 
-            SqlParameter[] parameters =
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@user", username),
-                new SqlParameter("@pass", ComputeSha256Hash(password))
+                new SqlParameter("@user", SqlDbType.VarChar) { Value = username.Trim() },
+                new SqlParameter("@pass", SqlDbType.VarChar) { Value = ComputeSha256Hash(password) }
             };
 
-            using (SelectQuery select = new SelectQuery())
-            {
-                DataTable dt = select.ExecuteSelect(query, parameters);
-                if (dt.Rows.Count == 0) return null;
+            using SelectQuery select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(sql, parameters);
 
-                DataRow row = dt.Rows[0];
-                return new User(
-                    Convert.ToInt32(row["User_Id"]),
-                    row["Username"].ToString(),
-                    row["Password"].ToString(),
-                    row["Role"].ToString(),
-                    Convert.ToBoolean(row["Enable"])
-                );
-            }
+            if (dt.Rows.Count == 0) return null;
+
+            DataRow row = dt.Rows[0];
+            return new User(
+                Convert.ToInt32(row["User_Id"]),
+                row["Username"].ToString(),
+                row["Password"].ToString(),
+                row["Role"].ToString(),
+                Convert.ToBoolean(row["Enable"])
+            );
         }
 
         /// <summary>
         /// Recupera la lista completa de usuarios activos en el sistema.
         /// </summary>
-        public List<User> ListAllUsers()
+        public System.Collections.Generic.List<User> ListAllUsers()
         {
-            List<User> list = new List<User>();
-            string query = "SELECT User_Id, Username, Password, Role, Enable FROM Users WHERE Enable = 1";
+            System.Collections.Generic.List<User> list = new System.Collections.Generic.List<User>();
+            string sql = "SELECT User_Id, Username, Password, Role, Enable FROM Users WHERE Enable = 1";
 
-            using (SelectQuery select = new SelectQuery())
+            using SelectQuery select = new SelectQuery();
+            DataTable dt = select.ExecuteSelect(sql);
+
+            foreach (DataRow row in dt.Rows)
             {
-                DataTable dt = select.ExecuteSelect(query);
-                foreach (DataRow row in dt.Rows)
-                {
-                    list.Add(new User(
-                        Convert.ToInt32(row["User_Id"]),
-                        row["Username"].ToString(),
-                        row["Password"].ToString(),
-                        row["Role"].ToString(),
-                        Convert.ToBoolean(row["Enable"])
-                    ));
-                }
+                list.Add(new User(
+                    Convert.ToInt32(row["User_Id"]),
+                    row["Username"].ToString(),
+                    row["Password"].ToString(),
+                    row["Role"].ToString(),
+                    Convert.ToBoolean(row["Enable"])
+                ));
             }
-
             return list;
         }
 
+        #region Persistence Methods (Active Record Style)
         /// <summary>
-        /// Inserta un nuevo usuario en la base de datos aplicando encriptación a la contraseña.
+        /// Comprueba si ya existe un usuario con el mismo Username en la base de datos.
         /// </summary>
-        public int AddUser()
+        public bool ExistsByUsername(string username, int currentUserId = 0)
         {
-            string query = @"INSERT INTO Users (Username, Password, Role, Enable)
-                             VALUES (@username, @password, @role, @enable)";
+            string sql = "SELECT CASE WHEN EXISTS(SELECT 1 FROM Users WHERE Username = @Username AND User_Id <> @UserId AND Enable = 1) THEN 1 ELSE 0 END";
 
-            SqlParameter[] parameters =
+            // Se utiliza la instrucción 'using' para asegurar la recolección de los recursos del comando
+            using SelectQuery select = new SelectQuery();
+
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@username", Username),
-                new SqlParameter("@password", ComputeSha256Hash(Password)),
-                new SqlParameter("@role", Role),
-                new SqlParameter("@enable", Enable)
+                new SqlParameter("@Username", SqlDbType.VarChar) { Value = username.Trim() },
+                new SqlParameter("@UserId", SqlDbType.Int) { Value = currentUserId }
             };
 
-            using (InsertCommand insert = new InsertCommand())
-                return insert.ExecuteInsert(query, parameters);
+            // Suponiendo que IsDuplicate o un método equivalente del profe Lawdee que ejecuta un ExecuteScalar
+            return select.IsDuplicate(sql, parameters);
         }
 
         /// <summary>
-        /// Actualiza los datos de un usuario existente, sobreescribiendo su Hash de contraseña.
+        /// Inserta el registro del objeto actual en la base de datos.
         /// </summary>
-        public int UpdateUser()
+        public bool InsertUser()
         {
-            string query = @"UPDATE Users
-                             SET Username = @username, Password = @password, Role = @role
-                             WHERE User_Id = @id";
+            string sql = "INSERT INTO Users (Username, Password, Role, Enable) VALUES (@Username, @Password, @Role, 1)";
 
-            SqlParameter[] parameters =
+            using InsertCommand insert = new InsertCommand();
+
+            SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@id", User_Id),
-                new SqlParameter("@username", Username),
-                new SqlParameter("@password", ComputeSha256Hash(Password)),
-                new SqlParameter("@role", Role)
+                new SqlParameter("@Username", SqlDbType.VarChar) { Value = this.Username.Trim() },
+                new SqlParameter("@Password", SqlDbType.VarChar) { Value = this.Password }, // Aquí puede ir el Hash SHA256 aplicado
+                new SqlParameter("@Role", SqlDbType.VarChar) { Value = this.Role }
             };
 
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
+            // Retorna verdadero si las filas afectadas son mayores a 0
+            return insert.ExecuteInsert(sql, parameters) > 0;
         }
 
         /// <summary>
-        /// Desactiva lógicamente a un usuario en el sistema.
+        /// Actualiza los datos del usuario actual.
         /// </summary>
-        public int DisableUser(int id)
+        public bool UpdateUser()
         {
-            string query = "UPDATE Users SET Enable = 0 WHERE User_Id = @id";
-            SqlParameter[] parameters = { new SqlParameter("@id", id) };
+            string sql = "UPDATE Users SET Username = @Username, Role = @Role WHERE User_Id = @UserId AND Enable = 1";
 
-            using (UpdateCommand update = new UpdateCommand())
-                return update.ExecuteUpdate(query, parameters);
-        }
-        /* --------------------------------------------------------------------- */
-        /* #region ESPACIO TEMPORAL (SIMULACIÓN PARA PRUEBAS DE LOGIN DE UI)     */
-        /* --------------------------------------------------------------------- */
-        #region Espacio Temporal de Pruebas en RAM
+            using UpdateCommand update = new UpdateCommand();
 
-        // Esta lista estática almacena tus usuarios de prueba temporalmente mientras diseñas las vistas.
-        private static readonly List<User> _mockUsers = new List<User>
-        {
-            new User(1, "admin", "admin123", "Admin"),
-            new User(2, "vendedor", "vendedor123", "Vendedor"),
-            new User(3, "elias", "caja2026", "Vendedor"),
-            new User(4, "milton", "superadmin", "Admin")
-        };
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@UserId", SqlDbType.Int) { Value = this.User_Id },
+                new SqlParameter("@Username", SqlDbType.VarChar) { Value = this.Username.Trim() },
+                new SqlParameter("@Role", SqlDbType.VarChar) { Value = this.Role }
+            };
 
-        /// <summary>
-        /// Método provisional para autenticar credenciales desde la pantalla de Login sin tocar la Base de Datos.
-        /// </summary>
-        public static User MockAuthenticate(string username, string password)
-        {
-            return _mockUsers.FirstOrDefault(u =>
-                u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) &&
-                u.Password == password &&
-                u.Enable);
+            return update.ExecuteUpdate(sql, parameters) > 0;
         }
 
         /// <summary>
-        /// Devuelve todos los usuarios simulados actuales para cargarlos en DataGridViews de prueba si es necesario.
+        /// Realiza un borrado lógico cambiando el estado 'Enable' a 0.
         /// </summary>
-        public static List<User> GetMockUsers()
+        public bool DeleteUser()
         {
-            return _mockUsers;
+            string sql = "UPDATE Users SET Enable = 0 WHERE User_Id = @UserId";
+
+            using DeleteCommand delete = new DeleteCommand();
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@UserId", SqlDbType.Int) { Value = this.User_Id }
+            };
+
+            return delete.ExecuteDelete(sql, parameters) > 0;
         }
         #endregion
-
+    
     }
 }

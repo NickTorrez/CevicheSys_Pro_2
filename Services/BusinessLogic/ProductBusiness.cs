@@ -12,49 +12,55 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class ProductBusiness
     {
-        private readonly Product product = new Product();
+        private readonly Product _productDomain = new Product();
+
+        /// <summary>
+        /// Valida y procesa el registro de un nuevo usuario en el sistema.
+        /// </summary>
+        /// <returns>
+        /// 0 = Éxito.
+        /// 1 = El objeto de usuario es nulo.
+        /// 2 = Nombre de usuario o contraseña vacíos.
+        /// 3 = Formato de nombre de usuario inválido.
+        /// 4 = El nombre de usuario ya se encuentra registrado.
+        /// 5 = Error al guardar en la base de datos.
+        /// </returns>
 
         public int InsertProduct(Product newProduct)
         {
             if (newProduct == null) return 1;
             if (string.IsNullOrWhiteSpace(newProduct.Product_Name)) return 2;
             if (newProduct.Category_Id <= 0) return 3;
-            if (newProduct.Current_Stock < 0) return 4;
-            if (newProduct.Minimum_Stock < 0) return 4;
 
-            newProduct.Product_Name = newProduct.Product_Name.Trim();
-            newProduct.Enable = true;
+            // Validaciones numéricas de inventario
+            if (newProduct.Current_Stock < 0 || newProduct.Minimum_Stock < 0) return 4;
 
-            return newProduct.AddProduct() > 0 ? 0 : 5;
+            // Validación de duplicidad en la Base de Datos
+            if (_productDomain.ExistsByName(newProduct.Product_Name)) return 5;
+
+            bool success = newProduct.InsertProduct();
+            return success ? 0 : 6;
         }
 
-        public int UpdateProduct(Product modifiedProduct)
+        public int UpdateProduct(Product existingProduct)
         {
-            if (modifiedProduct == null || modifiedProduct.Product_Id <= 0) return 1;
-            if (string.IsNullOrWhiteSpace(modifiedProduct.Product_Name)) return 2;
-            if (modifiedProduct.Category_Id <= 0) return 3;
-            if (modifiedProduct.Current_Stock < 0) return 4;
-            if (modifiedProduct.Minimum_Stock < 0) return 4;
+            if (existingProduct == null || existingProduct.Product_Id <= 0) return 1;
+            if (string.IsNullOrWhiteSpace(existingProduct.Product_Name)) return 2;
+            if (existingProduct.Category_Id <= 0) return 3;
+            if (existingProduct.Current_Stock < 0 || existingProduct.Minimum_Stock < 0) return 4;
 
-            modifiedProduct.Product_Name = modifiedProduct.Product_Name.Trim();
+            if (_productDomain.ExistsByName(existingProduct.Product_Name, existingProduct.Product_Id)) return 5;
 
-            return modifiedProduct.UpdateProduct() > 0 ? 0 : 5;
+            bool success = existingProduct.UpdateProduct();
+            return success ? 0 : 6;
         }
 
-        public int DisableProduct(int id)
+        public int DeleteProduct(int id)
         {
             if (id <= 0) return 1;
-            return product.DisableProduct(id) > 0 ? 0 : 5;
-        }
-
-        public List<Product> ListProducts()
-        {
-            return product.ListAllProducts();
-        }
-
-        public List<Product> ListLowStockProducts()
-        {
-            return product.ListAllProducts().FindAll(p => p.RequiresRestock());
+            Product productToDelete = new Product { Product_Id = id };
+            bool success = productToDelete.DeleteProduct();
+            return success ? 0 : 6;
         }
     }
 }

@@ -12,49 +12,38 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class DishBusiness
     {
-        private readonly Dish dish = new Dish();
+        private readonly Dish _dishDomain = new Dish();
 
         public int InsertDish(Dish newDish)
         {
             if (newDish == null) return 1;
-            if (string.IsNullOrWhiteSpace(newDish.Dish_Type)) return 2;
-            if (string.IsNullOrWhiteSpace(newDish.Size)) return 3;
-            if (newDish.Price <= 0) return 4;
+            if (string.IsNullOrWhiteSpace(newDish.Dish_Type) || string.IsNullOrWhiteSpace(newDish.Size)) return 2;
+            if (newDish.Price <= 0) return 3;
 
-            newDish.Dish_Type = newDish.Dish_Type.Trim();
-            newDish.Size = newDish.Size.Trim();
-            newDish.Enable = true;
+            if (_dishDomain.ExistsByTypeAndSize(newDish.Dish_Type, newDish.Size)) return 4;
 
-            return newDish.AddDish() > 0 ? 0 : 5;
+            bool success = newDish.InsertDish();
+            return success ? 0 : 5;
         }
 
-        public int UpdateDish(Dish modifiedDish)
+        public int UpdateDish(Dish existingDish)
         {
-            if (modifiedDish == null || modifiedDish.Dish_Id <= 0) return 1;
-            if (string.IsNullOrWhiteSpace(modifiedDish.Dish_Type)) return 2;
-            if (string.IsNullOrWhiteSpace(modifiedDish.Size)) return 3;
-            if (modifiedDish.Price <= 0) return 4;
+            if (existingDish == null || existingDish.Dish_Id <= 0) return 1;
+            if (string.IsNullOrWhiteSpace(existingDish.Dish_Type) || string.IsNullOrWhiteSpace(existingDish.Size)) return 2;
+            if (existingDish.Price <= 0) return 3;
 
-            modifiedDish.Dish_Type = modifiedDish.Dish_Type.Trim();
-            modifiedDish.Size = modifiedDish.Size.Trim();
+            if (_dishDomain.ExistsByTypeAndSize(existingDish.Dish_Type, existingDish.Size, existingDish.Dish_Id)) return 4;
 
-            return modifiedDish.UpdateDish() > 0 ? 0 : 5;
+            bool success = existingDish.UpdateDish();
+            return success ? 0 : 5;
         }
 
-        public int DisableDish(int id)
+        public int DeleteDish(int id)
         {
             if (id <= 0) return 1;
-            return dish.DisableDish(id) > 0 ? 0 : 5;
-        }
-
-        public List<Dish> ListDishes()
-        {
-            return dish.ListAllDishes();
-        }
-
-        public List<Dish> ListAvailableDishes()
-        {
-            return dish.ListAllDishes().FindAll(d => d.Is_Available);
+            Dish dishToDelete = new Dish { Dish_Id = id };
+            bool success = dishToDelete.DeleteDish();
+            return success ? 0 : 5;
         }
     }
 }

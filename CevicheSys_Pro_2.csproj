@@ -16,6 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
