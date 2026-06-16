@@ -14,11 +14,9 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
         {
             if (newRecipe == null) return 1;
             if (newRecipe.Dish_Id <= 0) return 2;
-            if (newRecipe.Ingredient_Id <= 0) return 3;
-            if (newRecipe.Quantity <= 0) return 4;
-            if (string.IsNullOrWhiteSpace(newRecipe.Unit)) return 4;
+            if (newRecipe.Product_Id <= 0) return 3;
+            if (newRecipe.Quantity_Used <= 0) return 4;
 
-            newRecipe.Unit = newRecipe.Unit.Trim();
             newRecipe.Enable = true;
 
             return newRecipe.AddRecipe() > 0 ? 0 : 5;
@@ -27,7 +25,7 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
         public int DisableRecipe(int recipeId)
         {
             if (recipeId <= 0) return 1;
-            return recipe.RemoveRecipe(recipeId) > 0 ? 0 : 5;
+            return recipe.DisableRecipe(recipeId) > 0 ? 0 : 5;
         }
     }
 }

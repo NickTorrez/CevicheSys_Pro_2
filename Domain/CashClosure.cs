@@ -18,7 +18,7 @@ namespace CevicheSys_Pro_2
         public int User_Id { get; set; }             // ACTUALIZADO: FK obligatoria
         public DateTime Closure_Date { get; set; }
         public decimal Initial_Cash { get; set; }    // ACTUALIZADO: Fondo de caja ingresado en la mañana
-        public decimal Calculated_Income { get; set; }
+        public decimal Calculated_Income { get; set; } 
         public decimal Real_Cash { get; set; }
         public string Notes_Remarks { get; set; }    // ACTUALIZADO: Para soportar las observaciones
 
@@ -65,10 +65,10 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public List<CashClosure> ListAllClosures()
         {
-            var list = new List<CashClosure>();
+            List<CashClosure> list = new List<CashClosure>();
             string query = "SELECT Closure_Id, User_Id, Closure_Date, Initial_Cash, Calculated_Income, Real_Cash, Notes_Remarks, Enable FROM Cash_Closure WHERE Enable = 1 ORDER BY Closure_Date DESC";
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
@@ -85,6 +85,7 @@ namespace CevicheSys_Pro_2
                     ));
                 }
             }
+
             return list;
         }
 
@@ -93,22 +94,22 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int AddCashClosure()
         {
-            string query = @"INSERT INTO Cash_Closure (User_Id, Closure_Date, Initial_Cash, Calculated_Income, Real_Cash, Notes_Remarks, Enable) 
-                             VALUES (@userId, @date, @initial, @calc, @real, @notes, @enable)";
-            SqlParameter[] parameters = {
-                new SqlParameter("@userId", this.User_Id),
-                new SqlParameter("@date", this.Closure_Date),
-                new SqlParameter("@initial", this.Initial_Cash),
-                new SqlParameter("@calc", this.Calculated_Income),
-                new SqlParameter("@real", this.Real_Cash),
-                new SqlParameter("@notes", (object)this.Notes_Remarks ?? DBNull.Value),
-                new SqlParameter("@enable", this.Enable)
+            string query = @"INSERT INTO Cash_Closure (User_Id, Closure_Date, Initial_Cash, Calculated_Income, Real_Cash, Notes_Remarks, Enable)
+                             VALUES (@userId, @date, @initial, @calculated, @real, @notes, @enable)";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@userId", User_Id),
+                new SqlParameter("@date", Closure_Date),
+                new SqlParameter("@initial", Initial_Cash),
+                new SqlParameter("@calculated", Calculated_Income),
+                new SqlParameter("@real", Real_Cash),
+                new SqlParameter("@notes", (object)Notes_Remarks ?? DBNull.Value),
+                new SqlParameter("@enable", Enable)
             };
 
-            using (var insert = new InsertCommand())
-            {
+            using (InsertCommand insert = new InsertCommand())
                 return insert.ExecuteInsert(query, parameters);
-            }
         }
     }
 }

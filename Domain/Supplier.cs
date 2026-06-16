@@ -1,13 +1,14 @@
-﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using CevicheSys_Pro_2.Domain;
 using CevicheSys_Pro_2.Services.Persistence;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json;
-using System.IO;
-using CevicheSys_Pro_2.Domain;
 
 namespace CevicheSys_Pro_2
 {
@@ -68,6 +69,8 @@ namespace CevicheSys_Pro_2
             return !string.IsNullOrWhiteSpace(Tax_Id) && Tax_Id.Trim().Length >= 14;
         }
 
+        public string FullName => $"{First_Name} {Last_Name}".Trim();
+
         /* --------------------------------------------------------------------- */
         /* Métodos CRUD (Persistencia desde el Dominio)                          */
         /* --------------------------------------------------------------------- */
@@ -77,15 +80,15 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public List<Supplier> ListAllSuppliers()
         {
-            var suppliers = new List<Supplier>();
+            List<Supplier> list = new List<Supplier>();
             string query = "SELECT Supplier_Id, Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable FROM Supplier WHERE Enable = 1";
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
                 {
-                    suppliers.Add(new Supplier(
+                    list.Add(new Supplier(
                         Convert.ToInt32(row["Supplier_Id"]),
                         row["Tax_Id"].ToString(),
                         row["First_Name"].ToString(),
@@ -97,7 +100,8 @@ namespace CevicheSys_Pro_2
                     ));
                 }
             }
-            return suppliers;
+
+            return list;
         }
 
         /// <summary>
@@ -105,22 +109,23 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int AddSupplier()
         {
-            string query = @"INSERT INTO Supplier (Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable) 
-                             VALUES (@TaxId, @FirstName, @LastName, @Address, @Phone, @Email, @Enable)";
-            SqlParameter[] parameters = {
-                new SqlParameter("@TaxId", this.Tax_Id),
-                new SqlParameter("@FirstName", this.First_Name),
-                new SqlParameter("@LastName", this.Last_Name),
-                new SqlParameter("@Address", this.Address),
-                new SqlParameter("@Phone", this.Phone),
-                new SqlParameter("@Email", this.Email),
-                new SqlParameter("@Enable", this.Enable)
+            string query = @"INSERT INTO Supplier (Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable)
+                             VALUES (@taxId, @firstName, @lastName, @address, @phone, @email, @enable)";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@taxId", Tax_Id),
+                new SqlParameter("@firstName", First_Name),
+                new SqlParameter("@lastName", Last_Name),
+                new SqlParameter("@address", (object)Address ?? DBNull.Value),
+                new SqlParameter("@phone", (object)Phone ?? DBNull.Value),
+                new SqlParameter("@email", (object)Email ?? DBNull.Value),
+                new SqlParameter("@enable", Enable)
             };
 
-            using (var insert = new InsertCommand())
-            {
+            using (InsertCommand insert = new InsertCommand())
                 return insert.ExecuteInsert(query, parameters);
-            }
+            
         }
 
         /// <summary>
@@ -128,22 +133,24 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int UpdateSupplier()
         {
-            string query = @"UPDATE Supplier SET Tax_Id = @TaxId, First_Name = @FirstName, Last_Name = @LastName, 
-                             Address = @Address, Phone = @Phone, Email = @Email WHERE Supplier_Id = @Id";
-            SqlParameter[] parameters = {
-                new SqlParameter("@Id", this.Supplier_Id),
-                new SqlParameter("@TaxId", this.Tax_Id),
-                new SqlParameter("@FirstName", this.First_Name),
-                new SqlParameter("@LastName", this.Last_Name),
-                new SqlParameter("@Address", this.Address),
-                new SqlParameter("@Phone", this.Phone),
-                new SqlParameter("@Email", this.Email)
+            string query = @"UPDATE Supplier
+                             SET Tax_Id = @taxId, First_Name = @firstName, Last_Name = @lastName,
+                                 Address = @address, Phone = @phone, Email = @email
+                             WHERE Supplier_Id = @id";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", Supplier_Id),
+                new SqlParameter("@taxId", Tax_Id),
+                new SqlParameter("@firstName", First_Name),
+                new SqlParameter("@lastName", Last_Name),
+                new SqlParameter("@address", (object)Address ?? DBNull.Value),
+                new SqlParameter("@phone", (object)Phone ?? DBNull.Value),
+                new SqlParameter("@email", (object)Email ?? DBNull.Value)
             };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
 
         /// <summary>
@@ -151,13 +158,11 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int DisableSupplier(int id)
         {
-            string query = "UPDATE Supplier SET Enable = 0 WHERE Supplier_Id = @Id";
-            SqlParameter[] parameters = { new SqlParameter("@Id", id) };
+            string query = "UPDATE Supplier SET Enable = 0 WHERE Supplier_Id = @id";
+            SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
     }
 

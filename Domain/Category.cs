@@ -53,10 +53,10 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public List<Category> ListAllCategories()
         {
-            var list = new List<Category>();
+            List<Category> list = new List<Category>();
             string query = "SELECT Category_Id, Category_Name, Target_Module, Enable FROM Category WHERE Enable = 1";
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
@@ -69,6 +69,7 @@ namespace CevicheSys_Pro_2
                     ));
                 }
             }
+
             return list;
         }
 
@@ -78,16 +79,16 @@ namespace CevicheSys_Pro_2
         public int AddCategory()
         {
             string query = "INSERT INTO Category (Category_Name, Target_Module, Enable) VALUES (@name, @module, @enable)";
-            SqlParameter[] parameters = {
-                new SqlParameter("@name", this.Category_Name),
-                new SqlParameter("@module", this.Target_Module),
-                new SqlParameter("@enable", this.Enable)
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@name", Category_Name),
+                new SqlParameter("@module", Target_Module),
+                new SqlParameter("@enable", Enable)
             };
 
-            using (var insert = new InsertCommand())
-            {
+            using (InsertCommand insert = new InsertCommand())
                 return insert.ExecuteInsert(query, parameters);
-            }
         }
 
         /// <summary>
@@ -96,16 +97,16 @@ namespace CevicheSys_Pro_2
         public int UpdateCategory()
         {
             string query = "UPDATE Category SET Category_Name = @name, Target_Module = @module WHERE Category_Id = @id";
-            SqlParameter[] parameters = {
-                new SqlParameter("@id", this.Category_Id),
-                new SqlParameter("@name", this.Category_Name),
-                new SqlParameter("@module", this.Target_Module)
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", Category_Id),
+                new SqlParameter("@name", Category_Name),
+                new SqlParameter("@module", Target_Module)
             };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
 
         /// <summary>
@@ -116,10 +117,8 @@ namespace CevicheSys_Pro_2
             string query = "UPDATE Category SET Enable = 0 WHERE Category_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
     }
 }

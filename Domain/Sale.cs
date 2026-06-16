@@ -35,7 +35,7 @@ namespace CevicheSys_Pro_2
             Payment_Method = string.Empty;
             Purchase_Type = string.Empty;
             Record_Date = DateTime.Now;
-            Total_Amount = 0.0m;
+            Total_Amount = 0m;
             Enable = true;
         }
 
@@ -64,40 +64,43 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int ProcessSaleWithDetails(List<SaleDetail> details)
         {
-            string masterQuery = @"INSERT INTO Sale (Customer_Id, Payment_Method, Purchase_Type, Total_Amount, Record_Date, User_Id, Enable) 
-                                   VALUES (@cust, @pay, @type, @total, @date, @userId, @enable);
+            string masterQuery = @"INSERT INTO Sale (User_Id, Customer_Id, Payment_Method, Purchase_Type, Total_Amount, Record_Date, Enable)
+                                   VALUES (@userId, @customerId, @paymentMethod, @purchaseType, @totalAmount, @recordDate, @enable);
                                    SELECT SCOPE_IDENTITY();";
 
-            SqlParameter[] masterParams = {
-                new SqlParameter("@cust", (object)this.Customer_Id ?? DBNull.Value),
-                new SqlParameter("@pay", this.Payment_Method),
-                new SqlParameter("@type", this.Purchase_Type),
-                new SqlParameter("@total", this.Total_Amount),
-                new SqlParameter("@date", this.Record_Date),
-                new SqlParameter("@userId", this.User_Id),
-                new SqlParameter("@enable", this.Enable)
+            SqlParameter[] masterParams =
+            {
+                new SqlParameter("@userId", User_Id),
+                new SqlParameter("@customerId", (object)Customer_Id ?? DBNull.Value),
+                new SqlParameter("@paymentMethod", Payment_Method),
+                new SqlParameter("@purchaseType", Purchase_Type),
+                new SqlParameter("@totalAmount", Total_Amount),
+                new SqlParameter("@recordDate", Record_Date),
+                new SqlParameter("@enable", Enable)
             };
 
-            using (var insertMaster = new InsertCommand())
+            using (InsertCommand insertMaster = new InsertCommand())
             {
                 int generatedSaleId = insertMaster.ExecuteInsertReturnId(masterQuery, masterParams);
                 if (generatedSaleId <= 0) return 0;
 
-                string detailQuery = "INSERT INTO Sale_Detail (Sale_Id, Dish_Id, Quantity, Enable) VALUES (@saleId, @dishId, @qty, 1)";
+                string detailQuery = @"INSERT INTO Sale_Detail (Dish_Id, Sale_Id, Quantity, Enable)
+                                       VALUES (@dishId, @saleId, @quantity, @enable)";
 
-                foreach (var item in details)
+                foreach (SaleDetail item in details)
                 {
-                    SqlParameter[] detailParams = {
-                        new SqlParameter("@saleId", generatedSaleId),
+                    SqlParameter[] detailParams =
+                    {
                         new SqlParameter("@dishId", item.Dish_Id),
-                        new SqlParameter("@qty", item.Quantity)
+                        new SqlParameter("@saleId", generatedSaleId),
+                        new SqlParameter("@quantity", item.Quantity),
+                        new SqlParameter("@enable", true)
                     };
 
-                    using (var insertDetail = new InsertCommand())
-                    {
+                    using (InsertCommand insertDetail = new InsertCommand())
                         insertDetail.ExecuteInsert(detailQuery, detailParams);
-                    }
                 }
+
                 return generatedSaleId;
             }
         }

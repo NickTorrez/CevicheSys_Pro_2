@@ -60,15 +60,15 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public List<Customer> ListAllCustomers()
         {
-            var customers = new List<Customer>();
+            List<Customer> list = new List<Customer>();
             string query = "SELECT Customer_Id, Full_Name, Phone, Enable FROM Customer WHERE Enable = 1";
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
                 {
-                    customers.Add(new Customer(
+                    list.Add(new Customer(
                         Convert.ToInt32(row["Customer_Id"]),
                         row["Full_Name"].ToString(),
                         row["Phone"].ToString(),
@@ -76,7 +76,8 @@ namespace CevicheSys_Pro_2
                     ));
                 }
             }
-            return customers;
+
+            return list;
         }
 
         /// <summary>
@@ -84,17 +85,17 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int AddCustomer()
         {
-            string query = "INSERT INTO Customer (Full_Name, Phone, Enable) VALUES (@FullName, @Phone, @Enable)";
-            SqlParameter[] parameters = {
-                new SqlParameter("@FullName", this.Full_Name),
-                new SqlParameter("@Phone", this.Phone),
-                new SqlParameter("@Enable", this.Enable)
+            string query = "INSERT INTO Customer (Full_Name, Phone, Enable) VALUES (@name, @phone, @enable)";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@name", Full_Name),
+                new SqlParameter("@phone", (object)Phone ?? DBNull.Value),
+                new SqlParameter("@enable", Enable)
             };
 
-            using (var insert = new InsertCommand())
-            {
+            using (InsertCommand insert = new InsertCommand())
                 return insert.ExecuteInsert(query, parameters);
-            }
         }
 
         /// <summary>
@@ -102,17 +103,17 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int UpdateCustomer()
         {
-            string query = "UPDATE Customer SET Full_Name = @FullName, Phone = @Phone WHERE Customer_Id = @Id";
-            SqlParameter[] parameters = {
-                new SqlParameter("@Id", this.Customer_Id),
-                new SqlParameter("@FullName", this.Full_Name),
-                new SqlParameter("@Phone", this.Phone)
+            string query = "UPDATE Customer SET Full_Name = @name, Phone = @phone WHERE Customer_Id = @id";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", Customer_Id),
+                new SqlParameter("@name", Full_Name),
+                new SqlParameter("@phone", (object)Phone ?? DBNull.Value)
             };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
 
         /// <summary>
@@ -120,13 +121,11 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int DisableCustomer(int id)
         {
-            string query = "UPDATE Customer SET Enable = 0 WHERE Customer_Id = @Id";
-            SqlParameter[] parameters = { new SqlParameter("@Id", id) };
+            string query = "UPDATE Customer SET Enable = 0 WHERE Customer_Id = @id";
+            SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
     }
 }

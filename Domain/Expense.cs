@@ -15,12 +15,13 @@ namespace CevicheSys_Pro_2
         /* Propiedades de la Entidad                                             */
         /* --------------------------------------------------------------------- */
         public int Expense_Id { get; set; }
-        public string Concept { get; set; }     // ACTUALIZADO según DB
-        public decimal Amount { get; set; }     // ACTUALIZADO a Decimal
-        public DateTime Date { get; set; }
         public int Category_Id { get; set; }
-        public int User_Id { get; set; }        // ACTUALIZADO: FK obligatoria en BD
+        public string Concept { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
         public bool Enable { get; set; }
+        public int User_Id { get; set; }
+
 
         /* --------------------------------------------------------------------- */
         /* Constructores                                                         */
@@ -32,21 +33,21 @@ namespace CevicheSys_Pro_2
         public Expense()
         {
             Concept = string.Empty;
-            Date = DateTime.Now;
-            Amount = 0.0m;
+            Date = DateTime.Today;
+            Amount = 0m;
             Enable = true;
         }
 
         /// <summary>
         /// Configura el registro contable de salida de efectivo con sus detalles y el usuario auditor.
         /// </summary>
-        public Expense(int expenseId, string concept, decimal amount, DateTime date, int categoryId, int userId, bool enable = true)
+        public Expense(int expenseId, int categoryId, string concept, decimal amount, DateTime date, int userId, bool enable = true)
         {
             Expense_Id = expenseId;
+            Category_Id = categoryId;
             Concept = concept;
             Amount = amount;
             Date = date;
-            Category_Id = categoryId;
             User_Id = userId;
             Enable = enable;
         }
@@ -60,25 +61,26 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public List<Expense> ListAllExpenses()
         {
-            var list = new List<Expense>();
-            string query = "SELECT Expense_Id, Concept, Amount, Date, Category_Id, User_Id, Enable FROM Expense WHERE Enable = 1";
+            List<Expense> list = new List<Expense>();
+            string query = "SELECT Expense_Id, Category_Id, Concept, Amount, Date, User_Id, Enable FROM Expense WHERE Enable = 1";
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
                 {
                     list.Add(new Expense(
                         Convert.ToInt32(row["Expense_Id"]),
+                        Convert.ToInt32(row["Category_Id"]),
                         row["Concept"].ToString(),
                         Convert.ToDecimal(row["Amount"]),
                         Convert.ToDateTime(row["Date"]),
-                        Convert.ToInt32(row["Category_Id"]),
                         Convert.ToInt32(row["User_Id"]),
                         Convert.ToBoolean(row["Enable"])
                     ));
                 }
             }
+
             return list;
         }
 
@@ -87,20 +89,21 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int AddExpense()
         {
-            string query = "INSERT INTO Expense (Concept, Amount, Date, Category_Id, User_Id, Enable) VALUES (@concept, @amount, @date, @catId, @userId, @enable)";
-            SqlParameter[] parameters = {
-                new SqlParameter("@concept", this.Concept),
-                new SqlParameter("@amount", this.Amount),
-                new SqlParameter("@date", this.Date),
-                new SqlParameter("@catId", this.Category_Id),
-                new SqlParameter("@userId", this.User_Id),
-                new SqlParameter("@enable", this.Enable)
+            string query = @"INSERT INTO Expense (Category_Id, Concept, Amount, Date, Enable, User_Id)
+                             VALUES (@categoryId, @concept, @amount, @date, @enable, @userId)";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@categoryId", Category_Id),
+                new SqlParameter("@concept", Concept),
+                new SqlParameter("@amount", Amount),
+                new SqlParameter("@date", Date.Date),
+                new SqlParameter("@enable", Enable),
+                new SqlParameter("@userId", User_Id)
             };
 
-            using (var insert = new InsertCommand())
-            {
+            using (InsertCommand insert = new InsertCommand())
                 return insert.ExecuteInsert(query, parameters);
-            }
         }
 
         /// <summary>
@@ -108,19 +111,21 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int UpdateExpense()
         {
-            string query = "UPDATE Expense SET Concept = @concept, Amount = @amount, Date = @date, Category_Id = @catId WHERE Expense_Id = @id";
-            SqlParameter[] parameters = {
-                new SqlParameter("@id", this.Expense_Id),
-                new SqlParameter("@concept", this.Concept),
-                new SqlParameter("@amount", this.Amount),
-                new SqlParameter("@date", this.Date),
-                new SqlParameter("@catId", this.Category_Id)
+            string query = @"UPDATE Expense
+                             SET Category_Id = @categoryId, Concept = @concept, Amount = @amount, Date = @date
+                             WHERE Expense_Id = @id";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", Expense_Id),
+                new SqlParameter("@categoryId", Category_Id),
+                new SqlParameter("@concept", Concept),
+                new SqlParameter("@amount", Amount),
+                new SqlParameter("@date", Date.Date)
             };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
 
         /// <summary>
@@ -131,10 +136,8 @@ namespace CevicheSys_Pro_2
             string query = "UPDATE Expense SET Enable = 0 WHERE Expense_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
     }
     

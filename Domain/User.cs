@@ -74,10 +74,10 @@ namespace CevicheSys_Pro_2
             {
                 byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
                 StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
+
+                foreach (byte item in bytes)
+                    builder.Append(item.ToString("x2"));
+
                 return builder.ToString();
             }
         }
@@ -91,28 +91,30 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public User Authenticate(string username, string password)
         {
-            string query = "SELECT User_Id, Username, Password, Role, Enable FROM Users WHERE Username = @user AND Password = @pass AND Enable = 1";
-            SqlParameter[] parameters = {
+            string query = @"SELECT User_Id, Username, Password, Role, Enable
+                             FROM Users
+                             WHERE Username = @user AND Password = @pass AND Enable = 1";
+
+            SqlParameter[] parameters =
+            {
                 new SqlParameter("@user", username),
                 new SqlParameter("@pass", ComputeSha256Hash(password))
             };
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query, parameters);
-                if (dt.Rows.Count > 0)
-                {
-                    DataRow row = dt.Rows[0];
-                    return new User(
-                        Convert.ToInt32(row["User_Id"]),
-                        row["Username"].ToString(),
-                        row["Password"].ToString(),
-                        row["Role"].ToString(),
-                        Convert.ToBoolean(row["Enable"])
-                    );
-                }
+                if (dt.Rows.Count == 0) return null;
+
+                DataRow row = dt.Rows[0];
+                return new User(
+                    Convert.ToInt32(row["User_Id"]),
+                    row["Username"].ToString(),
+                    row["Password"].ToString(),
+                    row["Role"].ToString(),
+                    Convert.ToBoolean(row["Enable"])
+                );
             }
-            return null;
         }
 
         /// <summary>
@@ -120,10 +122,10 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public List<User> ListAllUsers()
         {
-            var list = new List<User>();
+            List<User> list = new List<User>();
             string query = "SELECT User_Id, Username, Password, Role, Enable FROM Users WHERE Enable = 1";
 
-            using (var select = new SelectQuery())
+            using (SelectQuery select = new SelectQuery())
             {
                 DataTable dt = select.ExecuteSelect(query);
                 foreach (DataRow row in dt.Rows)
@@ -137,6 +139,7 @@ namespace CevicheSys_Pro_2
                     ));
                 }
             }
+
             return list;
         }
 
@@ -145,18 +148,19 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int AddUser()
         {
-            string query = "INSERT INTO Users (Username, Password, Role, Enable) VALUES (@username, @password, @role, @enable)";
-            SqlParameter[] parameters = {
-                new SqlParameter("@username", this.Username),
-                new SqlParameter("@password", ComputeSha256Hash(this.Password)),
-                new SqlParameter("@role", this.Role),
-                new SqlParameter("@enable", this.Enable)
+            string query = @"INSERT INTO Users (Username, Password, Role, Enable)
+                             VALUES (@username, @password, @role, @enable)";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@username", Username),
+                new SqlParameter("@password", ComputeSha256Hash(Password)),
+                new SqlParameter("@role", Role),
+                new SqlParameter("@enable", Enable)
             };
 
-            using (var insert = new InsertCommand())
-            {
+            using (InsertCommand insert = new InsertCommand())
                 return insert.ExecuteInsert(query, parameters);
-            }
         }
 
         /// <summary>
@@ -164,18 +168,20 @@ namespace CevicheSys_Pro_2
         /// </summary>
         public int UpdateUser()
         {
-            string query = "UPDATE Users SET Username = @username, Password = @password, Role = @role WHERE User_Id = @id";
-            SqlParameter[] parameters = {
-                new SqlParameter("@id", this.User_Id),
-                new SqlParameter("@username", this.Username),
-                new SqlParameter("@password", ComputeSha256Hash(this.Password)),
-                new SqlParameter("@role", this.Role)
+            string query = @"UPDATE Users
+                             SET Username = @username, Password = @password, Role = @role
+                             WHERE User_Id = @id";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", User_Id),
+                new SqlParameter("@username", Username),
+                new SqlParameter("@password", ComputeSha256Hash(Password)),
+                new SqlParameter("@role", Role)
             };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
 
         /// <summary>
@@ -186,10 +192,8 @@ namespace CevicheSys_Pro_2
             string query = "UPDATE Users SET Enable = 0 WHERE User_Id = @id";
             SqlParameter[] parameters = { new SqlParameter("@id", id) };
 
-            using (var update = new UpdateCommand())
-            {
+            using (UpdateCommand update = new UpdateCommand())
                 return update.ExecuteUpdate(query, parameters);
-            }
         }
         /* --------------------------------------------------------------------- */
         /* #region ESPACIO TEMPORAL (SIMULACIÓN PARA PRUEBAS DE LOGIN DE UI)     */
