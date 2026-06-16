@@ -13,29 +13,25 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class SaleBusiness
     {
-        private Sale sale;
-
-        public SaleBusiness()
-        {
-            sale = new Sale();
-        }
+        private readonly Sale expense = new Sale();
 
         public int InsertCompleteSale(Sale newSale, List<SaleDetail> details)
         {
             if (newSale == null) return 1;
+            if (details == null || details.Count == 0) return 2;
+            if (newSale.Total_Amount <= 0) return 3;
+            if (newSale.User_Id <= 0) return 4;
+            if (string.IsNullOrWhiteSpace(newSale.Payment_Method)) return 4;
+            if (string.IsNullOrWhiteSpace(newSale.Purchase_Type)) return 4;
+            if (details.Any(d => d.Dish_Id <= 0 || d.Quantity <= 0)) return 4;
 
-            // Reglas estrictas de Punto de Venta
-            if (details == null || details.Count == 0) return 2; // No se puede facturar una venta vacía
-            if (newSale.Total_Amount <= 0) return 3; // El monto total debe ser válido
-            if (newSale.User_Id <= 0) return 4; // Debe existir un usuario responsable
+            newSale.Payment_Method = newSale.Payment_Method.Trim();
+            newSale.Purchase_Type = newSale.Purchase_Type.Trim();
+            newSale.Enable = true;
 
-            // Se delega al dominio la transacción completa
             int generatedId = newSale.ProcessSaleWithDetails(details);
 
-            if (generatedId > 0)
-                return 0; // Transacción procesada con éxito
-            else
-                return 5; // Error al consolidar la venta en base de datos
+            return generatedId > 0 ? 0 : 5;
         }
 
     }

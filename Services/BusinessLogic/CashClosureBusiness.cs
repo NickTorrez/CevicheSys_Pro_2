@@ -12,26 +12,21 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class CashClosureBusiness
     {
-        private CashClosure closure;
-
-        public CashClosureBusiness()
-        {
-            closure = new CashClosure();
-        }
+        private readonly CashClosure closure = new CashClosure();
 
         public int InsertClosure(CashClosure newClosure)
         {
             if (newClosure == null) return 1;
+            if (newClosure.User_Id <= 0) return 2;
+            if (newClosure.Initial_Cash < 0) return 3;
+            if (newClosure.Calculated_Income < 0) return 3;
+            if (newClosure.Real_Cash < 0) return 3;
 
-            // Regla: El dinero real reportado no puede ser un número negativo
-            if (newClosure.Real_Cash < 0) return 2;
+            newClosure.Notes_Remarks = newClosure.Notes_Remarks?.Trim() ?? string.Empty;
+            newClosure.Cash_Discrepancy = newClosure.Real_Cash - newClosure.Calculated_Income;
+            newClosure.Enable = true;
 
-            // La propiedad Cash_Discrepancy ya fue validada matemáticamente en el constructor del Dominio
-
-            if (newClosure.AddCashClosure() > 0)
-                return 0;
-            else
-                return 3;
+            return newClosure.AddCashClosure() > 0 ? 0 : 5;
         }
 
         public List<CashClosure> ListClosures()

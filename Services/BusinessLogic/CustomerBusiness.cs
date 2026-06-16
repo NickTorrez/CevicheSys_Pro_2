@@ -12,48 +12,35 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class CustomerBusiness
     {
-        private Customer customer;
-
-        public CustomerBusiness()
-        {
-            customer = new Customer();
-        }
+        private readonly Customer customer = new Customer();
 
         public int InsertCustomer(Customer newCustomer)
         {
             if (newCustomer == null) return 1;
+            if (!newCustomer.ValidateIdentification()) return 2;
 
-            // Validación polimórfica heredada de la clase base Person
-            if (!newCustomer.ValidateIdentification())
-                return 2; // El nombre del cliente no cumple con la longitud mínima
+            newCustomer.Full_Name = newCustomer.Full_Name.Trim();
+            newCustomer.Phone = newCustomer.Phone?.Trim() ?? string.Empty;
+            newCustomer.Enable = true;
 
-            if (newCustomer.AddCustomer() > 0)
-                return 0;
-            else
-                return 3; // Error de persistencia
+            return newCustomer.AddCustomer() > 0 ? 0 : 5;
         }
 
         public int UpdateCustomer(Customer modifiedCustomer)
         {
             if (modifiedCustomer == null || modifiedCustomer.Customer_Id <= 0) return 1;
+            if (!modifiedCustomer.ValidateIdentification()) return 2;
 
-            if (!modifiedCustomer.ValidateIdentification())
-                return 2;
+            modifiedCustomer.Full_Name = modifiedCustomer.Full_Name.Trim();
+            modifiedCustomer.Phone = modifiedCustomer.Phone?.Trim() ?? string.Empty;
 
-            if (modifiedCustomer.UpdateCustomer() > 0)
-                return 0;
-            else
-                return 3;
+            return modifiedCustomer.UpdateCustomer() > 0 ? 0 : 5;
         }
 
         public int DisableCustomer(int id)
         {
             if (id <= 0) return 1;
-
-            if (customer.DisableCustomer(id) > 0)
-                return 0;
-            else
-                return 3;
+            return customer.DisableCustomer(id) > 0 ? 0 : 5;
         }
 
         public List<Customer> ListCustomers()

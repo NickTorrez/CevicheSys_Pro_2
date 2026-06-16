@@ -13,46 +13,38 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class ExpenseBusiness
     {
-        private Expense expense;
-
-        public ExpenseBusiness()
-        {
-            expense = new Expense();
-        }
+        private readonly Expense expense = new Expense();
 
         public int InsertExpense(Expense newExpense)
         {
             if (newExpense == null) return 1;
+            if (string.IsNullOrWhiteSpace(newExpense.Concept)) return 2;
+            if (newExpense.Amount <= 0) return 3;
+            if (newExpense.Category_Id <= 0) return 4;
+            if (newExpense.User_Id <= 0) return 4;
 
-            // Reglas de negocio contables
-            if (newExpense.Amount <= 0) return 2; // Un egreso no puede ser cero o negativo
-            if (string.IsNullOrWhiteSpace(newExpense.Concept)) return 3; // Debe justificarse la salida
+            newExpense.Concept = newExpense.Concept.Trim();
+            newExpense.Enable = true;
 
-            if (newExpense.AddExpense() > 0)
-                return 0;
-            else
-                return 4;
+            return newExpense.AddExpense() > 0 ? 0 : 5;
         }
 
         public int UpdateExpense(Expense modifiedExpense)
         {
             if (modifiedExpense == null || modifiedExpense.Expense_Id <= 0) return 1;
-            if (modifiedExpense.Amount <= 0) return 2;
+            if (string.IsNullOrWhiteSpace(modifiedExpense.Concept)) return 2;
+            if (modifiedExpense.Amount <= 0) return 3;
+            if (modifiedExpense.Category_Id <= 0) return 4;
 
-            if (modifiedExpense.UpdateExpense() > 0)
-                return 0;
-            else
-                return 4;
+            modifiedExpense.Concept = modifiedExpense.Concept.Trim();
+
+            return modifiedExpense.UpdateExpense() > 0 ? 0 : 5;
         }
 
         public int DisableExpense(int id)
         {
             if (id <= 0) return 1;
-
-            if (expense.DisableExpense(id) > 0)
-                return 0;
-            else
-                return 4;
+            return expense.DisableExpense(id) > 0 ? 0 : 5;
         }
 
         public List<Expense> ListExpenses()

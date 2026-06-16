@@ -12,52 +12,49 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class DishBusiness
     {
-        private Dish dish;
-
-        public DishBusiness()
-        {
-            dish = new Dish();
-        }
+        private readonly Dish dish = new Dish();
 
         public int InsertDish(Dish newDish)
         {
             if (newDish == null) return 1;
+            if (string.IsNullOrWhiteSpace(newDish.Dish_Type)) return 2;
+            if (string.IsNullOrWhiteSpace(newDish.Size)) return 3;
+            if (newDish.Price <= 0) return 4;
 
-            // Reglas de negocio restrictivas para el menú
-            if (string.IsNullOrWhiteSpace(newDish.Dish_Type)) return 2; // El tipo es obligatorio
-            if (newDish.Price <= 0) return 3; // Un platillo no puede ser gratis ni tener precio negativo
+            newDish.Dish_Type = newDish.Dish_Type.Trim();
+            newDish.Size = newDish.Size.Trim();
+            newDish.Enable = true;
 
-            if (newDish.AddDish() > 0)
-                return 0;
-            else
-                return 4;
+            return newDish.AddDish() > 0 ? 0 : 5;
         }
 
         public int UpdateDish(Dish modifiedDish)
         {
             if (modifiedDish == null || modifiedDish.Dish_Id <= 0) return 1;
             if (string.IsNullOrWhiteSpace(modifiedDish.Dish_Type)) return 2;
-            if (modifiedDish.Price <= 0) return 3;
+            if (string.IsNullOrWhiteSpace(modifiedDish.Size)) return 3;
+            if (modifiedDish.Price <= 0) return 4;
 
-            if (modifiedDish.UpdateDish() > 0)
-                return 0;
-            else
-                return 4;
+            modifiedDish.Dish_Type = modifiedDish.Dish_Type.Trim();
+            modifiedDish.Size = modifiedDish.Size.Trim();
+
+            return modifiedDish.UpdateDish() > 0 ? 0 : 5;
         }
 
         public int DisableDish(int id)
         {
             if (id <= 0) return 1;
-
-            if (dish.DisableDish(id) > 0)
-                return 0;
-            else
-                return 4;
+            return dish.DisableDish(id) > 0 ? 0 : 5;
         }
 
         public List<Dish> ListDishes()
         {
             return dish.ListAllDishes();
+        }
+
+        public List<Dish> ListAvailableDishes()
+        {
+            return dish.ListAllDishes().FindAll(d => d.Is_Available);
         }
     }
 }

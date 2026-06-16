@@ -12,47 +12,39 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class ProductBusiness
     {
-        private Product product;
-
-        public ProductBusiness()
-        {
-            product = new Product();
-        }
+        private readonly Product product = new Product();
 
         public int InsertProduct(Product newProduct)
         {
             if (newProduct == null) return 1;
-
-            // Reglas lógicas de inventario
             if (string.IsNullOrWhiteSpace(newProduct.Product_Name)) return 2;
-            if (newProduct.Current_Stock < 0) return 3; // El stock inicial no puede ser negativo
+            if (newProduct.Category_Id <= 0) return 3;
+            if (newProduct.Current_Stock < 0) return 4;
             if (newProduct.Minimum_Stock < 0) return 4;
 
-            if (newProduct.AddProduct() > 0)
-                return 0;
-            else
-                return 5;
+            newProduct.Product_Name = newProduct.Product_Name.Trim();
+            newProduct.Enable = true;
+
+            return newProduct.AddProduct() > 0 ? 0 : 5;
         }
 
         public int UpdateProduct(Product modifiedProduct)
         {
             if (modifiedProduct == null || modifiedProduct.Product_Id <= 0) return 1;
-            if (modifiedProduct.Current_Stock < 0) return 3;
+            if (string.IsNullOrWhiteSpace(modifiedProduct.Product_Name)) return 2;
+            if (modifiedProduct.Category_Id <= 0) return 3;
+            if (modifiedProduct.Current_Stock < 0) return 4;
+            if (modifiedProduct.Minimum_Stock < 0) return 4;
 
-            if (modifiedProduct.UpdateProduct() > 0)
-                return 0;
-            else
-                return 5;
+            modifiedProduct.Product_Name = modifiedProduct.Product_Name.Trim();
+
+            return modifiedProduct.UpdateProduct() > 0 ? 0 : 5;
         }
 
         public int DisableProduct(int id)
         {
             if (id <= 0) return 1;
-
-            if (product.DisableProduct(id) > 0)
-                return 0;
-            else
-                return 5;
+            return product.DisableProduct(id) > 0 ? 0 : 5;
         }
 
         public List<Product> ListProducts()
@@ -60,13 +52,9 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
             return product.ListAllProducts();
         }
 
-        /// <summary>
-        /// Aplica la regla de negocio del dominio para filtrar productos que requieren reabastecimiento.
-        /// </summary>
         public List<Product> ListLowStockProducts()
         {
-            List<Product> allProducts = product.ListAllProducts();
-            return allProducts.FindAll(p => p.RequiresRestock());
+            return product.ListAllProducts().FindAll(p => p.RequiresRestock());
         }
     }
 }

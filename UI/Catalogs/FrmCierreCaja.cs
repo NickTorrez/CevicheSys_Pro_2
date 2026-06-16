@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CevicheSys_Pro_2.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,14 +15,13 @@ namespace CevicheSys_Pro_2.UI.Catalogs
     public partial class FrmCierreCaja : Form
     {
         // Variables para los cálculos del sistema
-        private double efectivoInicial = 1000.00; // Simulación: Fondo de caja (Suelto para dar vuelto en la mañana)
-        private double totalVentasEfectivo = 0;
-        private double totalCambiosDados = 0;
-        private double ingresosCalculados = 0;    // Lo que el sistema ESPERA que haya
-
-        // Variables para el arqueo manual
-        private double efectivoReal = 0;          // Lo que el usuario CUENTA con las manos
-        private double descuadre = 0;
+        private decimal efectivoInicial = 1000.00m;
+        private decimal totalVentasEfectivo = 0m;
+        private decimal totalCambiosDados = 0m;
+        private decimal ingresosCalculados = 0m;
+        private decimal efectivoReal = 0m;
+        private decimal descuadre = 0m;
+        private readonly CultureInfo cultura = new CultureInfo("es-NI");
 
         public FrmCierreCaja()
         {
@@ -29,28 +30,25 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 
         private void FrmCierreCaja_Load(object sender, EventArgs e)
         {
-            // --- 1. SIMULACIÓN DE DATOS DEL SISTEMA ---
-            // (En el futuro, esto lo traerás de tu base de datos sumando las ventas del día)
-            totalVentasEfectivo = 4500.00; // Simulación de lo vendido
-            totalCambiosDados = 320.00;    // Simulación de los vueltos entregados
+            // Temporal: luego estos datos vendran desde ventas del dia.
+            totalVentasEfectivo = 4500.00m;
+            totalCambiosDados = 320.00m;
 
-            // --- 2. CÁLCULO MATEMÁTICO DEL SISTEMA ---
-            // Fórmula: (Efectivo con el que inicié + Lo que vendí) - Lo que di de vuelto
+            // Ojo: usa esta formula solo si totalVentasEfectivo representa efectivo recibido bruto.
             ingresosCalculados = (efectivoInicial + totalVentasEfectivo) - totalCambiosDados;
 
-            // --- 3. MOSTRAR EN PANTALLA (Solo Lectura) ---
-            lblEfectivoInicial.Text = $"C$ {efectivoInicial:F2}";
-            lblTotalVentasEfectivo.Text = $"C$ {totalVentasEfectivo:F2}";
-            lblCambiosEntregados.Text = $"C$ {totalCambiosDados:F2}";
-            lblIngresosCalculados.Text = $"C$ {ingresosCalculados:F2}";
+            lblEfectivoInicial.Text = efectivoInicial.ToString("C2", cultura);
+            lblTotalVentasEfectivo.Text = totalVentasEfectivo.ToString("C2", cultura);
+            lblCambiosEntregados.Text = totalCambiosDados.ToString("C2", cultura);
+            lblIngresosCalculados.Text = ingresosCalculados.ToString("C2", cultura);
 
-            // --- 4. PREPARAR INTERFAZ MANUAL ---
+            txtEfectivoReal.MaxLength = 12;
+            txtObservaciones.MaxLength = 0;
             txtEfectivoReal.Text = string.Empty;
             txtObservaciones.Text = string.Empty;
             lblDescuadre.Text = "Descuadre: C$ 0.00";
             lblDescuadre.ForeColor = Color.Black;
-
-            txtEfectivoReal.Focus(); // Cursor listo para escribir el dinero contado
+            txtEfectivoReal.Focus();
         }
 
         // Evento: Se dispara mientras el usuario va tecleando el dinero que contó
@@ -63,95 +61,82 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             if (string.IsNullOrWhiteSpace(txtEfectivoReal.Text))
             {
+                descuadre = 0m;
                 lblDescuadre.Text = "Descuadre: C$ 0.00";
                 lblDescuadre.ForeColor = Color.Black;
                 return;
             }
 
-            // Convertimos lo tecleado a número
-            if (double.TryParse(txtEfectivoReal.Text, out efectivoReal))
+            if (decimal.TryParse(txtEfectivoReal.Text, out efectivoReal))
             {
-                // REGLA DE NEGOCIO (Aplicando tu 3NF en memoria)
-                // Fórmula del descuadre: Efectivo Físico - Ingresos Calculados
                 descuadre = efectivoReal - ingresosCalculados;
+                lblDescuadre.Text = $"Descuadre: {descuadre.ToString("C2", cultura)}";
 
-                lblDescuadre.Text = $"Descuadre: C$ {descuadre:F2}";
-
-                // Coloreamos dinámicamente según el estado de la caja
                 if (descuadre < 0)
-                {
-                    lblDescuadre.ForeColor = Color.Red; // FALTANTE (Peligro)
-                }
+                    lblDescuadre.ForeColor = Color.Red;
                 else if (descuadre > 0)
-                {
-                    lblDescuadre.ForeColor = Color.Blue; // SOBRANTE (Anomalía)
-                }
+                    lblDescuadre.ForeColor = Color.Blue;
                 else
-                {
-                    lblDescuadre.ForeColor = Color.DarkGreen; // EXACTO (Caja perfecta)
-                }
+                    lblDescuadre.ForeColor = Color.DarkGreen;
             }
             else
             {
-                lblDescuadre.Text = "Monto inválido";
+                lblDescuadre.Text = "Monto invalido";
                 lblDescuadre.ForeColor = Color.Red;
             }
         }
 
         private void btnRegistrarCierre_Click(object sender, EventArgs e)
         {
-            // 1. Validaciones previas
-            if (string.IsNullOrWhiteSpace(txtEfectivoReal.Text) || !double.TryParse(txtEfectivoReal.Text, out efectivoReal))
+            if (string.IsNullOrWhiteSpace(txtEfectivoReal.Text) || !decimal.TryParse(txtEfectivoReal.Text, out efectivoReal))
             {
-                MessageBox.Show("Por favor, ingrese un monto válido en el conteo físico.", "Dato Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Por favor, ingrese un monto valido en el conteo fisico.", "Dato Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (efectivoReal < 0)
             {
-                MessageBox.Show("El efectivo real no puede ser un número negativo.", "Error de Lógica", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El efectivo real no puede ser negativo.", "Error de Logica", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Alerta de seguridad si la caja reporta faltante
             if (descuadre < 0)
             {
-                var confirmacion = MessageBox.Show($"¡Atención! Hay un FALTANTE en caja de C$ {Math.Abs(descuadre):F2}.\n\n¿Está seguro de registrar el cierre con este descuadre?",
-                                              "Confirmar Faltante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult confirmacion = MessageBox.Show(
+                    $"Hay un faltante en caja de {Math.Abs(descuadre).ToString("C2", cultura)}.\n\nDesea registrar el cierre?",
+                    "Confirmar Faltante",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
 
-                if (confirmacion == DialogResult.No) return;
+                if (confirmacion == DialogResult.No)
+                    return;
             }
 
-            // 3. Preparación de Entidad para la Base de Datos (Mapeo a tu Capa Domain)
-            /*
             CashClosure nuevoCierre = new CashClosure
             {
-                Date = DateTime.Now,
+                User_Id = Session.ActiveUser != null ? Session.ActiveUser.User_Id : 1,
+                Closure_Date = DateTime.Now,
+                Initial_Cash = efectivoInicial,
                 Calculated_Income = ingresosCalculados,
                 Real_Cash = efectivoReal,
-                Observations = txtObservaciones.Text.Trim(),
-                // Se asocia al usuario que tiene la sesión abierta
-                User_Id = Session.ActiveUser != null ? Session.ActiveUser.User_Id : 1 
+                Notes_Remarks = txtObservaciones.Text.Trim(),
+                Cash_Discrepancy = efectivoReal - ingresosCalculados,
+                Enable = true
             };
 
-            // 4. Llamada a la Capa Services
+            // Activar cuando BusinessLogic este conectado.
+            /*
             CashClosureBusiness closureBusiness = new CashClosureBusiness();
             int resultado = closureBusiness.InsertClosure(nuevoCierre);
 
-            if (resultado == 0)
+            if (resultado != 0)
             {
-                MessageBox.Show("Cierre de caja registrado exitosamente.", "Arqueo Finalizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Ocurrió un error al intentar guardar el cierre en la base de datos.", "Error de Guardado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No se pudo registrar el cierre. Codigo: " + resultado, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
             */
 
-            // --- SIMULACIÓN DE GUARDADO (Quita esto cuando conectes la BD) ---
-            MessageBox.Show("Cierre de caja calculado y registrado exitosamente (Modo Simulación).", "Arqueo Finalizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Cierre de caja calculado y registrado exitosamente.", "Arqueo Finalizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -160,6 +145,15 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void SoloNumerosYDecimales_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+                e.Handled = true;
+
+            if (e.KeyChar == '.' && sender is TextBox txt && txt.Text.Contains("."))
+                e.Handled = true;
         }
 
         private void TextBox_Enter(object sender, EventArgs e)

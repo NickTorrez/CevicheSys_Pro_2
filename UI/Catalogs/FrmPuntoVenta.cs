@@ -1,16 +1,17 @@
-﻿using System;
+﻿using CevicheSys_Pro_2;
+using CevicheSys_Pro_2.Domain;                       // Para mapear entidades en las tablas/vistas
+using CevicheSys_Pro_2.Helpers;                    // Para formateos, validaciones, etc.
+using CevicheSys_Pro_2.Services.BusinessLogic;       // Para llamar a los controladores de negocio
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CevicheSys_Pro_2.Domain;                       // Para mapear entidades en las tablas/vistas
-using CevicheSys_Pro_2.Services.BusinessLogic;       // Para llamar a los controladores de negocio
-using CevicheSys_Pro_2.Helpers;                    // Para formateos, validaciones, etc.
-using CevicheSys_Pro_2;
 
 namespace CevicheSys_Pro_2.UI.Catalogs
 {
@@ -18,7 +19,8 @@ namespace CevicheSys_Pro_2.UI.Catalogs
     {
         // Usamos BindingList para que el DataGridView se actualice automáticamente al agregar o modificar items
         private BindingList<DetailedSaleDTO> carritoCompras = new BindingList<DetailedSaleDTO>();
-        private double totalPagar = 0;
+        private decimal totalPagar = 0m;
+        private readonly CultureInfo cultura = new CultureInfo("es-NI");
         public FrmPuntoVenta()
         {
             InitializeComponent();
@@ -41,41 +43,33 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         /// </summary>
         private void CargarPlatillosDinamicos()
         {
-            // Limpiamos el panel por si acaso
             flpPlatillos.Controls.Clear();
 
-            // --- SIMULACIÓN DE DATOS DE LA BASE DE DATOS ---
-            // Aquí simulo lo que tu Service traería de la tabla Producto/Platillo
-            var listaPlatillos = new List<dynamic>
+            // Temporal: luego esta lista vendra de DishBusiness.ListDishes()
+            var listaPlatillos = new List<DishMenuItem>
             {
-                new { Id = 1, Tipo = "Camarón", Tamaño = "12 onz", Precio = 50.00 },
-                new { Id = 2, Tipo = "Camarón", Tamaño = "25 onz", Precio = 100.00 },
-                new { Id = 3, Tipo = "Pescado", Tamaño = "12 onz", Precio = 50.00 },
-                new { Id = 4, Tipo = "Pescado", Tamaño = "25 onz", Precio = 100.00 },
-                new { Id = 5, Tipo = "Mixto (Camarón y Pescado)", Tamaño = "12 onz", Precio = 60.00 },
-                new { Id = 6, Tipo = "Mixto (Camarón y Pescado)", Tamaño = "25 onz", Precio = 120.00 }
+                new DishMenuItem { Dish_Id = 1, Dish_Type = "Camaron", Size = "12 onz", Price = 50.00m },
+                new DishMenuItem { Dish_Id = 2, Dish_Type = "Camaron", Size = "25 onz", Price = 100.00m },
+                new DishMenuItem { Dish_Id = 3, Dish_Type = "Pescado", Size = "12 onz", Price = 50.00m },
+                new DishMenuItem { Dish_Id = 4, Dish_Type = "Pescado", Size = "25 onz", Price = 100.00m },
+                new DishMenuItem { Dish_Id = 5, Dish_Type = "Mixto", Size = "12 onz", Price = 60.00m },
+                new DishMenuItem { Dish_Id = 6, Dish_Type = "Mixto", Size = "25 onz", Price = 120.00m }
             };
 
-            // Recorremos la lista y creamos un botón por cada platillo
-            foreach (var platillo in listaPlatillos)
+            foreach (DishMenuItem platillo in listaPlatillos)
             {
                 Button btnPlatillo = new Button();
                 btnPlatillo.Width = 140;
                 btnPlatillo.Height = 100;
-                btnPlatillo.Text = $"{platillo.Tipo}\n{platillo.Tamaño}\nC$ {platillo.Precio:F2}";
+                btnPlatillo.Text = $"{platillo.Dish_Type}\n{platillo.Size}\n{platillo.Price.ToString("C2", cultura)}";
                 btnPlatillo.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-                btnPlatillo.BackColor = Color.FromArgb(227, 242, 253); // Celeste claro
+                btnPlatillo.BackColor = Color.FromArgb(227, 242, 253);
                 btnPlatillo.FlatStyle = FlatStyle.Flat;
-                btnPlatillo.FlatAppearance.BorderColor = Color.FromArgb(33, 150, 243); // Borde azul
+                btnPlatillo.FlatAppearance.BorderColor = Color.FromArgb(33, 150, 243);
                 btnPlatillo.Cursor = Cursors.Hand;
-
-                // Guardamos el objeto completo en la propiedad Tag para usarlo al hacer clic
                 btnPlatillo.Tag = platillo;
-
-                // Suscribimos el botón al evento Clic
                 btnPlatillo.Click += BtnPlatillo_Click;
 
-                // Lo agregamos al panel
                 flpPlatillos.Controls.Add(btnPlatillo);
             }
         }
@@ -86,37 +80,35 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         /// 
         private void BtnPlatillo_Click(object sender, EventArgs e)
         {
-            // Recuperamos el botón que fue clickeado y su información (Tag)
-            Button btnClickeado = (Button)sender;
-            dynamic platillo = btnClickeado.Tag;
+            if (sender is not Button btnClickeado || btnClickeado.Tag is not DishMenuItem platillo)
+                return;
 
-            // Buscamos si el platillo ya está en el carrito
-            var itemExistente = carritoCompras.FirstOrDefault(x => x.Dish_Type == platillo.Tipo && x.Size == platillo.Tamaño);
+            DetailedSaleDTO itemExistente = carritoCompras
+                .FirstOrDefault(x => x.Dish_Id == platillo.Dish_Id);
 
             if (itemExistente != null)
             {
-                // Si ya existe, solo sumamos 1 a la cantidad y recalculamos su subtotal
                 itemExistente.Quantity += 1;
                 itemExistente.Total_Amount = itemExistente.Quantity * itemExistente.Price;
             }
             else
             {
-                // Si no existe, creamos una nueva línea en el carrito
                 DetailedSaleDTO nuevoItem = new DetailedSaleDTO
                 {
-                    Dish_Type = platillo.Tipo,
-                    Size = platillo.Tamaño,
-                    Price = platillo.Precio,
+                    Dish_Id = platillo.Dish_Id,
+                    Dish_Type = platillo.Dish_Type,
+                    Size = platillo.Size,
+                    Price = platillo.Price,
                     Quantity = 1,
-                    Total_Amount = platillo.Precio,
-                    // Estos campos se llenarán en el modal de facturación:
+                    Total_Amount = platillo.Price,
                     Customer = "Pendiente",
                     Payment_Method = "Pendiente",
                     Purchase_Type = "Pendiente"
                 };
+
                 carritoCompras.Add(nuevoItem);
             }
-            // Refrescamos el DataGridView y el Total
+
             dgvCarrito.Refresh();
             ActualizarTotal();
         }
@@ -129,20 +121,29 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 
         private void ConfigurarColumnasCarrito()
         {
-            // Ocultamos columnas del DTO que no necesitamos ver en este momento
             if (dgvCarrito.Columns["Sale_Id"] != null) dgvCarrito.Columns["Sale_Id"].Visible = false;
+            if (dgvCarrito.Columns["Dish_Id"] != null) dgvCarrito.Columns["Dish_Id"].Visible = false;
             if (dgvCarrito.Columns["Date"] != null) dgvCarrito.Columns["Date"].Visible = false;
             if (dgvCarrito.Columns["Customer"] != null) dgvCarrito.Columns["Customer"].Visible = false;
             if (dgvCarrito.Columns["Payment_Method"] != null) dgvCarrito.Columns["Payment_Method"].Visible = false;
             if (dgvCarrito.Columns["Purchase_Type"] != null) dgvCarrito.Columns["Purchase_Type"].Visible = false;
             if (dgvCarrito.Columns["Auditor_User"] != null) dgvCarrito.Columns["Auditor_User"].Visible = false;
 
-            // Cambiamos los títulos a español
             if (dgvCarrito.Columns["Dish_Type"] != null) dgvCarrito.Columns["Dish_Type"].HeaderText = "Platillo";
-            if (dgvCarrito.Columns["Size"] != null) dgvCarrito.Columns["Size"].HeaderText = "Tamaño";
-            if (dgvCarrito.Columns["Price"] != null) dgvCarrito.Columns["Price"].HeaderText = "Precio Unit.";
+            if (dgvCarrito.Columns["Size"] != null) dgvCarrito.Columns["Size"].HeaderText = "Tamano";
+            if (dgvCarrito.Columns["Price"] != null)
+            {
+                dgvCarrito.Columns["Price"].HeaderText = "Precio Unit.";
+                dgvCarrito.Columns["Price"].DefaultCellStyle.Format = "C2";
+            }
+
             if (dgvCarrito.Columns["Quantity"] != null) dgvCarrito.Columns["Quantity"].HeaderText = "Cant.";
-            if (dgvCarrito.Columns["Total_Amount"] != null) dgvCarrito.Columns["Total_Amount"].HeaderText = "Subtotal";
+
+            if (dgvCarrito.Columns["Total_Amount"] != null)
+            {
+                dgvCarrito.Columns["Total_Amount"].HeaderText = "Subtotal";
+                dgvCarrito.Columns["Total_Amount"].DefaultCellStyle.Format = "C2";
+            }
         }
 
         // --- BOTONES DE ACCIÓN ---
@@ -150,40 +151,37 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             if (carritoCompras.Count == 0)
             {
-                MessageBox.Show("Agregue al menos un platillo al carrito antes de cobrar.", "Carrito Vacío", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Agregue al menos un platillo al carrito antes de cobrar.", "Carrito Vacio", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Convertimos la BindingList a un List normal para pasarlo al formulario
             List<DetailedSaleDTO> listaParaCobrar = carritoCompras.ToList();
 
-            // Abrimos el Modal de Facturación pasándole el Carrito y el Total a Pagar
             using (FrmFacturacion modalFacturacion = new FrmFacturacion(listaParaCobrar, totalPagar))
             {
-                // Si el usuario presionó "Generar Factura" en el modal y todo salió bien (DialogResult.OK)
                 if (modalFacturacion.ShowDialog() == DialogResult.OK)
                 {
-                    // Venta exitosa. Limpiamos el carrito para el siguiente cliente
                     carritoCompras.Clear();
                     ActualizarTotal();
-
-                    // Opcional: Mostrar un mensaje confirmando
-                    MessageBox.Show("¡Venta registrada exitosamente! Se ha procesado el pago.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Venta registrada exitosamente.", "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
         private void btnCierreCaja_Click(object sender, EventArgs e)
         {
-            // Abrimos el Modal de Cierre de Caja
             using (FrmCierreCaja modalCierre = new FrmCierreCaja())
             {
-                if (modalCierre.ShowDialog() == DialogResult.OK)
-                {
-                    // Opcional: Podrías forzar el cierre de sesión tras un cierre de caja exitoso
-                    // O simplemente limpiar el punto de venta.
-                }
+                modalCierre.ShowDialog();
             }
+        }
+
+        private class DishMenuItem
+        {
+            public int Dish_Id { get; set; }
+            public string Dish_Type { get; set; }
+            public string Size { get; set; }
+            public decimal Price { get; set; }
         }
     }
 }

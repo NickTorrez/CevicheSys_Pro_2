@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CevicheSys_Pro_2.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,59 +15,59 @@ namespace CevicheSys_Pro_2.UI.Catalogs
     public partial class FrmFacturacion : Form
     {
         // Variables para recibir los datos desde el Punto de Venta
-        private List<DetailedSaleDTO> carrito;
-        private double totalAPagar;
-        private double montoEntregado = 0;
-        private double cambio = 0;
+        private readonly List<DetailedSaleDTO> carrito;
+        private readonly decimal totalAPagar;
+        private decimal montoEntregado = 0m;
+        private decimal cambio = 0m;
+        private readonly CultureInfo cultura = new CultureInfo("es-NI");
+
 
         // Modificamos el constructor para que reciba el carrito y el total
-        public FrmFacturacion(List<DetailedSaleDTO> carritoCompras, double totalAPagar)
+        public FrmFacturacion(List<DetailedSaleDTO> carritoCompras, decimal totalAPagar)
         {
             InitializeComponent();
-            this.carrito = carritoCompras;
+            carrito = carritoCompras;
             this.totalAPagar = totalAPagar;
         }
 
         private void FrmFacturacion_Load(object sender, EventArgs e)
         {
-            // 1. Mostrar el total con formato de moneda
-            lblTotalPagar.Text = $"Total a Pagar: C$ {totalAPagar:F2}";
+            lblTotalPagar.Text = $"Total a Pagar: {totalAPagar.ToString("C2", cultura)}";
 
-            // 2. Llenar los ComboBox si no lo hiciste en diseño
             if (cmbTipoCompra.Items.Count == 0)
-            {
                 cmbTipoCompra.Items.AddRange(new string[] { "Local", "Delivery" });
-            }
-            if (cmbMetodoPago.Items.Count == 0)
-            {
-                cmbMetodoPago.Items.AddRange(new string[] { "Efectivo", "Tarjeta" });
-            }
 
-            // 3. Valores por defecto para agilizar la venta
+            if (cmbMetodoPago.Items.Count == 0)
+                cmbMetodoPago.Items.AddRange(new string[] { "Efectivo", "Tarjeta", "Transferencia" });
+
             cmbTipoCompra.SelectedIndex = 0;
             cmbMetodoPago.SelectedIndex = 0;
             txtNombreCliente.Text = "Cliente Mostrador";
-            txtMontoEntregado.Text = "";
-            txtMontoEntregado.Focus(); // Pone el cursor directo para escribir el billete
+            txtMontoEntregado.Text = string.Empty;
+            txtMontoEntregado.MaxLength = 12;
+            txtNombreCliente.MaxLength = 100;
+            txtTelefono.MaxLength = 20;
+            txtMontoEntregado.Focus();
         }
 
         // Evento: Cuando el cajero cambia entre Efectivo o Tarjeta
         private void cmbMetodoPago_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbMetodoPago.SelectedItem.ToString() == "Transferencia")
+            string metodo = cmbMetodoPago.SelectedItem?.ToString() ?? string.Empty;
+
+            if (metodo == "Tarjeta" || metodo == "Transferencia")
             {
-                // Si es tarjeta, pagan exacto y no hay vuelto
                 txtMontoEntregado.Enabled = false;
                 txtMontoEntregado.Text = totalAPagar.ToString("F2");
+                cambio = 0m;
                 lblCambio.Text = "Cambio: C$ 0.00";
                 lblCambio.ForeColor = Color.Black;
-                cambio = 0;
             }
             else
             {
-                // Si es efectivo, habilitamos el campo para que digite
                 txtMontoEntregado.Enabled = true;
-                txtMontoEntregado.Text = "";
+                txtMontoEntregado.Text = string.Empty;
+                cambio = 0m;
                 lblCambio.Text = "Cambio: C$ 0.00";
                 lblCambio.ForeColor = Color.Black;
                 txtMontoEntregado.Focus();
@@ -82,71 +84,92 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             if (string.IsNullOrWhiteSpace(txtMontoEntregado.Text))
             {
                 lblCambio.Text = "Cambio: C$ 0.00";
+                lblCambio.ForeColor = Color.Black;
                 return;
             }
 
-            // Intentamos convertir el texto a número (Double)
-            if (double.TryParse(txtMontoEntregado.Text, out montoEntregado))
+            if (decimal.TryParse(txtMontoEntregado.Text, out montoEntregado))
             {
                 cambio = montoEntregado - totalAPagar;
 
                 if (cambio < 0)
                 {
-                    // Si falta dinero, lo ponemos en rojo
-                    lblCambio.Text = $"Faltan: C$ {Math.Abs(cambio):F2}";
+                    lblCambio.Text = $"Faltan: {Math.Abs(cambio).ToString("C2", cultura)}";
                     lblCambio.ForeColor = Color.Red;
                 }
                 else
                 {
-                    // Si sobra dinero (vuelto), lo ponemos en verde
-                    lblCambio.Text = $"Cambio: C$ {cambio:F2}";
+                    lblCambio.Text = $"Cambio: {cambio.ToString("C2", cultura)}";
                     lblCambio.ForeColor = Color.DarkGreen;
                 }
             }
             else
             {
-                lblCambio.Text = "Monto inválido";
+                lblCambio.Text = "Monto invalido";
                 lblCambio.ForeColor = Color.Red;
             }
         }
 
         private void btnGenerarFactura_Click(object sender, EventArgs e)
         {
-            // --- 1. VALIDACIONES ---
             if (string.IsNullOrWhiteSpace(txtNombreCliente.Text))
             {
                 MessageBox.Show("Por favor, ingrese el nombre del cliente.", "Dato Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (cmbMetodoPago.SelectedItem.ToString() == "Efectivo" && cambio < 0)
+            string metodoPago = cmbMetodoPago.SelectedItem?.ToString() ?? string.Empty;
+
+            if (metodoPago == "Efectivo" && cambio < 0)
             {
-                MessageBox.Show("El monto entregado es menor al total a pagar. Revise el efectivo.", "Falta Dinero", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("El monto entregado es menor al total a pagar.", "Falta Dinero", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // --- 2. PREPARAR DATOS (Simulación de Guardado) ---
-            // Actualizamos la lista del carrito con los datos del cliente para pasárselo a la Capa Services
-            foreach (var item in carrito)
+            foreach (DetailedSaleDTO item in carrito)
             {
-                item.Customer = txtNombreCliente.Text;
-                item.Payment_Method = cmbMetodoPago.SelectedItem.ToString();
+                item.Customer = txtNombreCliente.Text.Trim();
+                item.Payment_Method = metodoPago;
                 item.Purchase_Type = cmbTipoCompra.SelectedItem.ToString();
             }
 
-            // NOTA PARA EL FUTURO:
-            // Aquí llamarás a "VentaBusiness.InsertarVenta(carrito)"
-            // Aquí generarás el PDF con iTextSharp.
+            Sale nuevaVenta = new Sale
+            {
+                Customer_Id = null, // Luego se reemplaza por el cliente encontrado/creado.
+                Payment_Method = metodoPago,
+                Purchase_Type = cmbTipoCompra.SelectedItem.ToString(),
+                Total_Amount = totalAPagar,
+                Record_Date = DateTime.Now,
+                User_Id = Session.ActiveUser != null ? Session.ActiveUser.User_Id : 1,
+                Enable = true
+            };
 
-            // --- 3. FINALIZAR CON ÉXITO ---
-            // Le decimos al FrmPuntoVenta que la ventana modal terminó con éxito (DialogResult.OK)
+            List<SaleDetail> detalles = carrito.Select(item => new SaleDetail
+            {
+                Dish_Id = item.Dish_Id,
+                Quantity = item.Quantity,
+                Enable = true
+            }).ToList();
+
+            // Activar cuando la capa BusinessLogic ya este lista.
+            /*
+            SaleBusiness saleBusiness = new SaleBusiness();
+            int resultado = saleBusiness.InsertCompleteSale(nuevaVenta, detalles);
+
+            if (resultado != 0)
+            {
+                MessageBox.Show("No se pudo registrar la venta. Codigo: " + resultado, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            */
+
+            // Simulacion temporal mientras conectamos BusinessLogic.
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            // Cancelar aborta la operación y regresa al Punto de Venta sin borrar el carrito
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
@@ -168,6 +191,15 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 // Regresa a blanco al salir
                 ctrl.BackColor = Color.White;
             }
+        }
+
+        private void SoloNumerosYDecimales_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+                e.Handled = true;
+
+            if (e.KeyChar == '.' && sender is TextBox txt && txt.Text.Contains("."))
+                e.Handled = true;
         }
     }
 

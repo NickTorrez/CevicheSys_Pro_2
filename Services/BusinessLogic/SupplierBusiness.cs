@@ -12,57 +12,76 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class SupplierBusiness
     {
-        private Supplier supplier; // Instancia interna del modelo de dominio
+        private readonly Supplier supplier = new Supplier();
 
-        public SupplierBusiness()
-        {
-            supplier = new Supplier();
-        }
-
-        public List<Supplier> ObtainAllSuppliers()
+        public List<Supplier> ListSuppliers()
         {
             return supplier.ListAllSuppliers();
         }
 
-        public int RegisterSupplier(Supplier newSupplier)
+        // Alias para no romper codigo anterior.
+        public List<Supplier> ObtainAllSuppliers()
+        {
+            return ListSuppliers();
+        }
+
+        public int InsertSupplier(Supplier newSupplier)
         {
             if (newSupplier == null) return 1;
+            if (!newSupplier.ValidateIdentification()) return 2;
+            if (string.IsNullOrWhiteSpace(newSupplier.First_Name)) return 3;
+            if (string.IsNullOrWhiteSpace(newSupplier.Last_Name)) return 4;
 
-            // Filtro de negocio polimórfico heredado de Person (Cédula/RUC)
-            if (!newSupplier.ValidateIdentification())
-                return 2; // Código 2: Cédula o RUC inválido (Menor a 14 dígitos)
+            NormalizeSupplier(newSupplier);
+            newSupplier.Enable = true;
 
-            if (string.IsNullOrWhiteSpace(newSupplier.First_Name) || string.IsNullOrWhiteSpace(newSupplier.Last_Name))
-                return 3; // Código 3: Nombre o Apellido vacío
-
-            // Ordena al dominio ejecutar la inserción
-            if (newSupplier.AddSupplier() > 0)
-                return 0; // Código 0: Éxito
-            else
-                return 1; // Código 1: Fallo operacional en la BD
+            return newSupplier.AddSupplier() > 0 ? 0 : 5;
         }
 
-        public int ModifySupplier(Supplier modifiedSupplier)
+        // Alias para no romper codigo anterior.
+        public int RegisterSupplier(Supplier newSupplier)
+        {
+            return InsertSupplier(newSupplier);
+        }
+
+        public int UpdateSupplier(Supplier modifiedSupplier)
         {
             if (modifiedSupplier == null || modifiedSupplier.Supplier_Id <= 0) return 1;
+            if (!modifiedSupplier.ValidateIdentification()) return 2;
+            if (string.IsNullOrWhiteSpace(modifiedSupplier.First_Name)) return 3;
+            if (string.IsNullOrWhiteSpace(modifiedSupplier.Last_Name)) return 4;
 
-            if (!modifiedSupplier.ValidateIdentification())
-                return 2;
+            NormalizeSupplier(modifiedSupplier);
 
-            if (modifiedSupplier.UpdateSupplier() > 0)
-                return 0;
-            else
-                return 1;
+            return modifiedSupplier.UpdateSupplier() > 0 ? 0 : 5;
         }
 
-        public int RemoveSupplier(int id)
+        // Alias para no romper codigo anterior.
+        public int ModifySupplier(Supplier modifiedSupplier)
+        {
+            return UpdateSupplier(modifiedSupplier);
+        }
+
+        public int DisableSupplier(int id)
         {
             if (id <= 0) return 1;
+            return supplier.DisableSupplier(id) > 0 ? 0 : 5;
+        }
 
-            if (supplier.DisableSupplier(id) > 0)
-                return 0;
-            else
-                return 1;
+        // Alias para no romper codigo anterior.
+        public int RemoveSupplier(int id)
+        {
+            return DisableSupplier(id);
+        }
+
+        private static void NormalizeSupplier(Supplier supplierToNormalize)
+        {
+            supplierToNormalize.Tax_Id = supplierToNormalize.Tax_Id?.Trim() ?? string.Empty;
+            supplierToNormalize.First_Name = supplierToNormalize.First_Name?.Trim() ?? string.Empty;
+            supplierToNormalize.Last_Name = supplierToNormalize.Last_Name?.Trim() ?? string.Empty;
+            supplierToNormalize.Phone = supplierToNormalize.Phone?.Trim() ?? string.Empty;
+            supplierToNormalize.Email = supplierToNormalize.Email?.Trim() ?? string.Empty;
+            supplierToNormalize.Address = supplierToNormalize.Address?.Trim() ?? string.Empty;
         }
     }    
 }

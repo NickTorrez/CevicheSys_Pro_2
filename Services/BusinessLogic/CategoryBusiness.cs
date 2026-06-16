@@ -12,45 +12,37 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class CategoryBusiness
     {
-        private Category category;
-
-        public CategoryBusiness()
-        {
-            category = new Category();
-        }
+        private readonly Category category = new Category();
 
         public int InsertCategory(Category newCategory)
         {
             if (newCategory == null) return 1;
-
             if (string.IsNullOrWhiteSpace(newCategory.Category_Name)) return 2;
             if (string.IsNullOrWhiteSpace(newCategory.Target_Module)) return 3;
 
-            if (newCategory.AddCategory() > 0)
-                return 0;
-            else
-                return 4;
+            newCategory.Category_Name = newCategory.Category_Name.Trim();
+            newCategory.Target_Module = newCategory.Target_Module.Trim();
+            newCategory.Enable = true;
+
+            return newCategory.AddCategory() > 0 ? 0 : 5;
         }
 
         public int UpdateCategory(Category modifiedCategory)
         {
             if (modifiedCategory == null || modifiedCategory.Category_Id <= 0) return 1;
             if (string.IsNullOrWhiteSpace(modifiedCategory.Category_Name)) return 2;
+            if (string.IsNullOrWhiteSpace(modifiedCategory.Target_Module)) return 3;
 
-            if (modifiedCategory.UpdateCategory() > 0)
-                return 0;
-            else
-                return 4;
+            modifiedCategory.Category_Name = modifiedCategory.Category_Name.Trim();
+            modifiedCategory.Target_Module = modifiedCategory.Target_Module.Trim();
+
+            return modifiedCategory.UpdateCategory() > 0 ? 0 : 5;
         }
 
         public int DisableCategory(int id)
         {
             if (id <= 0) return 1;
-
-            if (category.DisableCategory(id) > 0)
-                return 0;
-            else
-                return 4;
+            return category.DisableCategory(id) > 0 ? 0 : 5;
         }
 
         public List<Category> ListCategories()

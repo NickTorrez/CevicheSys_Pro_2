@@ -62,17 +62,27 @@ namespace CevicheSys_Pro_2
     public class DetailedSaleDTO
     {
         public int Sale_Id { get; set; }
+        public int Dish_Id { get; set; }
         public DateTime Date { get; set; }
         public string Customer { get; set; }
         public string Dish_Type { get; set; }
         public string Size { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int Quantity { get; set; }
-        public double Total_Amount { get; set; }
+        public decimal Total_Amount { get; set; }
         public string Payment_Method { get; set; }
         public string Purchase_Type { get; set; }
         public string Auditor_User { get; set; }
 
+        public DetailedSaleDTO()
+        {
+            Customer = string.Empty;
+            Dish_Type = string.Empty;
+            Size = string.Empty;
+            Payment_Method = string.Empty;
+            Purchase_Type = string.Empty;
+            Auditor_User = string.Empty;
+        }
     }
 
 }
