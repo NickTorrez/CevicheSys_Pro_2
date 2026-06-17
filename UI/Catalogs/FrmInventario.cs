@@ -287,6 +287,11 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             chkDisponible.Checked = true;
             tablaPlatillos.DefaultView.RowFilter = "Enable = true";
         }
+
+        private void txtStockActual_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

@@ -36,7 +36,7 @@
             tabInsumos = new TabPage();
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistroProducto = new Panel();
-            button4 = new Button();
+            btnLimpiarCampos = new Button();
             btnEliminarProducto = new Button();
             btnEditarProducto = new Button();
             btnGuardarProducto = new Button();
@@ -136,7 +136,7 @@
             // pnlRegistroProducto
             // 
             pnlRegistroProducto.BorderStyle = BorderStyle.FixedSingle;
-            pnlRegistroProducto.Controls.Add(button4);
+            pnlRegistroProducto.Controls.Add(btnLimpiarCampos);
             pnlRegistroProducto.Controls.Add(btnEliminarProducto);
             pnlRegistroProducto.Controls.Add(btnEditarProducto);
             pnlRegistroProducto.Controls.Add(btnGuardarProducto);
@@ -162,20 +162,20 @@
             pnlRegistroProducto.Size = new Size(325, 558);
             pnlRegistroProducto.TabIndex = 0;
             // 
-            // button4
+            // btnLimpiarCampos
             // 
-            button4.Anchor = AnchorStyles.None;
-            button4.BackColor = Color.FromArgb(108, 117, 125);
-            button4.Cursor = Cursors.Hand;
-            button4.FlatStyle = FlatStyle.Flat;
-            button4.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold);
-            button4.ForeColor = Color.White;
-            button4.Location = new Point(164, 480);
-            button4.Name = "button4";
-            button4.Size = new Size(140, 60);
-            button4.TabIndex = 18;
-            button4.Text = "Limpiar Campos";
-            button4.UseVisualStyleBackColor = false;
+            btnLimpiarCampos.Anchor = AnchorStyles.None;
+            btnLimpiarCampos.BackColor = Color.FromArgb(108, 117, 125);
+            btnLimpiarCampos.Cursor = Cursors.Hand;
+            btnLimpiarCampos.FlatStyle = FlatStyle.Flat;
+            btnLimpiarCampos.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold);
+            btnLimpiarCampos.ForeColor = Color.White;
+            btnLimpiarCampos.Location = new Point(164, 480);
+            btnLimpiarCampos.Name = "btnLimpiarCampos";
+            btnLimpiarCampos.Size = new Size(140, 60);
+            btnLimpiarCampos.TabIndex = 18;
+            btnLimpiarCampos.Text = "Limpiar Campos";
+            btnLimpiarCampos.UseVisualStyleBackColor = false;
             // 
             // btnEliminarProducto
             // 
@@ -272,6 +272,7 @@
             txtStockActual.Name = "txtStockActual";
             txtStockActual.Size = new Size(192, 26);
             txtStockActual.TabIndex = 11;
+            txtStockActual.TextChanged += txtStockActual_TextChanged;
             txtStockActual.Enter += TextBox_Enter;
             txtStockActual.Leave += TextBox_Leave;
             // 
@@ -782,7 +783,7 @@
         private ComboBox cmbProveedor;
         private ComboBox cmbCategoria;
         private Button btnGuardarProducto;
-        private Button button4;
+        private Button btnLimpiarCampos;
         private Button btnEliminarProducto;
         private Button btnEditarProducto;
         private Panel pnlBuscarProducto;

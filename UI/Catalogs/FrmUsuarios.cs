@@ -178,5 +178,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
         {
             LimpiarFormulario();
         }
+
+        private void dgvUsuarios_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

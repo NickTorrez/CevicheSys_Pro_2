@@ -63,7 +63,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtNombreProveedor.MaxLength = 50;
             txtApellidoProveedor.MaxLength = 50;
             txtTelefono.MaxLength = 20;
-            txtCorreo.MaxLength = 100;
+            txtEmail.MaxLength = 100;
             txtDireccion.MaxLength = 255;
         }
 
@@ -116,7 +116,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             if (!ValidarProveedor()) return;
 
             int nuevoId = tablaProveedores.Rows.Count == 0 ? 1 : tablaProveedores.AsEnumerable().Max(r => r.Field<int>("Supplier_Id")) + 1;
-            tablaProveedores.Rows.Add(nuevoId, txtCedulaRuc.Text.Trim(), txtNombreProveedor.Text.Trim(), txtApellidoProveedor.Text.Trim(), txtTelefono.Text.Trim(), txtCorreo.Text.Trim(), txtDireccion.Text.Trim(), true);
+            tablaProveedores.Rows.Add(nuevoId, txtCedulaRuc.Text.Trim(), txtNombreProveedor.Text.Trim(), txtApellidoProveedor.Text.Trim(), txtTelefono.Text.Trim(), txtEmail.Text.Trim(), txtDireccion.Text.Trim(), true);
             LimpiarFormulario();
         }
 
@@ -135,7 +135,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             fila["First_Name"] = txtNombreProveedor.Text.Trim();
             fila["Last_Name"] = txtApellidoProveedor.Text.Trim();
             fila["Phone"] = txtTelefono.Text.Trim();
-            fila["Email"] = txtCorreo.Text.Trim();
+            fila["Email"] = txtEmail.Text.Trim();
             fila["Address"] = txtDireccion.Text.Trim();
             LimpiarFormulario();
         }
@@ -168,7 +168,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtNombreProveedor.Text = row.Cells["First_Name"].Value.ToString();
             txtApellidoProveedor.Text = row.Cells["Last_Name"].Value.ToString();
             txtTelefono.Text = row.Cells["Phone"].Value.ToString();
-            txtCorreo.Text = row.Cells["Email"].Value.ToString();
+            txtEmail.Text = row.Cells["Email"].Value.ToString();
             txtDireccion.Text = row.Cells["Address"].Value.ToString();
         }
 
@@ -185,13 +185,13 @@ namespace CevicheSys_Pro_2.UI.Catalogs
                 string.IsNullOrWhiteSpace(txtNombreProveedor.Text) ||
                 string.IsNullOrWhiteSpace(txtApellidoProveedor.Text) ||
                 string.IsNullOrWhiteSpace(txtTelefono.Text) ||
-                string.IsNullOrWhiteSpace(txtCorreo.Text))
+                string.IsNullOrWhiteSpace(txtEmail.Text))
             {
                 MessageBox.Show("Completa los datos obligatorios del proveedor.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (!txtCorreo.Text.Contains("@"))
+            if (!txtEmail.Text.Contains("@"))
             {
                 MessageBox.Show("Ingresa un correo electronico valido.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -207,7 +207,7 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtNombreProveedor.Clear();
             txtApellidoProveedor.Clear();
             txtTelefono.Clear();
-            txtCorreo.Clear();
+            txtEmail.Clear();
             txtDireccion.Clear();
             txtBuscarProveedor.Clear();
             tablaProveedores.DefaultView.RowFilter = "Enable = true";

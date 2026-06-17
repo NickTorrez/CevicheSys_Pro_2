@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
-            pnlRegistro = new Panel();
+            pnlRegistroGastos = new Panel();
+            btnEditarEgreso = new Button();
             cmbProveedor = new ComboBox();
             label6 = new Label();
             txtMonto = new TextBox();
@@ -49,12 +50,11 @@
             pnlLista = new Panel();
             dgvGastos = new DataGridView();
             pnlFiltrar = new Panel();
-            lblTotalGastos = new Label();
             btnFiltrarEgreso = new Button();
             dtpFin = new DateTimePicker();
             dtpInicio = new DateTimePicker();
             tableLayoutPanel1.SuspendLayout();
-            pnlRegistro.SuspendLayout();
+            pnlRegistroGastos.SuspendLayout();
             pnlLista.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGastos).BeginInit();
             pnlFiltrar.SuspendLayout();
@@ -65,7 +65,7 @@
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
-            tableLayoutPanel1.Controls.Add(pnlRegistro, 0, 0);
+            tableLayoutPanel1.Controls.Add(pnlRegistroGastos, 0, 0);
             tableLayoutPanel1.Controls.Add(pnlLista, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
@@ -75,28 +75,43 @@
             tableLayoutPanel1.Size = new Size(962, 603);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // pnlRegistro
+            // pnlRegistroGastos
             // 
-            pnlRegistro.BorderStyle = BorderStyle.FixedSingle;
-            pnlRegistro.Controls.Add(cmbProveedor);
-            pnlRegistro.Controls.Add(label6);
-            pnlRegistro.Controls.Add(txtMonto);
-            pnlRegistro.Controls.Add(txtConcepto);
-            pnlRegistro.Controls.Add(cmbTipoGasto);
-            pnlRegistro.Controls.Add(label5);
-            pnlRegistro.Controls.Add(label4);
-            pnlRegistro.Controls.Add(label3);
-            pnlRegistro.Controls.Add(label1);
-            pnlRegistro.Controls.Add(dtpFechaGasto);
-            pnlRegistro.Controls.Add(label2);
-            pnlRegistro.Controls.Add(btnLimpiarEgreso);
-            pnlRegistro.Controls.Add(btnEliminarEgreso);
-            pnlRegistro.Controls.Add(btnGuardarEgreso);
-            pnlRegistro.Dock = DockStyle.Fill;
-            pnlRegistro.Location = new Point(3, 3);
-            pnlRegistro.Name = "pnlRegistro";
-            pnlRegistro.Size = new Size(330, 597);
-            pnlRegistro.TabIndex = 0;
+            pnlRegistroGastos.BorderStyle = BorderStyle.FixedSingle;
+            pnlRegistroGastos.Controls.Add(btnEditarEgreso);
+            pnlRegistroGastos.Controls.Add(cmbProveedor);
+            pnlRegistroGastos.Controls.Add(label6);
+            pnlRegistroGastos.Controls.Add(txtMonto);
+            pnlRegistroGastos.Controls.Add(txtConcepto);
+            pnlRegistroGastos.Controls.Add(cmbTipoGasto);
+            pnlRegistroGastos.Controls.Add(label5);
+            pnlRegistroGastos.Controls.Add(label4);
+            pnlRegistroGastos.Controls.Add(label3);
+            pnlRegistroGastos.Controls.Add(label1);
+            pnlRegistroGastos.Controls.Add(dtpFechaGasto);
+            pnlRegistroGastos.Controls.Add(label2);
+            pnlRegistroGastos.Controls.Add(btnLimpiarEgreso);
+            pnlRegistroGastos.Controls.Add(btnEliminarEgreso);
+            pnlRegistroGastos.Controls.Add(btnGuardarEgreso);
+            pnlRegistroGastos.Dock = DockStyle.Fill;
+            pnlRegistroGastos.Location = new Point(3, 3);
+            pnlRegistroGastos.Name = "pnlRegistroGastos";
+            pnlRegistroGastos.Size = new Size(330, 597);
+            pnlRegistroGastos.TabIndex = 0;
+            // 
+            // btnEditarEgreso
+            // 
+            btnEditarEgreso.BackColor = Color.FromArgb(0, 123, 255);
+            btnEditarEgreso.Cursor = Cursors.Hand;
+            btnEditarEgreso.FlatStyle = FlatStyle.Flat;
+            btnEditarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnEditarEgreso.ForeColor = Color.White;
+            btnEditarEgreso.Location = new Point(168, 436);
+            btnEditarEgreso.Name = "btnEditarEgreso";
+            btnEditarEgreso.Size = new Size(150, 70);
+            btnEditarEgreso.TabIndex = 22;
+            btnEditarEgreso.Text = "Editar Egreso";
+            btnEditarEgreso.UseVisualStyleBackColor = false;
             // 
             // cmbProveedor
             // 
@@ -244,6 +259,7 @@
             btnLimpiarEgreso.TabIndex = 10;
             btnLimpiarEgreso.Text = "Limpiar";
             btnLimpiarEgreso.UseVisualStyleBackColor = false;
+            btnLimpiarEgreso.Click += btnLimpiarEgreso_Click;
             // 
             // btnEliminarEgreso
             // 
@@ -269,7 +285,7 @@
             btnGuardarEgreso.FlatStyle = FlatStyle.Flat;
             btnGuardarEgreso.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnGuardarEgreso.ForeColor = Color.White;
-            btnGuardarEgreso.Location = new Point(90, 432);
+            btnGuardarEgreso.Location = new Point(12, 436);
             btnGuardarEgreso.Name = "btnGuardarEgreso";
             btnGuardarEgreso.Size = new Size(150, 70);
             btnGuardarEgreso.TabIndex = 8;
@@ -290,20 +306,20 @@
             // 
             // dgvGastos
             // 
-            dataGridViewCellStyle5.BackColor = Color.WhiteSmoke;
-            dataGridViewCellStyle5.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle5.ForeColor = Color.Black;
-            dgvGastos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dgvGastos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvGastos.BackgroundColor = Color.WhiteSmoke;
             dgvGastos.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle6.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle6.ForeColor = Color.White;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            dgvGastos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvGastos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvGastos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvGastos.Dock = DockStyle.Fill;
             dgvGastos.Location = new Point(0, 115);
@@ -316,7 +332,6 @@
             // 
             // pnlFiltrar
             // 
-            pnlFiltrar.Controls.Add(lblTotalGastos);
             pnlFiltrar.Controls.Add(btnFiltrarEgreso);
             pnlFiltrar.Controls.Add(dtpFin);
             pnlFiltrar.Controls.Add(dtpInicio);
@@ -326,16 +341,6 @@
             pnlFiltrar.Size = new Size(618, 115);
             pnlFiltrar.TabIndex = 0;
             // 
-            // lblTotalGastos
-            // 
-            lblTotalGastos.AutoSize = true;
-            lblTotalGastos.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTotalGastos.Location = new Point(344, 69);
-            lblTotalGastos.Name = "lblTotalGastos";
-            lblTotalGastos.Size = new Size(205, 22);
-            lblTotalGastos.TabIndex = 3;
-            lblTotalGastos.Text = "Gastos Totales: C$0.00";
-            // 
             // btnFiltrarEgreso
             // 
             btnFiltrarEgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -343,7 +348,7 @@
             btnFiltrarEgreso.FlatStyle = FlatStyle.Flat;
             btnFiltrarEgreso.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnFiltrarEgreso.ForeColor = Color.White;
-            btnFiltrarEgreso.Location = new Point(114, 49);
+            btnFiltrarEgreso.Location = new Point(232, 49);
             btnFiltrarEgreso.Name = "btnFiltrarEgreso";
             btnFiltrarEgreso.Size = new Size(154, 51);
             btnFiltrarEgreso.TabIndex = 2;
@@ -382,19 +387,18 @@
             Text = "FrmGastos";
             Load += FrmGastos_Load;
             tableLayoutPanel1.ResumeLayout(false);
-            pnlRegistro.ResumeLayout(false);
-            pnlRegistro.PerformLayout();
+            pnlRegistroGastos.ResumeLayout(false);
+            pnlRegistroGastos.PerformLayout();
             pnlLista.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvGastos).EndInit();
             pnlFiltrar.ResumeLayout(false);
-            pnlFiltrar.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
         private TableLayoutPanel tableLayoutPanel1;
-        private Panel pnlRegistro;
+        private Panel pnlRegistroGastos;
         private Panel pnlLista;
         private Panel pnlFiltrar;
         private Button btnLimpiarEgreso;
@@ -415,6 +419,6 @@
         private DataGridView dgvGastos;
         private ComboBox cmbProveedor;
         private Label label6;
-        private Label lblTotalGastos;
+        private Button btnEditarEgreso;
     }
 }

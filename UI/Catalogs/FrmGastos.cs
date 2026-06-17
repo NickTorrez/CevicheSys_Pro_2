@@ -208,5 +208,10 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtMonto.Clear();
             AplicarFiltro();
         }
+
+        private void btnLimpiarEgreso_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

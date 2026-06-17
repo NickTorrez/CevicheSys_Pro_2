@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCierreCaja));
-            groupBox1 = new GroupBox();
+            gbCierreAutomatico = new GroupBox();
             label6 = new Label();
             label5 = new Label();
             label4 = new Label();
@@ -38,7 +38,7 @@
             lblCambiosEntregados = new Label();
             lblTotalVentasEfectivo = new Label();
             lblEfectivoInicial = new Label();
-            groupBox2 = new GroupBox();
+            gbCierreManual = new GroupBox();
             txtObservaciones = new TextBox();
             label2 = new Label();
             lblDescuadre = new Label();
@@ -47,34 +47,38 @@
             btnRegistrarCierre = new Button();
             btnCancelar = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
-            groupBox1.SuspendLayout();
-            groupBox2.SuspendLayout();
+            label7 = new Label();
+            lblTotalVentasTransferencia = new Label();
+            gbCierreAutomatico.SuspendLayout();
+            gbCierreManual.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // groupBox1
+            // gbCierreAutomatico
             // 
-            groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(label5);
-            groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(lblIngresosCalculados);
-            groupBox1.Controls.Add(lblCambiosEntregados);
-            groupBox1.Controls.Add(lblTotalVentasEfectivo);
-            groupBox1.Controls.Add(lblEfectivoInicial);
-            groupBox1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            groupBox1.Location = new Point(12, 36);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(281, 253);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Resumen del Sistema";
+            gbCierreAutomatico.Controls.Add(lblTotalVentasTransferencia);
+            gbCierreAutomatico.Controls.Add(label7);
+            gbCierreAutomatico.Controls.Add(label6);
+            gbCierreAutomatico.Controls.Add(label5);
+            gbCierreAutomatico.Controls.Add(label4);
+            gbCierreAutomatico.Controls.Add(label3);
+            gbCierreAutomatico.Controls.Add(lblIngresosCalculados);
+            gbCierreAutomatico.Controls.Add(lblCambiosEntregados);
+            gbCierreAutomatico.Controls.Add(lblTotalVentasEfectivo);
+            gbCierreAutomatico.Controls.Add(lblEfectivoInicial);
+            gbCierreAutomatico.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gbCierreAutomatico.Location = new Point(12, 36);
+            gbCierreAutomatico.Name = "gbCierreAutomatico";
+            gbCierreAutomatico.Size = new Size(281, 253);
+            gbCierreAutomatico.TabIndex = 0;
+            gbCierreAutomatico.TabStop = false;
+            gbCierreAutomatico.Text = "Resumen del Sistema";
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label6.Location = new Point(7, 173);
+            label6.Location = new Point(7, 192);
             label6.Name = "label6";
             label6.Size = new Size(157, 18);
             label6.TabIndex = 7;
@@ -84,7 +88,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label5.Location = new Point(3, 137);
+            label5.Location = new Point(7, 156);
             label5.Name = "label5";
             label5.Size = new Size(160, 18);
             label5.TabIndex = 6;
@@ -94,7 +98,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label4.Location = new Point(5, 99);
+            label4.Location = new Point(5, 70);
             label4.Name = "label4";
             label4.Size = new Size(143, 18);
             label4.TabIndex = 5;
@@ -104,7 +108,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label3.Location = new Point(7, 61);
+            label3.Location = new Point(7, 32);
             label3.Name = "label3";
             label3.Size = new Size(106, 18);
             label3.TabIndex = 4;
@@ -115,7 +119,7 @@
             lblIngresosCalculados.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblIngresosCalculados.AutoSize = true;
             lblIngresosCalculados.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            lblIngresosCalculados.Location = new Point(221, 173);
+            lblIngresosCalculados.Location = new Point(219, 192);
             lblIngresosCalculados.Name = "lblIngresosCalculados";
             lblIngresosCalculados.Size = new Size(48, 18);
             lblIngresosCalculados.TabIndex = 3;
@@ -126,7 +130,7 @@
             lblCambiosEntregados.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCambiosEntregados.AutoSize = true;
             lblCambiosEntregados.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            lblCambiosEntregados.Location = new Point(217, 137);
+            lblCambiosEntregados.Location = new Point(215, 156);
             lblCambiosEntregados.Name = "lblCambiosEntregados";
             lblCambiosEntregados.Size = new Size(52, 18);
             lblCambiosEntregados.TabIndex = 2;
@@ -137,7 +141,7 @@
             lblTotalVentasEfectivo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblTotalVentasEfectivo.AutoSize = true;
             lblTotalVentasEfectivo.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            lblTotalVentasEfectivo.Location = new Point(210, 99);
+            lblTotalVentasEfectivo.Location = new Point(210, 70);
             lblTotalVentasEfectivo.Name = "lblTotalVentasEfectivo";
             lblTotalVentasEfectivo.Size = new Size(58, 18);
             lblTotalVentasEfectivo.TabIndex = 1;
@@ -148,26 +152,26 @@
             lblEfectivoInicial.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblEfectivoInicial.AutoSize = true;
             lblEfectivoInicial.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            lblEfectivoInicial.Location = new Point(190, 62);
+            lblEfectivoInicial.Location = new Point(190, 33);
             lblEfectivoInicial.Name = "lblEfectivoInicial";
             lblEfectivoInicial.Size = new Size(77, 18);
             lblEfectivoInicial.TabIndex = 0;
             lblEfectivoInicial.Text = "C$ Inicial";
             // 
-            // groupBox2
+            // gbCierreManual
             // 
-            groupBox2.Controls.Add(txtObservaciones);
-            groupBox2.Controls.Add(label2);
-            groupBox2.Controls.Add(lblDescuadre);
-            groupBox2.Controls.Add(txtEfectivoReal);
-            groupBox2.Controls.Add(label1);
-            groupBox2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            groupBox2.Location = new Point(310, 36);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(290, 477);
-            groupBox2.TabIndex = 1;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Conteo Manual";
+            gbCierreManual.Controls.Add(txtObservaciones);
+            gbCierreManual.Controls.Add(label2);
+            gbCierreManual.Controls.Add(lblDescuadre);
+            gbCierreManual.Controls.Add(txtEfectivoReal);
+            gbCierreManual.Controls.Add(label1);
+            gbCierreManual.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gbCierreManual.Location = new Point(310, 36);
+            gbCierreManual.Name = "gbCierreManual";
+            gbCierreManual.Size = new Size(290, 477);
+            gbCierreManual.TabIndex = 1;
+            gbCierreManual.TabStop = false;
+            gbCierreManual.Text = "Conteo Manual";
             // 
             // txtObservaciones
             // 
@@ -263,14 +267,35 @@
             flowLayoutPanel1.Size = new Size(251, 201);
             flowLayoutPanel1.TabIndex = 4;
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(7, 101);
+            label7.Name = "label7";
+            label7.Size = new Size(106, 36);
+            label7.TabIndex = 8;
+            label7.Text = "Ventas por \r\nTransferencia";
+            // 
+            // lblTotalVentasTransferencia
+            // 
+            lblTotalVentasTransferencia.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblTotalVentasTransferencia.AutoSize = true;
+            lblTotalVentasTransferencia.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTotalVentasTransferencia.Location = new Point(209, 112);
+            lblTotalVentasTransferencia.Name = "lblTotalVentasTransferencia";
+            lblTotalVentasTransferencia.Size = new Size(57, 18);
+            lblTotalVentasTransferencia.TabIndex = 9;
+            lblTotalVentasTransferencia.Text = "C$ VPT";
+            // 
             // FrmCierreCaja
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(612, 553);
             Controls.Add(flowLayoutPanel1);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
+            Controls.Add(gbCierreManual);
+            Controls.Add(gbCierreAutomatico);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -278,22 +303,22 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "Cierre de Caja";
             Load += FrmCierreCaja_Load;
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            gbCierreAutomatico.ResumeLayout(false);
+            gbCierreAutomatico.PerformLayout();
+            gbCierreManual.ResumeLayout(false);
+            gbCierreManual.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private GroupBox groupBox1;
+        private GroupBox gbCierreAutomatico;
         private Label lblIngresosCalculados;
         private Label lblCambiosEntregados;
         private Label lblTotalVentasEfectivo;
         private Label lblEfectivoInicial;
-        private GroupBox groupBox2;
+        private GroupBox gbCierreManual;
         private Label label1;
         private TextBox txtEfectivoReal;
         private Label lblDescuadre;
@@ -306,5 +331,7 @@
         private Label label6;
         private Label label5;
         private Label label4;
+        private Label lblTotalVentasTransferencia;
+        private Label label7;
     }
 }

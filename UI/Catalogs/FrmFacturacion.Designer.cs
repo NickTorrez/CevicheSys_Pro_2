@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFacturacion));
             txtNombreCliente = new TextBox();
             txtTelefono = new TextBox();
-            groupBox1 = new GroupBox();
+            gbDatos = new GroupBox();
             btnCancelar = new Button();
             btnGenerarFactura = new Button();
             pnlEfectivo = new Panel();
@@ -45,7 +45,7 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            groupBox1.SuspendLayout();
+            gbDatos.SuspendLayout();
             pnlEfectivo.SuspendLayout();
             SuspendLayout();
             // 
@@ -61,7 +61,7 @@
             // 
             // txtTelefono
             // 
-            txtTelefono.Location = new Point(152, 61);
+            txtTelefono.Location = new Point(153, 60);
             txtTelefono.MaxLength = 20;
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(186, 28);
@@ -69,28 +69,28 @@
             txtTelefono.Enter += TextBox_Enter;
             txtTelefono.Leave += TextBox_Leave;
             // 
-            // groupBox1
+            // gbDatos
             // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox1.Controls.Add(btnCancelar);
-            groupBox1.Controls.Add(btnGenerarFactura);
-            groupBox1.Controls.Add(pnlEfectivo);
-            groupBox1.Controls.Add(lblTotalPagar);
-            groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(cmbMetodoPago);
-            groupBox1.Controls.Add(cmbTipoCompra);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(txtNombreCliente);
-            groupBox1.Controls.Add(txtTelefono);
-            groupBox1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            groupBox1.Location = new Point(35, 36);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(366, 434);
-            groupBox1.TabIndex = 2;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Ingresar Datos de la Compra";
+            gbDatos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            gbDatos.Controls.Add(btnCancelar);
+            gbDatos.Controls.Add(btnGenerarFactura);
+            gbDatos.Controls.Add(pnlEfectivo);
+            gbDatos.Controls.Add(lblTotalPagar);
+            gbDatos.Controls.Add(label4);
+            gbDatos.Controls.Add(cmbMetodoPago);
+            gbDatos.Controls.Add(cmbTipoCompra);
+            gbDatos.Controls.Add(label3);
+            gbDatos.Controls.Add(label2);
+            gbDatos.Controls.Add(label1);
+            gbDatos.Controls.Add(txtNombreCliente);
+            gbDatos.Controls.Add(txtTelefono);
+            gbDatos.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            gbDatos.Location = new Point(35, 36);
+            gbDatos.Name = "gbDatos";
+            gbDatos.Size = new Size(366, 434);
+            gbDatos.TabIndex = 2;
+            gbDatos.TabStop = false;
+            gbDatos.Text = "Ingresar Datos de la Compra";
             // 
             // btnCancelar
             // 
@@ -189,7 +189,7 @@
             cmbMetodoPago.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbMetodoPago.FormattingEnabled = true;
             cmbMetodoPago.Items.AddRange(new object[] { "Efectivo", "Transferencia" });
-            cmbMetodoPago.Location = new Point(167, 128);
+            cmbMetodoPago.Location = new Point(168, 132);
             cmbMetodoPago.Name = "cmbMetodoPago";
             cmbMetodoPago.Size = new Size(171, 27);
             cmbMetodoPago.TabIndex = 6;
@@ -243,7 +243,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(432, 503);
-            Controls.Add(groupBox1);
+            Controls.Add(gbDatos);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -251,8 +251,8 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Facturación de la Compra";
             Load += FrmFacturacion_Load;
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            gbDatos.ResumeLayout(false);
+            gbDatos.PerformLayout();
             pnlEfectivo.ResumeLayout(false);
             pnlEfectivo.PerformLayout();
             ResumeLayout(false);
@@ -262,7 +262,7 @@
 
         private TextBox txtNombreCliente;
         private TextBox txtTelefono;
-        private GroupBox groupBox1;
+        private GroupBox gbDatos;
         private Label label4;
         private ComboBox cmbMetodoPago;
         private ComboBox cmbTipoCompra;

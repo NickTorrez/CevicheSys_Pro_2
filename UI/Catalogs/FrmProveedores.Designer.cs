@@ -31,8 +31,8 @@
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
-            pnlRegistro = new Panel();
-            txtCorreo = new TextBox();
+            pnlRegistroProveedores = new Panel();
+            txtEmail = new TextBox();
             txtApellidoProveedor = new TextBox();
             label8 = new Label();
             label7 = new Label();
@@ -45,17 +45,17 @@
             label4 = new Label();
             label3 = new Label();
             label2 = new Label();
-            btnLimpiar = new Button();
-            btnEliminar = new Button();
-            btnEditar = new Button();
-            btnGuardar = new Button();
+            btnLimpiarCampos = new Button();
+            btnEliminarProveedor = new Button();
+            btnEditarProveedor = new Button();
+            btnGuardarProveedor = new Button();
             pnlLista = new Panel();
             dgvProveedores = new DataGridView();
             pnlBuscar = new Panel();
             txtBuscarProveedor = new TextBox();
             label1 = new Label();
             tableLayoutPanel1.SuspendLayout();
-            pnlRegistro.SuspendLayout();
+            pnlRegistroProveedores.SuspendLayout();
             pnlLista.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProveedores).BeginInit();
             pnlBuscar.SuspendLayout();
@@ -66,7 +66,7 @@
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
-            tableLayoutPanel1.Controls.Add(pnlRegistro, 0, 0);
+            tableLayoutPanel1.Controls.Add(pnlRegistroProveedores, 0, 0);
             tableLayoutPanel1.Controls.Add(pnlLista, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
@@ -76,43 +76,43 @@
             tableLayoutPanel1.Size = new Size(962, 603);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // pnlRegistro
+            // pnlRegistroProveedores
             // 
-            pnlRegistro.BorderStyle = BorderStyle.FixedSingle;
-            pnlRegistro.Controls.Add(txtCorreo);
-            pnlRegistro.Controls.Add(txtApellidoProveedor);
-            pnlRegistro.Controls.Add(label8);
-            pnlRegistro.Controls.Add(label7);
-            pnlRegistro.Controls.Add(txtDireccion);
-            pnlRegistro.Controls.Add(txtTelefono);
-            pnlRegistro.Controls.Add(txtNombreProveedor);
-            pnlRegistro.Controls.Add(txtCedulaRuc);
-            pnlRegistro.Controls.Add(label6);
-            pnlRegistro.Controls.Add(label5);
-            pnlRegistro.Controls.Add(label4);
-            pnlRegistro.Controls.Add(label3);
-            pnlRegistro.Controls.Add(label2);
-            pnlRegistro.Controls.Add(btnLimpiar);
-            pnlRegistro.Controls.Add(btnEliminar);
-            pnlRegistro.Controls.Add(btnEditar);
-            pnlRegistro.Controls.Add(btnGuardar);
-            pnlRegistro.Dock = DockStyle.Fill;
-            pnlRegistro.Location = new Point(3, 3);
-            pnlRegistro.Name = "pnlRegistro";
-            pnlRegistro.Size = new Size(330, 597);
-            pnlRegistro.TabIndex = 0;
+            pnlRegistroProveedores.BorderStyle = BorderStyle.FixedSingle;
+            pnlRegistroProveedores.Controls.Add(txtEmail);
+            pnlRegistroProveedores.Controls.Add(txtApellidoProveedor);
+            pnlRegistroProveedores.Controls.Add(label8);
+            pnlRegistroProveedores.Controls.Add(label7);
+            pnlRegistroProveedores.Controls.Add(txtDireccion);
+            pnlRegistroProveedores.Controls.Add(txtTelefono);
+            pnlRegistroProveedores.Controls.Add(txtNombreProveedor);
+            pnlRegistroProveedores.Controls.Add(txtCedulaRuc);
+            pnlRegistroProveedores.Controls.Add(label6);
+            pnlRegistroProveedores.Controls.Add(label5);
+            pnlRegistroProveedores.Controls.Add(label4);
+            pnlRegistroProveedores.Controls.Add(label3);
+            pnlRegistroProveedores.Controls.Add(label2);
+            pnlRegistroProveedores.Controls.Add(btnLimpiarCampos);
+            pnlRegistroProveedores.Controls.Add(btnEliminarProveedor);
+            pnlRegistroProveedores.Controls.Add(btnEditarProveedor);
+            pnlRegistroProveedores.Controls.Add(btnGuardarProveedor);
+            pnlRegistroProveedores.Dock = DockStyle.Fill;
+            pnlRegistroProveedores.Location = new Point(3, 3);
+            pnlRegistroProveedores.Name = "pnlRegistroProveedores";
+            pnlRegistroProveedores.Size = new Size(330, 597);
+            pnlRegistroProveedores.TabIndex = 0;
             // 
-            // txtCorreo
+            // txtEmail
             // 
-            txtCorreo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtCorreo.Font = new Font("Century Gothic", 9F);
-            txtCorreo.Location = new Point(116, 270);
-            txtCorreo.MaxLength = 100;
-            txtCorreo.Name = "txtCorreo";
-            txtCorreo.Size = new Size(202, 26);
-            txtCorreo.TabIndex = 20;
-            txtCorreo.Enter += TextBox_Enter;
-            txtCorreo.Leave += TextBox_Leave;
+            txtEmail.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtEmail.Font = new Font("Century Gothic", 9F);
+            txtEmail.Location = new Point(116, 270);
+            txtEmail.MaxLength = 100;
+            txtEmail.Name = "txtEmail";
+            txtEmail.Size = new Size(202, 26);
+            txtEmail.TabIndex = 20;
+            txtEmail.Enter += TextBox_Enter;
+            txtEmail.Leave += TextBox_Leave;
             // 
             // txtApellidoProveedor
             // 
@@ -252,69 +252,69 @@
             label2.TabIndex = 8;
             label2.Text = "Datos del Proveedor";
             // 
-            // btnLimpiar
+            // btnLimpiarCampos
             // 
-            btnLimpiar.Anchor = AnchorStyles.None;
-            btnLimpiar.BackColor = Color.FromArgb(108, 117, 125);
-            btnLimpiar.Cursor = Cursors.Hand;
-            btnLimpiar.FlatStyle = FlatStyle.Flat;
-            btnLimpiar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnLimpiar.ForeColor = Color.White;
-            btnLimpiar.Location = new Point(168, 511);
-            btnLimpiar.Name = "btnLimpiar";
-            btnLimpiar.Size = new Size(150, 70);
-            btnLimpiar.TabIndex = 7;
-            btnLimpiar.Text = "Nuevo";
-            btnLimpiar.UseVisualStyleBackColor = false;
-            btnLimpiar.Click += btnLimpiar_Click;
+            btnLimpiarCampos.Anchor = AnchorStyles.None;
+            btnLimpiarCampos.BackColor = Color.FromArgb(108, 117, 125);
+            btnLimpiarCampos.Cursor = Cursors.Hand;
+            btnLimpiarCampos.FlatStyle = FlatStyle.Flat;
+            btnLimpiarCampos.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnLimpiarCampos.ForeColor = Color.White;
+            btnLimpiarCampos.Location = new Point(168, 511);
+            btnLimpiarCampos.Name = "btnLimpiarCampos";
+            btnLimpiarCampos.Size = new Size(150, 70);
+            btnLimpiarCampos.TabIndex = 7;
+            btnLimpiarCampos.Text = "Nuevo";
+            btnLimpiarCampos.UseVisualStyleBackColor = false;
+            btnLimpiarCampos.Click += btnLimpiar_Click;
             // 
-            // btnEliminar
+            // btnEliminarProveedor
             // 
-            btnEliminar.Anchor = AnchorStyles.None;
-            btnEliminar.BackColor = Color.FromArgb(220, 53, 69);
-            btnEliminar.Cursor = Cursors.Hand;
-            btnEliminar.FlatStyle = FlatStyle.Flat;
-            btnEliminar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnEliminar.ForeColor = Color.White;
-            btnEliminar.Location = new Point(12, 511);
-            btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(150, 70);
-            btnEliminar.TabIndex = 6;
-            btnEliminar.Text = "Eliminar/\r\nInactivar";
-            btnEliminar.UseVisualStyleBackColor = false;
-            btnEliminar.Click += btnEliminar_Click;
+            btnEliminarProveedor.Anchor = AnchorStyles.None;
+            btnEliminarProveedor.BackColor = Color.FromArgb(220, 53, 69);
+            btnEliminarProveedor.Cursor = Cursors.Hand;
+            btnEliminarProveedor.FlatStyle = FlatStyle.Flat;
+            btnEliminarProveedor.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnEliminarProveedor.ForeColor = Color.White;
+            btnEliminarProveedor.Location = new Point(12, 511);
+            btnEliminarProveedor.Name = "btnEliminarProveedor";
+            btnEliminarProveedor.Size = new Size(150, 70);
+            btnEliminarProveedor.TabIndex = 6;
+            btnEliminarProveedor.Text = "Eliminar/\r\nInactivar";
+            btnEliminarProveedor.UseVisualStyleBackColor = false;
+            btnEliminarProveedor.Click += btnEliminar_Click;
             // 
-            // btnEditar
+            // btnEditarProveedor
             // 
-            btnEditar.Anchor = AnchorStyles.None;
-            btnEditar.BackColor = Color.FromArgb(0, 123, 255);
-            btnEditar.Cursor = Cursors.Hand;
-            btnEditar.FlatStyle = FlatStyle.Flat;
-            btnEditar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnEditar.ForeColor = Color.White;
-            btnEditar.Location = new Point(168, 435);
-            btnEditar.Name = "btnEditar";
-            btnEditar.Size = new Size(150, 70);
-            btnEditar.TabIndex = 5;
-            btnEditar.Text = "Modificar";
-            btnEditar.UseVisualStyleBackColor = false;
-            btnEditar.Click += btnEditar_Click;
+            btnEditarProveedor.Anchor = AnchorStyles.None;
+            btnEditarProveedor.BackColor = Color.FromArgb(0, 123, 255);
+            btnEditarProveedor.Cursor = Cursors.Hand;
+            btnEditarProveedor.FlatStyle = FlatStyle.Flat;
+            btnEditarProveedor.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnEditarProveedor.ForeColor = Color.White;
+            btnEditarProveedor.Location = new Point(168, 435);
+            btnEditarProveedor.Name = "btnEditarProveedor";
+            btnEditarProveedor.Size = new Size(150, 70);
+            btnEditarProveedor.TabIndex = 5;
+            btnEditarProveedor.Text = "Modificar";
+            btnEditarProveedor.UseVisualStyleBackColor = false;
+            btnEditarProveedor.Click += btnEditar_Click;
             // 
-            // btnGuardar
+            // btnGuardarProveedor
             // 
-            btnGuardar.Anchor = AnchorStyles.None;
-            btnGuardar.BackColor = Color.FromArgb(40, 167, 69);
-            btnGuardar.Cursor = Cursors.Hand;
-            btnGuardar.FlatStyle = FlatStyle.Flat;
-            btnGuardar.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
-            btnGuardar.ForeColor = Color.White;
-            btnGuardar.Location = new Point(12, 435);
-            btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(150, 70);
-            btnGuardar.TabIndex = 4;
-            btnGuardar.Text = "Registrar Proveedor";
-            btnGuardar.UseVisualStyleBackColor = false;
-            btnGuardar.Click += btnGuardar_Click;
+            btnGuardarProveedor.Anchor = AnchorStyles.None;
+            btnGuardarProveedor.BackColor = Color.FromArgb(40, 167, 69);
+            btnGuardarProveedor.Cursor = Cursors.Hand;
+            btnGuardarProveedor.FlatStyle = FlatStyle.Flat;
+            btnGuardarProveedor.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnGuardarProveedor.ForeColor = Color.White;
+            btnGuardarProveedor.Location = new Point(12, 435);
+            btnGuardarProveedor.Name = "btnGuardarProveedor";
+            btnGuardarProveedor.Size = new Size(150, 70);
+            btnGuardarProveedor.TabIndex = 4;
+            btnGuardarProveedor.Text = "Registrar Proveedor";
+            btnGuardarProveedor.UseVisualStyleBackColor = false;
+            btnGuardarProveedor.Click += btnGuardar_Click;
             // 
             // pnlLista
             // 
@@ -396,8 +396,8 @@
             Text = "FrmProveedores";
             Load += FrmProveedores_Load;
             tableLayoutPanel1.ResumeLayout(false);
-            pnlRegistro.ResumeLayout(false);
-            pnlRegistro.PerformLayout();
+            pnlRegistroProveedores.ResumeLayout(false);
+            pnlRegistroProveedores.PerformLayout();
             pnlLista.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvProveedores).EndInit();
             pnlBuscar.ResumeLayout(false);
@@ -408,16 +408,16 @@
         #endregion
 
         private TableLayoutPanel tableLayoutPanel1;
-        private Panel pnlRegistro;
+        private Panel pnlRegistroProveedores;
         private Panel pnlLista;
         private Panel pnlBuscar;
         private TextBox txtBuscarProveedor;
         private Label label1;
         private DataGridView dgvProveedores;
-        private Button btnLimpiar;
-        private Button btnEliminar;
-        private Button btnEditar;
-        private Button btnGuardar;
+        private Button btnLimpiarCampos;
+        private Button btnEliminarProveedor;
+        private Button btnEditarProveedor;
+        private Button btnGuardarProveedor;
         private TextBox txtDireccion;
         private TextBox txtTelefono;
         private TextBox txtNombreProveedor;
@@ -427,7 +427,7 @@
         private Label label4;
         private Label label3;
         private Label label2;
-        private TextBox txtCorreo;
+        private TextBox txtEmail;
         private TextBox txtApellidoProveedor;
         private Label label8;
         private Label label7;

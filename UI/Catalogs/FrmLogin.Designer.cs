@@ -44,7 +44,7 @@
             lblSubtitulo = new Label();
             pbPassword = new PictureBox();
             txtPassword = new TextBox();
-            panel2 = new Panel();
+            pnlLogo = new Panel();
             label2 = new Label();
             label1 = new Label();
             btnCerrarApp = new Button();
@@ -53,7 +53,7 @@
             ((System.ComponentModel.ISupportInitialize)pbLogo).BeginInit();
             pnlTarjetaLogin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pbPassword).BeginInit();
-            panel2.SuspendLayout();
+            pnlLogo.SuspendLayout();
             pnlRegistro.SuspendLayout();
             SuspendLayout();
             // 
@@ -193,7 +193,7 @@
             btnTogglePassword.Cursor = Cursors.Hand;
             btnTogglePassword.FlatAppearance.BorderSize = 0;
             btnTogglePassword.FlatStyle = FlatStyle.Flat;
-            btnTogglePassword.Location = new Point(392, 333);
+            btnTogglePassword.Location = new Point(392, 330);
             btnTogglePassword.Name = "btnTogglePassword";
             btnTogglePassword.Size = new Size(32, 28);
             btnTogglePassword.TabIndex = 10;
@@ -231,18 +231,18 @@
             txtPassword.Size = new Size(265, 30);
             txtPassword.TabIndex = 1;
             // 
-            // panel2
+            // pnlLogo
             // 
-            panel2.BackColor = Color.FromArgb(10, 25, 47);
-            panel2.Controls.Add(label2);
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(pbLogo);
-            panel2.Dock = DockStyle.Left;
-            panel2.ForeColor = SystemColors.ControlText;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(500, 673);
-            panel2.TabIndex = 1;
+            pnlLogo.BackColor = Color.FromArgb(10, 25, 47);
+            pnlLogo.Controls.Add(label2);
+            pnlLogo.Controls.Add(label1);
+            pnlLogo.Controls.Add(pbLogo);
+            pnlLogo.Dock = DockStyle.Left;
+            pnlLogo.ForeColor = SystemColors.ControlText;
+            pnlLogo.Location = new Point(0, 0);
+            pnlLogo.Name = "pnlLogo";
+            pnlLogo.Size = new Size(500, 673);
+            pnlLogo.TabIndex = 1;
             // 
             // label2
             // 
@@ -299,7 +299,7 @@
             BackColor = Color.White;
             ClientSize = new Size(1262, 673);
             Controls.Add(pnlRegistro);
-            Controls.Add(panel2);
+            Controls.Add(pnlLogo);
             Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -314,8 +314,8 @@
             pnlTarjetaLogin.ResumeLayout(false);
             pnlTarjetaLogin.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pbPassword).EndInit();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            pnlLogo.ResumeLayout(false);
+            pnlLogo.PerformLayout();
             pnlRegistro.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -330,7 +330,7 @@
         private Label lblUser;
         private Button btnIngresar;
         private Panel pnlTarjetaLogin;
-        private Panel panel2;
+        private Panel pnlLogo;
         private Label label2;
         private Label label1;
         private Label lblSubtitulo;
