@@ -103,16 +103,6 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             this.Close(); // Cerramos el menú
         }
 
-        // Para evitar que la aplicación se quede corriendo en segundo plano si cierran con la "X"
-        private void FrmMainMenu_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            // Si el usuario cierra desde la 'X' de Windows sin cerrar sesión de forma manual
-            if (Session.ActiveUser != null || Session.IsMasterKeyLogin)
-            {
-                Application.Exit();
-            }
-        }
-
         private void tmrReloj_Tick(object sender, EventArgs e)
         {
             // Actualiza la hora y la fecha cada segundo

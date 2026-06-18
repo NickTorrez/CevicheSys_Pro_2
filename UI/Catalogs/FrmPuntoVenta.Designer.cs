@@ -204,6 +204,7 @@
             dgvCarrito.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvCarrito.Size = new Size(377, 558);
             dgvCarrito.TabIndex = 1;
+            dgvCarrito.CellClick += dgvCarrito_CellClick;
             // 
             // label2
             // 

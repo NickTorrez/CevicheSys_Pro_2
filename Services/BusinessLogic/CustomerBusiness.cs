@@ -13,77 +13,44 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     public class CustomerBusiness
     {
         #region Propiedades
-        private readonly Customer _customer;
-        #endregion
-
-        #region Constructores
-        public CustomerBusiness()
-        {
-            _customer = new Customer();
-        }
+        private readonly Customer _customerDomain = new Customer();
         #endregion
 
         #region Métodos
         public int InsertCustomer(Customer newCustomer)
         {
-            try
-            {
-                if (newCustomer == null) return 1;
-                if (!newCustomer.ValidateIdentification()) return 2;
+            if (newCustomer == null)
+                throw new ArgumentNullException(nameof(newCustomer), "Los datos del cliente están vacíos.");
 
-                newCustomer.Full_Name = newCustomer.Full_Name.Trim();
-                newCustomer.Phone = newCustomer.Phone?.Trim() ?? string.Empty;
-                newCustomer.Enable = true;
+            if (!newCustomer.ValidateIdentification())
+                throw new ArgumentException("El nombre del cliente es obligatorio y debe tener al menos 3 caracteres.");
 
-                return newCustomer.AddCustomer() > 0 ? 0 : 5;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error en la lógica de inserción de cliente.", ex);
-            }
+            return newCustomer.InsertCustomer();
         }
 
-        public int UpdateCustomer(Customer modifiedCustomer)
+        public int UpdateCustomer(Customer existingCustomer)
         {
-            try
-            {
-                if (modifiedCustomer == null || modifiedCustomer.Customer_Id <= 0) return 1;
-                if (!modifiedCustomer.ValidateIdentification()) return 2;
+            if (existingCustomer == null || existingCustomer.Customer_Id <= 0)
+                throw new ArgumentException("El cliente proporcionado es inválido para actualización.");
 
-                modifiedCustomer.Full_Name = modifiedCustomer.Full_Name.Trim();
-                modifiedCustomer.Phone = modifiedCustomer.Phone?.Trim() ?? string.Empty;
+            if (!existingCustomer.ValidateIdentification())
+                throw new ArgumentException("El nombre del cliente es obligatorio y debe tener al menos 3 caracteres.");
 
-                return modifiedCustomer.UpdateCustomer() > 0 ? 0 : 5;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error en la lógica de actualización de cliente.", ex);
-            }
+            return existingCustomer.UpdateCustomer();
         }
 
-        public int DisableCustomer(int id)
+        public int DeleteCustomer(int id)
         {
-            try
-            {
-                if (id <= 0) return 1;
-                return _customer.DisableCustomer(id) > 0 ? 0 : 5;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al intentar dar de baja al cliente.", ex);
-            }
+            if (id <= 0)
+                throw new ArgumentException("Se requiere un ID de cliente válido para dar de baja.");
+
+            Customer customerToDelete = new Customer { Customer_Id = id };
+            return customerToDelete.DeleteCustomer();
         }
 
         public List<Customer> ListCustomers()
         {
-            try
-            {
-                return _customer.ListAllCustomers();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Fallo en la lectura de clientes.", ex);
-            }
+            return _customerDomain.ListAllCustomers();
         }
         #endregion
     }

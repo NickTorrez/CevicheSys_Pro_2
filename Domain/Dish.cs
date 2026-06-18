@@ -45,29 +45,41 @@ namespace CevicheSys_Pro_2
             using SelectQuery select = new SelectQuery();
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@Type", SqlDbType.VarChar) { Value = type.Trim() },
-                new SqlParameter("@Size", SqlDbType.VarChar) { Value = size.Trim() },
+                new SqlParameter("@Type", SqlDbType.VarChar, 50) { Value = type.Trim() },
+                new SqlParameter("@Size", SqlDbType.VarChar, 30) { Value = size.Trim() },
                 new SqlParameter("@Id", SqlDbType.Int) { Value = currentId }
             };
             return select.IsDuplicate(sql, parameters);
         }
 
-        public bool InsertDish()
+        public DataTable ListAllDishes()
+        {
+            // Consulta SQL para traer todos los platillos activos (Enable = 1)
+            string sql = "SELECT Dish_Id, Dish_Type, Size, Price, Enable FROM Dish WHERE Enable = 1";
+
+            // Usamos el comando de selección nativo de tu arquitectura de persistencia
+            using SelectQuery select = new SelectQuery();
+
+            // Retornamos el DataTable resultante
+            return select.ExecuteSelect(sql);
+        }
+
+        public int InsertDish()
         {
             string sql = @"INSERT INTO Dish (Dish_Type, Size, Price, Is_Available, Enable) 
                            VALUES (@Type, @Size, @Price, @Available, 1)";
             using InsertCommand insert = new InsertCommand();
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@Type", SqlDbType.VarChar) { Value = this.Dish_Type.Trim() },
-                new SqlParameter("@Size", SqlDbType.VarChar) { Value = this.Size.Trim() },
+                new SqlParameter("@Type", SqlDbType.VarChar, 50) { Value = this.Dish_Type.Trim() },
+                new SqlParameter("@Size", SqlDbType.VarChar, 30) { Value = this.Size.Trim() },
                 new SqlParameter("@Price", SqlDbType.Decimal) { Value = this.Price },
                 new SqlParameter("@Available", SqlDbType.Bit) { Value = this.Is_Available }
             };
-            return insert.ExecuteInsert(sql, parameters) > 0;
+            return insert.ExecuteInsert(sql, parameters);
         }
 
-        public bool UpdateDish()
+        public int UpdateDish()
         {
             string sql = @"UPDATE Dish SET Dish_Type = @Type, Size = @Size, Price = @Price, Is_Available = @Available 
                            WHERE Dish_Id = @Id AND Enable = 1";
@@ -75,15 +87,15 @@ namespace CevicheSys_Pro_2
             SqlParameter[] parameters = new SqlParameter[]
             {
                 new SqlParameter("@Id", SqlDbType.Int) { Value = this.Dish_Id },
-                new SqlParameter("@Type", SqlDbType.VarChar) { Value = this.Dish_Type.Trim() },
-                new SqlParameter("@Size", SqlDbType.VarChar) { Value = this.Size.Trim() },
+                new SqlParameter("@Type", SqlDbType.VarChar, 50) { Value = this.Dish_Type.Trim() },
+                new SqlParameter("@Size", SqlDbType.VarChar, 30) { Value = this.Size.Trim() },
                 new SqlParameter("@Price", SqlDbType.Decimal) { Value = this.Price },
                 new SqlParameter("@Available", SqlDbType.Bit) { Value = this.Is_Available }
             };
-            return update.ExecuteUpdate(sql, parameters) > 0;
+            return update.ExecuteUpdate(sql, parameters);
         }
 
-        public bool DeleteDish()
+        public int DeleteDish()
         {
             string sql = "UPDATE Dish SET Enable = 0 WHERE Dish_Id = @Id";
             using DeleteCommand delete = new DeleteCommand();
@@ -91,7 +103,7 @@ namespace CevicheSys_Pro_2
             {
                 new SqlParameter("@Id", SqlDbType.Int) { Value = this.Dish_Id }
             };
-            return delete.ExecuteDelete(sql, parameters) > 0;
+            return delete.ExecuteDelete(sql, parameters);
         }
         #endregion
     }

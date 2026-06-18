@@ -28,75 +28,115 @@ namespace CevicheSys_Pro_2
 
         #region Constructors
         public Supplier() : base() { }
+
+        public Supplier(int supplierId, string taxId, string firstName, string lastName, string address, string phone, string email, bool enable):base(phone, enable)
+        {
+            Supplier_Id = supplierId;
+            Tax_Id = taxId;
+            First_Name = firstName;
+            Last_Name = lastName;
+            Address = address;
+            Phone = phone;
+            Email = email;
+            Enable = enable;
+        }
+
         #endregion
 
         #region Validation Methods
-        /// <summary>
-        /// Aplica la regla de identidad polimórfica heredada de Person.
-        /// </summary>
+        public bool ExistsByTaxId(string taxId, int currentSupplierId)
+        {
+            string sql = "SELECT CASE WHEN EXISTS (SELECT 1 FROM Supplier WHERE Tax_Id = @Tax_Id AND Supplier_Id <> @Supplier_Id AND Enable = 1) THEN 1 ELSE 0 END;";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Tax_Id", SqlDbType.VarChar, 20) { Value = taxId },
+                new SqlParameter("@Supplier_Id", SqlDbType.Int) { Value = currentSupplierId }
+            };
+
+            using (SelectQuery select = new SelectQuery())
+            {
+                return select.IsDuplicate(sql, parameters);
+            }
+        }
+
+        // Implementación del miembro abstracto heredado de Person
         public override bool ValidateIdentification()
         {
-            return !string.IsNullOrWhiteSpace(Tax_Id) && Tax_Id.Trim().Length >= 14;
+            // Validación básica: Tax_Id debe existir y no exceder 20 caracteres (coincide con el parámetro SqlDbType.VarChar, 20)
+            return !string.IsNullOrWhiteSpace(this.Tax_Id) && this.Tax_Id.Length <= 20;
         }
         #endregion
 
         #region Persistence Methods
-        public bool ExistsByTaxId(string taxId, int currentId = 0)
+
+        public DataTable ListAllSuppliers()
         {
-            string sql = "SELECT CASE WHEN EXISTS(SELECT 1 FROM Supplier WHERE Tax_Id = @TaxId AND Supplier_Id <> @Id AND Enable = 1) THEN 1 ELSE 0 END";
-            using SelectQuery select = new SelectQuery();
-            SqlParameter[] parameters = new SqlParameter[]
+            string sql = "SELECT Supplier_Id, Tax_Id, First_Name, Last_Name, Address, Phone, Email FROM Supplier WHERE Enable = 1 ORDER BY Last_Name ASC, First_Name ASC;";
+            using (SelectQuery select = new SelectQuery())
             {
-                new SqlParameter("@TaxId", SqlDbType.VarChar) { Value = taxId.Trim() },
-                new SqlParameter("@Id", SqlDbType.Int) { Value = currentId }
-            };
-            return select.IsDuplicate(sql, parameters);
+                return select.ExecuteSelect(sql);
+            }
         }
 
-        public bool InsertSupplier()
+        public int InsertSupplier()
         {
-            string sql = @"INSERT INTO Supplier (Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable)
-                           VALUES (@TaxId, @FirstName, @LastName, @Address, @Phone, @Email, 1)";
-            using InsertCommand insert = new InsertCommand();
+            string sql = "INSERT INTO Supplier (Tax_Id, First_Name, Last_Name, Address, Phone, Email, Enable) " +
+                         "VALUES (@Tax_Id, @First_Name, @Last_Name, @Address, @Phone, @Email, @Enable);";
+
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@TaxId", SqlDbType.VarChar) { Value = this.Tax_Id.Trim() },
-                new SqlParameter("@FirstName", SqlDbType.VarChar) { Value = this.First_Name.Trim() },
-                new SqlParameter("@LastName", SqlDbType.VarChar) { Value = this.Last_Name.Trim() },
-                new SqlParameter("@Address", SqlDbType.VarChar) { Value = (object)this.Address ?? DBNull.Value },
-                new SqlParameter("@Phone", SqlDbType.VarChar) { Value = (object)this.Phone ?? DBNull.Value },
-                new SqlParameter("@Email", SqlDbType.VarChar) { Value = (object)this.Email ?? DBNull.Value }
+                new SqlParameter("@Tax_Id", SqlDbType.VarChar, 20) { Value = this.Tax_Id },
+                new SqlParameter("@First_Name", SqlDbType.VarChar, 50) { Value = this.First_Name },
+                new SqlParameter("@Last_Name", SqlDbType.VarChar, 50) { Value = this.Last_Name },
+                new SqlParameter("@Address", SqlDbType.VarChar, 255) { Value = (object?)this.Address ?? DBNull.Value },
+                new SqlParameter("@Phone", SqlDbType.VarChar, 20) { Value = (object?)this.Phone ?? DBNull.Value },
+                new SqlParameter("@Email", SqlDbType.VarChar, 100) { Value = (object?)this.Email ?? DBNull.Value },
+                new SqlParameter("@Enable", SqlDbType.Bit) { Value = this.Enable }
             };
-            return insert.ExecuteInsert(sql, parameters) > 0;
+
+            using (InsertCommand cmd = new InsertCommand())
+            {
+                return cmd.ExecuteInsert(sql, parameters);
+            }
         }
 
-        public bool UpdateSupplier()
+        public int UpdateSupplier()
         {
-            string sql = @"UPDATE Supplier SET Tax_Id = @TaxId, First_Name = @FirstName, Last_Name = @LastName,
-                           Address = @Address, Phone = @Phone, Email = @Email WHERE Supplier_Id = @Id AND Enable = 1";
-            using UpdateCommand update = new UpdateCommand();
+            string sql = "UPDATE Supplier SET Tax_Id = @Tax_Id, First_Name = @First_Name, Last_Name = @Last_Name, " +
+                         "Address = @Address, Phone = @Phone, Email = @Email, Enable = @Enable WHERE Supplier_Id = @Supplier_Id;";
+
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@Id", SqlDbType.Int) { Value = this.Supplier_Id },
-                new SqlParameter("@TaxId", SqlDbType.VarChar) { Value = this.Tax_Id.Trim() },
-                new SqlParameter("@FirstName", SqlDbType.VarChar) { Value = this.First_Name.Trim() },
-                new SqlParameter("@LastName", SqlDbType.VarChar) { Value = this.Last_Name.Trim() },
-                new SqlParameter("@Address", SqlDbType.VarChar) { Value = (object)this.Address ?? DBNull.Value },
-                new SqlParameter("@Phone", SqlDbType.VarChar) { Value = (object)this.Phone ?? DBNull.Value },
-                new SqlParameter("@Email", SqlDbType.VarChar) { Value = (object)this.Email ?? DBNull.Value }
+                new SqlParameter("@Supplier_Id", SqlDbType.Int) { Value = this.Supplier_Id },
+                new SqlParameter("@Tax_Id", SqlDbType.VarChar, 20) { Value = this.Tax_Id },
+                new SqlParameter("@First_Name", SqlDbType.VarChar, 50) { Value = this.First_Name },
+                new SqlParameter("@Last_Name", SqlDbType.VarChar, 50) { Value = this.Last_Name },
+                new SqlParameter("@Address", SqlDbType.VarChar, 255) { Value = (object?)this.Address ?? DBNull.Value },
+                new SqlParameter("@Phone", SqlDbType.VarChar, 20) { Value = (object?)this.Phone ?? DBNull.Value },
+                new SqlParameter("@Email", SqlDbType.VarChar, 100) { Value = (object?)this.Email ?? DBNull.Value },
+                new SqlParameter("@Enable", SqlDbType.Bit) { Value = this.Enable }
             };
-            return update.ExecuteUpdate(sql, parameters) > 0;
+
+            using (UpdateCommand cmd = new UpdateCommand())
+            {
+                return cmd.ExecuteUpdate(sql, parameters);
+            }
         }
 
-        public bool DeleteSupplier()
+        public int DeleteSupplier()
         {
-            string sql = "UPDATE Supplier SET Enable = 0 WHERE Supplier_Id = @Id";
-            using DeleteCommand delete = new DeleteCommand();
+            string sql = "UPDATE Supplier SET Enable = 0 WHERE Supplier_Id = @Supplier_Id;";
+
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@Id", SqlDbType.Int) { Value = this.Supplier_Id }
+                new SqlParameter("@Supplier_Id", SqlDbType.Int) { Value = this.Supplier_Id }
             };
-            return delete.ExecuteDelete(sql, parameters) > 0;
+
+            using (UpdateCommand cmd = new UpdateCommand())
+            {
+                return cmd.ExecuteUpdate(sql, parameters);
+            }
         }
         #endregion
     }

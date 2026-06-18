@@ -279,7 +279,7 @@
             btnCerrarApp.TabIndex = 1;
             btnCerrarApp.Text = "❌​ Close";
             btnCerrarApp.UseVisualStyleBackColor = false;
-            btnCerrarApp.Click += button1_Click;
+            btnCerrarApp.Click += btnCerrarApp_Click_1;
             // 
             // pnlRegistro
             // 

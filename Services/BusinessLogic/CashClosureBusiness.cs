@@ -16,17 +16,18 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
 
         public int InsertClosure(CashClosure newClosure)
         {
-            if (newClosure == null) return 1;
-            if (newClosure.User_Id <= 0) return 2;
+            if (newClosure == null)
+                throw new ArgumentNullException(nameof(newClosure), "Los datos del cierre de caja están vacíos.");
 
-            // Los montos financieros no deben ser negativos (aunque el real podría ser cero si hubo robo/pérdida total)
-            if (newClosure.Initial_Cash < 0 || newClosure.Calculated_Income < 0 || newClosure.Real_Cash < 0) return 3;
+            if (newClosure.User_Id <= 0)
+                throw new ArgumentException("No se ha identificado al usuario responsable del cierre de caja.");
 
-            // Se calcula el descuadre internamente antes de insertar para asegurar integridad lógica
+            if (newClosure.Initial_Cash < 0 || newClosure.Calculated_Income < 0 || newClosure.Real_Cash < 0)
+                throw new ArgumentException("Los montos declarados en el arqueo no pueden contener valores negativos.");
+
             newClosure.Cash_Discrepancy = newClosure.Real_Cash - newClosure.Calculated_Income;
 
-            bool success = newClosure.InsertClosure();
-            return success ? 0 : 4;
+            return newClosure.InsertClosure();
         }
     }
 }

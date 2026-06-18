@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             tcInventario = new TabControl();
             tabInsumos = new TabPage();
             tableLayoutPanel1 = new TableLayoutPanel();
@@ -44,16 +44,12 @@
             cmbProveedor = new ComboBox();
             cmbCategoria = new ComboBox();
             txtStockActual = new TextBox();
-            txtPrecioCompra = new TextBox();
             txtNombreProducto = new TextBox();
-            txtIdProducto = new TextBox();
             label9 = new Label();
             label8 = new Label();
             label7 = new Label();
-            label6 = new Label();
             label5 = new Label();
             label4 = new Label();
-            label3 = new Label();
             label1 = new Label();
             pnlListarProducto = new Panel();
             dgvInventario = new DataGridView();
@@ -63,9 +59,9 @@
             tabPlatillos = new TabPage();
             tableLayoutPanel2 = new TableLayoutPanel();
             pnlRegistrarPlatillo = new Panel();
-            btnLimpiarPlatillo = new Button();
-            btnEliminarPlatillo = new Button();
             btnEditarPlatillo = new Button();
+            btnLimpiarControles = new Button();
+            btnEliminarPlatillo = new Button();
             btnGuardarPlatillo = new Button();
             chkDisponible = new CheckBox();
             txtPrecio = new TextBox();
@@ -144,16 +140,12 @@
             pnlRegistroProducto.Controls.Add(cmbProveedor);
             pnlRegistroProducto.Controls.Add(cmbCategoria);
             pnlRegistroProducto.Controls.Add(txtStockActual);
-            pnlRegistroProducto.Controls.Add(txtPrecioCompra);
             pnlRegistroProducto.Controls.Add(txtNombreProducto);
-            pnlRegistroProducto.Controls.Add(txtIdProducto);
             pnlRegistroProducto.Controls.Add(label9);
             pnlRegistroProducto.Controls.Add(label8);
             pnlRegistroProducto.Controls.Add(label7);
-            pnlRegistroProducto.Controls.Add(label6);
             pnlRegistroProducto.Controls.Add(label5);
             pnlRegistroProducto.Controls.Add(label4);
-            pnlRegistroProducto.Controls.Add(label3);
             pnlRegistroProducto.Controls.Add(label1);
             pnlRegistroProducto.Dock = DockStyle.Fill;
             pnlRegistroProducto.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -176,6 +168,7 @@
             btnLimpiarCampos.TabIndex = 18;
             btnLimpiarCampos.Text = "Limpiar Campos";
             btnLimpiarCampos.UseVisualStyleBackColor = false;
+            btnLimpiarCampos.Click += btnLimpiarCampos_Click;
             // 
             // btnEliminarProducto
             // 
@@ -205,7 +198,7 @@
             btnEditarProducto.Name = "btnEditarProducto";
             btnEditarProducto.Size = new Size(140, 60);
             btnEditarProducto.TabIndex = 16;
-            btnEditarProducto.Text = "Actualizar";
+            btnEditarProducto.Text = "Editar";
             btnEditarProducto.UseVisualStyleBackColor = false;
             btnEditarProducto.Click += btnEditarProducto_Click;
             // 
@@ -230,12 +223,10 @@
             dtpFechaVencimiento.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dtpFechaVencimiento.Font = new Font("Century Gothic", 9F);
             dtpFechaVencimiento.Format = DateTimePickerFormat.Short;
-            dtpFechaVencimiento.Location = new Point(119, 358);
+            dtpFechaVencimiento.Location = new Point(119, 291);
             dtpFechaVencimiento.Name = "dtpFechaVencimiento";
             dtpFechaVencimiento.Size = new Size(192, 26);
             dtpFechaVencimiento.TabIndex = 14;
-            dtpFechaVencimiento.Enter += TextBox_Enter;
-            dtpFechaVencimiento.Leave += TextBox_Leave;
             // 
             // cmbProveedor
             // 
@@ -243,12 +234,10 @@
             cmbProveedor.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbProveedor.Font = new Font("Century Gothic", 9F);
             cmbProveedor.FormattingEnabled = true;
-            cmbProveedor.Location = new Point(119, 207);
+            cmbProveedor.Location = new Point(119, 183);
             cmbProveedor.Name = "cmbProveedor";
             cmbProveedor.Size = new Size(192, 28);
             cmbProveedor.TabIndex = 13;
-            cmbProveedor.Enter += TextBox_Enter;
-            cmbProveedor.Leave += TextBox_Leave;
             // 
             // cmbCategoria
             // 
@@ -256,65 +245,36 @@
             cmbCategoria.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbCategoria.Font = new Font("Century Gothic", 9F);
             cmbCategoria.FormattingEnabled = true;
-            cmbCategoria.Location = new Point(119, 155);
+            cmbCategoria.Location = new Point(119, 131);
             cmbCategoria.Name = "cmbCategoria";
             cmbCategoria.Size = new Size(192, 28);
             cmbCategoria.TabIndex = 12;
-            cmbCategoria.Enter += TextBox_Enter;
-            cmbCategoria.Leave += TextBox_Leave;
             // 
             // txtStockActual
             // 
             txtStockActual.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtStockActual.Font = new Font("Century Gothic", 9F);
-            txtStockActual.Location = new Point(119, 309);
+            txtStockActual.Location = new Point(119, 242);
             txtStockActual.MaxLength = 12;
             txtStockActual.Name = "txtStockActual";
             txtStockActual.Size = new Size(192, 26);
             txtStockActual.TabIndex = 11;
-            txtStockActual.TextChanged += txtStockActual_TextChanged;
-            txtStockActual.Enter += TextBox_Enter;
-            txtStockActual.Leave += TextBox_Leave;
-            // 
-            // txtPrecioCompra
-            // 
-            txtPrecioCompra.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtPrecioCompra.Font = new Font("Century Gothic", 9F);
-            txtPrecioCompra.Location = new Point(119, 260);
-            txtPrecioCompra.Name = "txtPrecioCompra";
-            txtPrecioCompra.Size = new Size(192, 26);
-            txtPrecioCompra.TabIndex = 10;
-            txtPrecioCompra.Enter += TextBox_Enter;
-            txtPrecioCompra.Leave += TextBox_Leave;
             // 
             // txtNombreProducto
             // 
             txtNombreProducto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtNombreProducto.Font = new Font("Century Gothic", 9F);
-            txtNombreProducto.Location = new Point(119, 106);
+            txtNombreProducto.Location = new Point(119, 82);
             txtNombreProducto.MaxLength = 100;
             txtNombreProducto.Name = "txtNombreProducto";
             txtNombreProducto.Size = new Size(192, 26);
             txtNombreProducto.TabIndex = 9;
-            txtNombreProducto.Enter += TextBox_Enter;
-            txtNombreProducto.Leave += TextBox_Leave;
-            // 
-            // txtIdProducto
-            // 
-            txtIdProducto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtIdProducto.Font = new Font("Century Gothic", 9F);
-            txtIdProducto.Location = new Point(119, 60);
-            txtIdProducto.Name = "txtIdProducto";
-            txtIdProducto.Size = new Size(192, 26);
-            txtIdProducto.TabIndex = 8;
-            txtIdProducto.Enter += TextBox_Enter;
-            txtIdProducto.Leave += TextBox_Leave;
             // 
             // label9
             // 
             label9.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label9.AutoSize = true;
-            label9.Location = new Point(14, 354);
+            label9.Location = new Point(14, 287);
             label9.Name = "label9";
             label9.Size = new Size(103, 36);
             label9.TabIndex = 7;
@@ -324,7 +284,7 @@
             // 
             label8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label8.AutoSize = true;
-            label8.Location = new Point(14, 211);
+            label8.Location = new Point(14, 187);
             label8.Name = "label8";
             label8.Size = new Size(84, 18);
             label8.TabIndex = 6;
@@ -334,27 +294,17 @@
             // 
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label7.AutoSize = true;
-            label7.Location = new Point(14, 313);
+            label7.Location = new Point(14, 246);
             label7.Name = "label7";
             label7.Size = new Size(101, 18);
             label7.TabIndex = 5;
             label7.Text = "Stock Actual";
             // 
-            // label6
-            // 
-            label6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label6.AutoSize = true;
-            label6.Location = new Point(14, 252);
-            label6.Name = "label6";
-            label6.Size = new Size(83, 36);
-            label6.TabIndex = 4;
-            label6.Text = "Precio de \r\nCompra";
-            // 
             // label5
             // 
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label5.AutoSize = true;
-            label5.Location = new Point(14, 159);
+            label5.Location = new Point(14, 135);
             label5.Name = "label5";
             label5.Size = new Size(83, 18);
             label5.TabIndex = 3;
@@ -364,21 +314,11 @@
             // 
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label4.AutoSize = true;
-            label4.Location = new Point(14, 96);
+            label4.Location = new Point(14, 72);
             label4.Name = "label4";
             label4.Size = new Size(100, 36);
             label4.TabIndex = 2;
             label4.Text = "Nombre del \r\nProducto";
-            // 
-            // label3
-            // 
-            label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label3.AutoSize = true;
-            label3.Location = new Point(14, 60);
-            label3.Name = "label3";
-            label3.Size = new Size(93, 18);
-            label3.TabIndex = 1;
-            label3.Text = "ID Producto";
             // 
             // label1
             // 
@@ -405,20 +345,20 @@
             // 
             // dgvInventario
             // 
-            dataGridViewCellStyle5.BackColor = Color.WhiteSmoke;
-            dataGridViewCellStyle5.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle5.ForeColor = Color.Black;
-            dgvInventario.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dgvInventario.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvInventario.BackgroundColor = Color.WhiteSmoke;
             dgvInventario.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle6.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle6.ForeColor = Color.White;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            dgvInventario.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvInventario.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvInventario.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvInventario.Dock = DockStyle.Fill;
             dgvInventario.Location = new Point(0, 68);
@@ -489,9 +429,9 @@
             // pnlRegistrarPlatillo
             // 
             pnlRegistrarPlatillo.BorderStyle = BorderStyle.FixedSingle;
-            pnlRegistrarPlatillo.Controls.Add(btnLimpiarPlatillo);
-            pnlRegistrarPlatillo.Controls.Add(btnEliminarPlatillo);
             pnlRegistrarPlatillo.Controls.Add(btnEditarPlatillo);
+            pnlRegistrarPlatillo.Controls.Add(btnLimpiarControles);
+            pnlRegistrarPlatillo.Controls.Add(btnEliminarPlatillo);
             pnlRegistrarPlatillo.Controls.Add(btnGuardarPlatillo);
             pnlRegistrarPlatillo.Controls.Add(chkDisponible);
             pnlRegistrarPlatillo.Controls.Add(txtPrecio);
@@ -508,19 +448,36 @@
             pnlRegistrarPlatillo.Size = new Size(325, 558);
             pnlRegistrarPlatillo.TabIndex = 0;
             // 
-            // btnLimpiarPlatillo
+            // btnEditarPlatillo
             // 
-            btnLimpiarPlatillo.Anchor = AnchorStyles.None;
-            btnLimpiarPlatillo.BackColor = Color.FromArgb(108, 117, 125);
-            btnLimpiarPlatillo.Cursor = Cursors.Hand;
-            btnLimpiarPlatillo.FlatStyle = FlatStyle.Flat;
-            btnLimpiarPlatillo.ForeColor = Color.White;
-            btnLimpiarPlatillo.Location = new Point(166, 468);
-            btnLimpiarPlatillo.Name = "btnLimpiarPlatillo";
-            btnLimpiarPlatillo.Size = new Size(150, 70);
-            btnLimpiarPlatillo.TabIndex = 11;
-            btnLimpiarPlatillo.Text = "Nuevo";
-            btnLimpiarPlatillo.UseVisualStyleBackColor = false;
+            btnEditarPlatillo.Anchor = AnchorStyles.None;
+            btnEditarPlatillo.BackColor = Color.FromArgb(0, 123, 255);
+            btnEditarPlatillo.FlatStyle = FlatStyle.Flat;
+            btnEditarPlatillo.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnEditarPlatillo.ForeColor = Color.White;
+            btnEditarPlatillo.Location = new Point(166, 392);
+            btnEditarPlatillo.Name = "btnEditarPlatillo";
+            btnEditarPlatillo.Size = new Size(150, 70);
+            btnEditarPlatillo.TabIndex = 12;
+            btnEditarPlatillo.Text = "Editar";
+            btnEditarPlatillo.UseVisualStyleBackColor = false;
+            btnEditarPlatillo.Click += btnEditarPlatillo_Click_1;
+            // 
+            // btnLimpiarControles
+            // 
+            btnLimpiarControles.Anchor = AnchorStyles.None;
+            btnLimpiarControles.BackColor = Color.FromArgb(108, 117, 125);
+            btnLimpiarControles.Cursor = Cursors.Hand;
+            btnLimpiarControles.FlatStyle = FlatStyle.Flat;
+            btnLimpiarControles.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
+            btnLimpiarControles.ForeColor = Color.White;
+            btnLimpiarControles.Location = new Point(166, 468);
+            btnLimpiarControles.Name = "btnLimpiarControles";
+            btnLimpiarControles.Size = new Size(150, 70);
+            btnLimpiarControles.TabIndex = 11;
+            btnLimpiarControles.Text = "Nuevo";
+            btnLimpiarControles.UseVisualStyleBackColor = false;
+            btnLimpiarControles.Click += btnLimpiarControles_Click;
             // 
             // btnEliminarPlatillo
             // 
@@ -528,6 +485,7 @@
             btnEliminarPlatillo.BackColor = Color.FromArgb(220, 53, 69);
             btnEliminarPlatillo.Cursor = Cursors.Hand;
             btnEliminarPlatillo.FlatStyle = FlatStyle.Flat;
+            btnEliminarPlatillo.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnEliminarPlatillo.ForeColor = Color.White;
             btnEliminarPlatillo.Location = new Point(10, 468);
             btnEliminarPlatillo.Name = "btnEliminarPlatillo";
@@ -537,27 +495,13 @@
             btnEliminarPlatillo.UseVisualStyleBackColor = false;
             btnEliminarPlatillo.Click += btnEliminarPlatillo_Click;
             // 
-            // btnEditarPlatillo
-            // 
-            btnEditarPlatillo.Anchor = AnchorStyles.None;
-            btnEditarPlatillo.BackColor = Color.FromArgb(0, 123, 255);
-            btnEditarPlatillo.Cursor = Cursors.Hand;
-            btnEditarPlatillo.FlatStyle = FlatStyle.Flat;
-            btnEditarPlatillo.ForeColor = Color.White;
-            btnEditarPlatillo.Location = new Point(166, 392);
-            btnEditarPlatillo.Name = "btnEditarPlatillo";
-            btnEditarPlatillo.Size = new Size(150, 70);
-            btnEditarPlatillo.TabIndex = 9;
-            btnEditarPlatillo.Text = "Modificar";
-            btnEditarPlatillo.UseVisualStyleBackColor = false;
-            btnEditarPlatillo.Click += btnEditarPlatillo_Click;
-            // 
             // btnGuardarPlatillo
             // 
             btnGuardarPlatillo.Anchor = AnchorStyles.None;
             btnGuardarPlatillo.BackColor = Color.FromArgb(40, 167, 69);
             btnGuardarPlatillo.Cursor = Cursors.Hand;
             btnGuardarPlatillo.FlatStyle = FlatStyle.Flat;
+            btnGuardarPlatillo.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold);
             btnGuardarPlatillo.ForeColor = Color.White;
             btnGuardarPlatillo.Location = new Point(10, 392);
             btnGuardarPlatillo.Name = "btnGuardarPlatillo";
@@ -589,8 +533,6 @@
             txtPrecio.Size = new Size(190, 26);
             txtPrecio.TabIndex = 6;
             txtPrecio.TextAlign = HorizontalAlignment.Right;
-            txtPrecio.Enter += TextBox_Enter;
-            txtPrecio.Leave += TextBox_Leave;
             // 
             // txtTamano
             // 
@@ -600,8 +542,6 @@
             txtTamano.Name = "txtTamano";
             txtTamano.Size = new Size(190, 26);
             txtTamano.TabIndex = 5;
-            txtTamano.Enter += TextBox_Enter;
-            txtTamano.Leave += TextBox_Leave;
             // 
             // txtTipoPlatillo
             // 
@@ -611,9 +551,6 @@
             txtTipoPlatillo.Name = "txtTipoPlatillo";
             txtTipoPlatillo.Size = new Size(190, 26);
             txtTipoPlatillo.TabIndex = 4;
-            txtTipoPlatillo.TextChanged += txtTipoPlatillo_TextChanged;
-            txtTipoPlatillo.Enter += TextBox_Enter;
-            txtTipoPlatillo.Leave += TextBox_Leave;
             // 
             // label13
             // 
@@ -671,20 +608,20 @@
             // dgvPlatillos
             // 
             dgvPlatillos.AllowUserToAddRows = false;
-            dataGridViewCellStyle7.BackColor = Color.WhiteSmoke;
-            dataGridViewCellStyle7.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle7.ForeColor = Color.Black;
-            dgvPlatillos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle3.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dgvPlatillos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             dgvPlatillos.BackgroundColor = Color.WhiteSmoke;
             dgvPlatillos.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle8.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle8.ForeColor = Color.White;
-            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
-            dgvPlatillos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle4.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvPlatillos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             dgvPlatillos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvPlatillos.Dock = DockStyle.Fill;
             dgvPlatillos.Location = new Point(0, 68);
@@ -769,16 +706,12 @@
         private Label label2;
         private Panel pnlListarPlatillo;
         private TextBox txtStockActual;
-        private TextBox txtPrecioCompra;
         private TextBox txtNombreProducto;
-        private TextBox txtIdProducto;
         private Label label9;
         private Label label8;
         private Label label7;
-        private Label label6;
         private Label label5;
         private Label label4;
-        private Label label3;
         private DateTimePicker dtpFechaVencimiento;
         private ComboBox cmbProveedor;
         private ComboBox cmbCategoria;
@@ -798,12 +731,12 @@
         private Label label13;
         private Label label12;
         private Label label11;
-        private Button btnLimpiarPlatillo;
+        private Button btnLimpiarControles;
         private Button btnEliminarPlatillo;
-        private Button btnEditarPlatillo;
         private Button btnGuardarPlatillo;
         private TextBox txtBuscarPlatillo;
         private Label label14;
         private DataGridView dgvPlatillos;
+        private Button btnEditarPlatillo;
     }
 }

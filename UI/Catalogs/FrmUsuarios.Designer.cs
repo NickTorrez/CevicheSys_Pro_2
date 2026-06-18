@@ -96,6 +96,7 @@
             btnEditarUsuario.TabIndex = 10;
             btnEditarUsuario.Text = "Editar Usuario";
             btnEditarUsuario.UseVisualStyleBackColor = false;
+            btnEditarUsuario.Click += btnEditarUsuario_Click;
             // 
             // btnVerPassword
             // 
@@ -228,6 +229,7 @@
             txtBuscarUsuario.Name = "txtBuscarUsuario";
             txtBuscarUsuario.Size = new Size(268, 26);
             txtBuscarUsuario.TabIndex = 1;
+            txtBuscarUsuario.TextChanged += txtBuscarUsuario_TextChanged;
             // 
             // label5
             // 

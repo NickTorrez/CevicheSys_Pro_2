@@ -43,6 +43,7 @@ namespace CevicheSys_Pro_2
             string sql = @"INSERT INTO Recipe (Dish_Id, Product_Id, Quantity_Used, Enable) 
                            VALUES (@dishId, @productId, @quantity, @enable)";
 
+            using InsertCommand insert = new InsertCommand();
             SqlParameter[] parameters = {
                 new SqlParameter("@dishId", SqlDbType.Int) { Value = Dish_Id },
                 new SqlParameter("@productId", SqlDbType.Int) { Value = Product_Id },
@@ -50,7 +51,6 @@ namespace CevicheSys_Pro_2
                 new SqlParameter("@enable", SqlDbType.Bit) { Value = Enable }
             };
 
-            using InsertCommand insert = new InsertCommand();
             return insert.ExecuteInsert(sql, parameters);
         }
 
@@ -58,12 +58,12 @@ namespace CevicheSys_Pro_2
         {
             string sql = "UPDATE Recipe SET Enable = @enable WHERE Recipe_Id = @id";
 
+            using UpdateCommand update = new UpdateCommand();
             SqlParameter[] parameters = {
                 new SqlParameter("@id", SqlDbType.Int) { Value = recipeId },
                 new SqlParameter("@enable", SqlDbType.Bit) { Value = false }
             };
 
-            using UpdateCommand update = new UpdateCommand();
             return update.ExecuteUpdate(sql, parameters);
         }
         #endregion

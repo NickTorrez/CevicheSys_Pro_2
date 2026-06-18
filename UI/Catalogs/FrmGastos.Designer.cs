@@ -33,8 +33,6 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistroGastos = new Panel();
             btnEditarEgreso = new Button();
-            cmbProveedor = new ComboBox();
-            label6 = new Label();
             txtMonto = new TextBox();
             txtConcepto = new TextBox();
             cmbTipoGasto = new ComboBox();
@@ -79,8 +77,6 @@
             // 
             pnlRegistroGastos.BorderStyle = BorderStyle.FixedSingle;
             pnlRegistroGastos.Controls.Add(btnEditarEgreso);
-            pnlRegistroGastos.Controls.Add(cmbProveedor);
-            pnlRegistroGastos.Controls.Add(label6);
             pnlRegistroGastos.Controls.Add(txtMonto);
             pnlRegistroGastos.Controls.Add(txtConcepto);
             pnlRegistroGastos.Controls.Add(cmbTipoGasto);
@@ -113,35 +109,11 @@
             btnEditarEgreso.Text = "Editar Egreso";
             btnEditarEgreso.UseVisualStyleBackColor = false;
             // 
-            // cmbProveedor
-            // 
-            cmbProveedor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            cmbProveedor.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbProveedor.Font = new Font("Century Gothic", 9F);
-            cmbProveedor.FormattingEnabled = true;
-            cmbProveedor.Location = new Point(123, 172);
-            cmbProveedor.Name = "cmbProveedor";
-            cmbProveedor.Size = new Size(195, 28);
-            cmbProveedor.TabIndex = 21;
-            cmbProveedor.Enter += TextBox_Enter;
-            cmbProveedor.Leave += TextBox_Leave;
-            // 
-            // label6
-            // 
-            label6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label6.AutoSize = true;
-            label6.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(12, 175);
-            label6.Name = "label6";
-            label6.Size = new Size(84, 18);
-            label6.TabIndex = 20;
-            label6.Text = "Proveedor";
-            // 
             // txtMonto
             // 
             txtMonto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtMonto.Font = new Font("Century Gothic", 9F);
-            txtMonto.Location = new Point(123, 366);
+            txtMonto.Location = new Point(123, 341);
             txtMonto.MaxLength = 12;
             txtMonto.Name = "txtMonto";
             txtMonto.Size = new Size(195, 26);
@@ -154,7 +126,7 @@
             // 
             txtConcepto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtConcepto.Font = new Font("Century Gothic", 9F);
-            txtConcepto.Location = new Point(12, 245);
+            txtConcepto.Location = new Point(12, 220);
             txtConcepto.MaxLength = 255;
             txtConcepto.Multiline = true;
             txtConcepto.Name = "txtConcepto";
@@ -170,7 +142,7 @@
             cmbTipoGasto.Font = new Font("Century Gothic", 9F);
             cmbTipoGasto.FormattingEnabled = true;
             cmbTipoGasto.Items.AddRange(new object[] { "Compras", "Servicios Basicos", "Salarios" });
-            cmbTipoGasto.Location = new Point(123, 119);
+            cmbTipoGasto.Location = new Point(123, 152);
             cmbTipoGasto.Name = "cmbTipoGasto";
             cmbTipoGasto.Size = new Size(195, 28);
             cmbTipoGasto.TabIndex = 17;
@@ -182,7 +154,7 @@
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label5.Location = new Point(12, 370);
+            label5.Location = new Point(12, 345);
             label5.Name = "label5";
             label5.Size = new Size(93, 18);
             label5.TabIndex = 16;
@@ -193,7 +165,7 @@
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label4.AutoSize = true;
             label4.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label4.Location = new Point(9, 216);
+            label4.Location = new Point(9, 191);
             label4.Name = "label4";
             label4.Size = new Size(83, 18);
             label4.TabIndex = 15;
@@ -204,7 +176,7 @@
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label3.Location = new Point(12, 123);
+            label3.Location = new Point(12, 156);
             label3.Name = "label3";
             label3.Size = new Size(109, 18);
             label3.TabIndex = 14;
@@ -215,7 +187,7 @@
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Century Gothic", 9F, FontStyle.Bold);
-            label1.Location = new Point(12, 75);
+            label1.Location = new Point(12, 108);
             label1.Name = "label1";
             label1.Size = new Size(54, 18);
             label1.TabIndex = 13;
@@ -226,7 +198,7 @@
             dtpFechaGasto.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dtpFechaGasto.Font = new Font("Century Gothic", 9F);
             dtpFechaGasto.Format = DateTimePickerFormat.Short;
-            dtpFechaGasto.Location = new Point(123, 69);
+            dtpFechaGasto.Location = new Point(123, 102);
             dtpFechaGasto.Name = "dtpFechaGasto";
             dtpFechaGasto.RightToLeft = RightToLeft.No;
             dtpFechaGasto.Size = new Size(195, 26);
@@ -239,7 +211,7 @@
             label2.Anchor = AnchorStyles.None;
             label2.AutoSize = true;
             label2.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(56, 17);
+            label2.Location = new Point(56, 41);
             label2.Name = "label2";
             label2.Size = new Size(218, 27);
             label2.TabIndex = 11;
@@ -417,8 +389,6 @@
         private DateTimePicker dtpFin;
         private DateTimePicker dtpInicio;
         private DataGridView dgvGastos;
-        private ComboBox cmbProveedor;
-        private Label label6;
         private Button btnEditarEgreso;
     }
 }

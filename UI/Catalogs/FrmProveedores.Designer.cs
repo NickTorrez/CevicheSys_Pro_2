@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tableLayoutPanel1 = new TableLayoutPanel();
             pnlRegistroProveedores = new Panel();
             txtEmail = new TextBox();
@@ -111,8 +111,8 @@
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(202, 26);
             txtEmail.TabIndex = 20;
-            txtEmail.Enter += TextBox_Enter;
-            txtEmail.Leave += TextBox_Leave;
+            txtEmail.Enter += InputControl_Enter;
+            txtEmail.Leave += InputControl_Leave;
             // 
             // txtApellidoProveedor
             // 
@@ -123,8 +123,8 @@
             txtApellidoProveedor.Name = "txtApellidoProveedor";
             txtApellidoProveedor.Size = new Size(202, 26);
             txtApellidoProveedor.TabIndex = 19;
-            txtApellidoProveedor.Enter += TextBox_Enter;
-            txtApellidoProveedor.Leave += TextBox_Leave;
+            txtApellidoProveedor.Enter += InputControl_Enter;
+            txtApellidoProveedor.Leave += InputControl_Leave;
             // 
             // label8
             // 
@@ -158,8 +158,8 @@
             txtDireccion.Name = "txtDireccion";
             txtDireccion.Size = new Size(306, 74);
             txtDireccion.TabIndex = 16;
-            txtDireccion.Enter += TextBox_Enter;
-            txtDireccion.Leave += TextBox_Leave;
+            txtDireccion.Enter += InputControl_Enter;
+            txtDireccion.Leave += InputControl_Leave;
             // 
             // txtTelefono
             // 
@@ -170,8 +170,8 @@
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(202, 26);
             txtTelefono.TabIndex = 15;
-            txtTelefono.Enter += TextBox_Enter;
-            txtTelefono.Leave += TextBox_Leave;
+            txtTelefono.Enter += InputControl_Enter;
+            txtTelefono.Leave += InputControl_Leave;
             // 
             // txtNombreProveedor
             // 
@@ -182,8 +182,8 @@
             txtNombreProveedor.Name = "txtNombreProveedor";
             txtNombreProveedor.Size = new Size(202, 26);
             txtNombreProveedor.TabIndex = 14;
-            txtNombreProveedor.Enter += TextBox_Enter;
-            txtNombreProveedor.Leave += TextBox_Leave;
+            txtNombreProveedor.Enter += InputControl_Enter;
+            txtNombreProveedor.Leave += InputControl_Leave;
             // 
             // txtCedulaRuc
             // 
@@ -194,8 +194,8 @@
             txtCedulaRuc.Name = "txtCedulaRuc";
             txtCedulaRuc.Size = new Size(202, 26);
             txtCedulaRuc.TabIndex = 13;
-            txtCedulaRuc.Enter += TextBox_Enter;
-            txtCedulaRuc.Leave += TextBox_Leave;
+            txtCedulaRuc.Enter += InputControl_Enter;
+            txtCedulaRuc.Leave += InputControl_Leave;
             // 
             // label6
             // 
@@ -329,20 +329,20 @@
             // 
             // dgvProveedores
             // 
-            dataGridViewCellStyle3.BackColor = Color.WhiteSmoke;
-            dataGridViewCellStyle3.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle3.ForeColor = Color.Black;
-            dgvProveedores.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.BackColor = Color.WhiteSmoke;
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dgvProveedores.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvProveedores.BackgroundColor = Color.WhiteSmoke;
             dgvProveedores.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = Color.FromArgb(0, 91, 150);
-            dataGridViewCellStyle4.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle4.ForeColor = Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dgvProveedores.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(0, 91, 150);
+            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvProveedores.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvProveedores.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProveedores.Dock = DockStyle.Fill;
             dgvProveedores.Location = new Point(0, 68);
@@ -351,7 +351,7 @@
             dgvProveedores.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProveedores.Size = new Size(618, 527);
             dgvProveedores.TabIndex = 1;
-            dgvProveedores.CellContentClick += dgvProveedores_CellContentClick;
+            dgvProveedores.CellClick += dgvProveedores_CellClick;
             // 
             // pnlBuscar
             // 

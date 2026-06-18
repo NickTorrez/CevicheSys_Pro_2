@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CevicheSys_Pro_2.Services.BusinessLogic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,284 +15,536 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 
     public partial class FrmInventario : Form
     {
-        private DataTable tablaProductos = new DataTable();
-        private DataTable tablaPlatillos = new DataTable();
-        private int productoSeleccionadoId = 0;
-        private int platilloSeleccionadoId = 0;
-        private readonly CultureInfo cultura = new CultureInfo("es-NI");
+        // Controladores de Lógica de Negocio Reales
+        private readonly ProductBusiness _productBusiness;
+        private readonly DishBusiness _dishBusiness;
+        private readonly CategoryBusiness _categoryBusiness;
+        private readonly SupplierBusiness _supplierBusiness;
+
+        // Variables de estado internas para guardar los IDs seleccionados de las tablas
+        private int _productoSeleccionadoId = 0;
+        private int _platilloSeleccionadoId = 0;
+
+        // DataTables en memoria para soportar el filtrado/búsqueda en tiempo real
+        private DataTable _dtProductos;
+        private DataTable _dtPlatillos;
 
         public FrmInventario()
         {
             InitializeComponent();
-        }
+            // Inicialización de capas de negocio
+            _productBusiness = new ProductBusiness();
+            _dishBusiness = new DishBusiness();
+            _categoryBusiness = new CategoryBusiness();
+            _supplierBusiness = new SupplierBusiness();
 
-        private void TextBox_Enter(object sender, EventArgs e)
-        {
-            // Evaluamos si el elemento es un control válido
-            if (sender is Control ctrl)
-            {
-                // Cambia a celeste claro marino al entrar
-                ctrl.BackColor = Color.FromArgb(227, 242, 253);
-            }
-        }
-
-        private void TextBox_Leave(object sender, EventArgs e)
-        {
-            if (sender is Control ctrl)
-            {
-                // Regresa a blanco al salir
-                ctrl.BackColor = Color.White;
-            }
+            // Formulario hijo sin bordes
+            this.FormBorderStyle = FormBorderStyle.None;
         }
 
         private void FrmInventario_Load(object sender, EventArgs e)
         {
-            ConfigurarFormulario();
-            ConfigurarGrid(dgvInventario);
-            ConfigurarGrid(dgvPlatillos);
-            CrearTablasTemporales();
-            CargarCombosTemporales();
-            CargarDatosTemporales();
-            LimpiarProducto();
-            LimpiarPlatillo();
+            AsignarEventosEstilo();
+            CargarCombosMaestros();
+            CargarInventarioProductos();
+            CargarInventarioPlatillos();
         }
 
-        private void SoloNumerosYDecimales_KeyPress(object sender, KeyPressEventArgs e)
+        #region Eventos Visuales
+        private void AsignarEventosEstilo()
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
-                e.Handled = true;
+            // Pestaña Insumos
+            var controlesInsumos = new List<Control>
+            {
+                txtNombreProducto, cmbCategoria, cmbProveedor,
+                txtStockActual, dtpFechaVencimiento, txtBuscarProducto
+            };
 
-            if (e.KeyChar == '.' && sender is TextBox txt && txt.Text.Contains("."))
-                e.Handled = true;
+            // Pestaña Platillos
+            var controlesPlatillos = new List<Control>
+            {
+                txtTipoPlatillo, txtTamano, txtPrecio, txtBuscarPlatillo
+            };
+
+            // Unificar y asignar dinámicamente
+            foreach (var ctrl in controlesInsumos.Concat(controlesPlatillos))
+            {
+                if (ctrl != null)
+                {
+                    ctrl.Enter += InputControl_Enter;
+                    ctrl.Leave += InputControl_Leave;
+                }
+            }
         }
 
-        private void ConfigurarFormulario()
+        private void InputControl_Enter(object sender, EventArgs e)
         {
-            txtNombreProducto.MaxLength = 100;
-            txtStockActual.MaxLength = 12;
-            txtTipoPlatillo.MaxLength = 50;
-            txtTamano.MaxLength = 30;
-            txtPrecio.MaxLength = 12;
-            txtStockActual.KeyPress += SoloNumerosYDecimales_KeyPress;
-            txtPrecio.KeyPress += SoloNumerosYDecimales_KeyPress;
+            if (sender is Control ctrl)
+            {
+                ctrl.BackColor = Color.FromArgb(227, 242, 253);
+            }
         }
 
-        private void ConfigurarGrid(DataGridView grid)
+        private void InputControl_Leave(object sender, EventArgs e)
         {
-            grid.ReadOnly = true;
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.MultiSelect = false;
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            grid.BackgroundColor = Color.White;
-            grid.BorderStyle = BorderStyle.None;
-            grid.RowHeadersVisible = false;
-            grid.EnableHeadersVisualStyles = false;
-            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 91, 150);
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 247, 250);
+            if (sender is Control ctrl)
+            {
+                ctrl.BackColor = Color.White;
+            }
         }
+        #endregion
 
-        private void CrearTablasTemporales()
+        #region Métodos de Carga de Datos
+        private void CargarCombosMaestros()
         {
-            tablaProductos.Columns.Add("Product_Id", typeof(int));
-            tablaProductos.Columns.Add("Product_Name", typeof(string));
-            tablaProductos.Columns.Add("Category_Name", typeof(string));
-            tablaProductos.Columns.Add("Supplier_Name", typeof(string));
-            tablaProductos.Columns.Add("Current_Stock", typeof(decimal));
-            tablaProductos.Columns.Add("Expiration_Date", typeof(DateTime));
-            tablaProductos.Columns.Add("Enable", typeof(bool));
+            try
+            {
+                // Categorías usando el método real 'ListCategories()'
+                DataTable dtCategorias = _categoryBusiness.ListCategories();
+                cmbCategoria.DataSource = dtCategorias;
+                cmbCategoria.DisplayMember = "Category_Name"; // Propiedad real de tu BD
+                cmbCategoria.ValueMember = "Category_Id";
+                cmbCategoria.SelectedIndex = -1;
 
-            tablaPlatillos.Columns.Add("Dish_Id", typeof(int));
-            tablaPlatillos.Columns.Add("Dish_Type", typeof(string));
-            tablaPlatillos.Columns.Add("Size", typeof(string));
-            tablaPlatillos.Columns.Add("Price", typeof(decimal));
-            tablaPlatillos.Columns.Add("Is_Available", typeof(bool));
-            tablaPlatillos.Columns.Add("Enable", typeof(bool));
+                // Proveedores usando el método real 'ListSuppliers()'
+                DataTable dtProveedores = _supplierBusiness.ListSuppliers();
+                cmbProveedor.DataSource = dtProveedores;
+                cmbProveedor.DisplayMember = "Supplier_Name"; // Propiedad calculada o real de tu BD
+                cmbProveedor.ValueMember = "Supplier_Id";
+                cmbProveedor.SelectedIndex = -1;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar catálogos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void CargarCombosTemporales()
+        private void CargarInventarioProductos()
         {
-            cmbCategoria.Items.Clear();
-            cmbCategoria.Items.AddRange(new object[] { "Insumo", "Bebida", "Empaque" });
-            cmbCategoria.SelectedIndex = 0;
-
-            cmbProveedor.Items.Clear();
-            cmbProveedor.Items.AddRange(new object[] { "Carlos Mendoza", "Mariscos Del Pacifico" });
-            cmbProveedor.SelectedIndex = 0;
+            try
+            {
+                // Método real de tu ProductBusiness es 'ListProducts()'
+                _dtProductos = _productBusiness.ListProducts();
+                dgvInventario.DataSource = null;
+                dgvInventario.DataSource = _dtProductos;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar productos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void CargarDatosTemporales()
+        private void CargarInventarioPlatillos()
         {
-            tablaProductos.Rows.Add(1, "Camaron", "Insumo", "Carlos Mendoza", 25.5m, DateTime.Today.AddDays(10), true);
-            tablaProductos.Rows.Add(2, "Pescado", "Insumo", "Mariscos Del Pacifico", 40m, DateTime.Today.AddDays(7), true);
-            dgvInventario.DataSource = tablaProductos;
-
-            tablaPlatillos.Rows.Add(1, "Ceviche de Camaron", "12 oz", 180m, true, true);
-            tablaPlatillos.Rows.Add(2, "Ceviche Mixto", "Familiar", 420m, true, true);
-            dgvPlatillos.DataSource = tablaPlatillos;
-
-            OcultarColumnasTecnicas();
+            try
+            {
+                // Método real de tu DishBusiness es 'ListDishes()'
+                _dtPlatillos = _dishBusiness.ListDishes();
+                dgvPlatillos.DataSource = null;
+                dgvPlatillos.DataSource = _dtPlatillos;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar platillos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+        #endregion
 
-        private void OcultarColumnasTecnicas()
-        {
-            if (dgvInventario.Columns["Product_Id"] != null) dgvInventario.Columns["Product_Id"].Visible = false;
-            if (dgvInventario.Columns["Enable"] != null) dgvInventario.Columns["Enable"].Visible = false;
-            if (dgvPlatillos.Columns["Dish_Id"] != null) dgvPlatillos.Columns["Dish_Id"].Visible = false;
-            if (dgvPlatillos.Columns["Enable"] != null) dgvPlatillos.Columns["Enable"].Visible = false;
-            if (dgvPlatillos.Columns["Price"] != null) dgvPlatillos.Columns["Price"].DefaultCellStyle.Format = "C2";
-        }
-
-        private void btnGuardarPlatillo_Click(object sender, EventArgs e)
-        {
-            if (!ValidarPlatillo()) return;
-            int id = tablaPlatillos.Rows.Count == 0 ? 1 : tablaPlatillos.AsEnumerable().Max(r => r.Field<int>("Dish_Id")) + 1;
-            tablaPlatillos.Rows.Add(id, txtTipoPlatillo.Text.Trim(), txtTamano.Text.Trim(), decimal.Parse(txtPrecio.Text, cultura), chkDisponible.Checked, true);
-            LimpiarPlatillo();
-        }
+        #region Eventos de Botones Producto
 
         private void btnGuardarProducto_Click(object sender, EventArgs e)
         {
-            if (!ValidarProducto()) return;
-            int id = tablaProductos.Rows.Count == 0 ? 1 : tablaProductos.AsEnumerable().Max(r => r.Field<int>("Product_Id")) + 1;
-            tablaProductos.Rows.Add(id, txtNombreProducto.Text.Trim(), cmbCategoria.Text, cmbProveedor.Text, decimal.Parse(txtStockActual.Text, cultura), dtpFechaVencimiento.Value.Date, true);
-            LimpiarProducto();
+            if (!ValidarCamposProducto()) return;
+
+            try
+            {
+                Product nuevoProducto = new Product
+                {
+                    Product_Name = txtNombreProducto.Text.Trim(),
+                    Category_Id = Convert.ToInt32(cmbCategoria.SelectedValue),
+                    Supplier_Id = Convert.ToInt32(cmbProveedor.SelectedValue),
+                    Current_Stock = Convert.ToInt32(txtStockActual.Text.Trim()),
+                    Expiration_Date = dtpFechaVencimiento.Value,
+                    Enable = true
+                };
+
+                // Solución al Error CS0029: Tu método es void. Si no lanza excepción, es exitoso.
+                _productBusiness.InsertProduct(nuevoProducto);
+
+                MessageBox.Show("Insumo guardado con éxito.", "Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarInventarioProductos();
+                LimpiarCamposProducto();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Validación de Negocio", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnEditarProducto_Click(object sender, EventArgs e)
         {
-            if (productoSeleccionadoId == 0) return;
-            if (!ValidarProducto()) return;
+            if (_productoSeleccionadoId <= 0)
+            {
+                MessageBox.Show("Seleccione un producto del listado para modificar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            DataRow fila = tablaProductos.AsEnumerable().First(r => r.Field<int>("Product_Id") == productoSeleccionadoId);
-            fila["Product_Name"] = txtNombreProducto.Text.Trim();
-            fila["Category_Name"] = cmbCategoria.Text;
-            fila["Supplier_Name"] = cmbProveedor.Text;
-            fila["Current_Stock"] = decimal.Parse(txtStockActual.Text, cultura);
-            fila["Expiration_Date"] = dtpFechaVencimiento.Value.Date;
-            LimpiarProducto();
+            if (!ValidarCamposProducto()) return;
+
+            try
+            {
+                Product productoEditar = new Product
+                {
+                    Product_Id = _productoSeleccionadoId, // Se gestiona internamente
+                    Product_Name = txtNombreProducto.Text.Trim(),
+                    Category_Id = Convert.ToInt32(cmbCategoria.SelectedValue),
+                    Supplier_Id = Convert.ToInt32(cmbProveedor.SelectedValue),
+                    Current_Stock = Convert.ToInt32(txtStockActual.Text.Trim()),
+                    Expiration_Date = dtpFechaVencimiento.Value,
+                    Enable = true
+                };
+
+                // Tu método de negocio es void
+                _productBusiness.UpdateProduct(productoEditar);
+
+                MessageBox.Show("Insumo actualizado con éxito.", "Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarInventarioProductos();
+                LimpiarCamposProducto();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Validación de Negocio", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnEliminarProducto_Click(object sender, EventArgs e)
         {
-            if (productoSeleccionadoId == 0) return;
-            tablaProductos.AsEnumerable().First(r => r.Field<int>("Product_Id") == productoSeleccionadoId)["Enable"] = false;
-            LimpiarProducto();
+            if (_productoSeleccionadoId <= 0)
+            {
+                MessageBox.Show("Seleccione un producto del listado para dar de baja.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult confirmacion = MessageBox.Show("¿Está seguro que desea dar de baja este insumo?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirmacion == DialogResult.Yes)
+            {
+                try
+                {
+                    // Tu método de negocio es void
+                    _productBusiness.DeleteProduct(_productoSeleccionadoId);
+
+                    MessageBox.Show("Insumo dado de baja con éxito.", "Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    CargarInventarioProductos();
+                    LimpiarCamposProducto();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
-        private void dgvInventario_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void btnLimpiarCampos_Click(object sender, EventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            DataGridViewRow row = dgvInventario.Rows[e.RowIndex];
-            productoSeleccionadoId = Convert.ToInt32(row.Cells["Product_Id"].Value);
-            txtNombreProducto.Text = row.Cells["Product_Name"].Value.ToString();
-            cmbCategoria.Text = row.Cells["Category_Name"].Value.ToString();
-            cmbProveedor.Text = row.Cells["Supplier_Name"].Value.ToString();
-            txtStockActual.Text = row.Cells["Current_Stock"].Value.ToString();
-            dtpFechaVencimiento.Value = Convert.ToDateTime(row.Cells["Expiration_Date"].Value);
-        }
-
-        private void txtTipoPlatillo_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnEditarPlatillo_Click(object sender, EventArgs e)
-        {
-            if (platilloSeleccionadoId == 0) return;
-            if (!ValidarPlatillo()) return;
-
-            DataRow fila = tablaPlatillos.AsEnumerable().First(r => r.Field<int>("Dish_Id") == platilloSeleccionadoId);
-            fila["Dish_Type"] = txtTipoPlatillo.Text.Trim();
-            fila["Size"] = txtTamano.Text.Trim();
-            fila["Price"] = decimal.Parse(txtPrecio.Text, cultura);
-            fila["Is_Available"] = chkDisponible.Checked;
-            LimpiarPlatillo();
-        }
-
-        private void btnEliminarPlatillo_Click(object sender, EventArgs e)
-        {
-            if (platilloSeleccionadoId == 0) return;
-            tablaPlatillos.AsEnumerable().First(r => r.Field<int>("Dish_Id") == platilloSeleccionadoId)["Enable"] = false;
-            LimpiarPlatillo();
-        }
-
-        private void dgvPlatillos_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            DataGridViewRow row = dgvPlatillos.Rows[e.RowIndex];
-            platilloSeleccionadoId = Convert.ToInt32(row.Cells["Dish_Id"].Value);
-            txtTipoPlatillo.Text = row.Cells["Dish_Type"].Value.ToString();
-            txtTamano.Text = row.Cells["Size"].Value.ToString();
-            txtPrecio.Text = row.Cells["Price"].Value.ToString();
-            chkDisponible.Checked = Convert.ToBoolean(row.Cells["Is_Available"].Value);
+            LimpiarCamposProducto();
         }
 
         private void txtBuscarProducto_TextChanged(object sender, EventArgs e)
         {
-            string filtro = txtBuscarProducto.Text.Trim().Replace("'", "''");
-            tablaProductos.DefaultView.RowFilter = $"Enable = true AND Product_Name LIKE '%{filtro}%'";
-        }
-
-        private void txtBuscarPlatillo_TextChanged(object sender, EventArgs e)
-        {
-            string filtro = txtBuscarPlatillo.Text.Trim().Replace("'", "''");
-            tablaPlatillos.DefaultView.RowFilter = $"Enable = true AND Dish_Type LIKE '%{filtro}%'";
-        }
-
-        private bool ValidarProducto()
-        {
-            if (string.IsNullOrWhiteSpace(txtNombreProducto.Text) || string.IsNullOrWhiteSpace(txtStockActual.Text))
+            if (_dtProductos != null)
             {
-                MessageBox.Show("Completa nombre y stock del producto.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // Filtrado nativo sobre el DataView del DataTable para búsquedas instantáneas sin recargar base de datos
+                string filtro = txtBuscarProducto.Text.Trim().Replace("'", "''");
+                _dtProductos.DefaultView.RowFilter = string.IsNullOrEmpty(filtro)
+                    ? ""
+                    : $"Name LIKE '%{filtro}%'";
+            }
+        }
+
+        private void dgvInventario_CellClick(object sender, DataGridViewCellEventArgs e)
+        {// 1. BLINDAJE CRÍTICO: Si hacen clic en los encabezados de columna (fila -1)
+         // o el control detecta un área vacía (CurrentRow nulo), salimos del método para evitar el crash.
+            if (e.RowIndex < 0 || dgvInventario.CurrentRow == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // Capturamos de forma segura la fila seleccionada
+                DataGridViewRow filaActual = dgvInventario.Rows[e.RowIndex];
+
+                // 2. DETECCIÓN DE FILA FANTASMA: Si es la fila en blanco para agregar nuevos registros de Windows Forms, salimos.
+                if (filaActual.IsNewRow)
+                {
+                    return;
+                }
+
+                // 3. MAPEO SEGURO DE TEXTOS (Nombre del Insumo/Producto)
+                // Usamos ?.ToString() ?? string.Empty para que si la celda es NULL en SQL Server, no explote el programa.
+                txtNombreProducto.Text = filaActual.Cells["NombreProducto"].Value?.ToString() ?? string.Empty;
+
+                // 4. MAPEO SEGURO DE COMBOBOXES (Categoría y Proveedor)
+                // Buscamos el texto en el ComboBox. Si existe, lo selecciona.
+                string categoria = filaActual.Cells["Categoria"].Value?.ToString() ?? "";
+                if (cmbCategoria.Items.Contains(categoria))
+                    cmbCategoria.SelectedItem = categoria;
+                else if (cmbCategoria.Items.Count > 0)
+                    cmbCategoria.SelectedIndex = 0; // Valor por defecto si no lo encuentra
+
+                string proveedor = filaActual.Cells["Proveedor"].Value?.ToString() ?? "";
+                if (cmbProveedor.Items.Contains(proveedor))
+                    cmbProveedor.SelectedItem = proveedor;
+                else if (cmbProveedor.Items.Count > 0)
+                    cmbProveedor.SelectedIndex = 0;
+
+                // 5. MAPEO SEGURO DE NÚMEROS (Precio de Compra y Stock Actual)
+
+                if (filaActual.Cells["StockActual"].Value != null && filaActual.Cells["StockActual"].Value != DBNull.Value)
+                {
+                    txtStockActual.Text = Convert.ToDecimal(filaActual.Cells["StockActual"].Value).ToString("N2");
+                }
+                else
+                {
+                    txtStockActual.Text = "0.00";
+                }
+
+                // 6. MAPEO SEGURO DE FECHA (Fecha de Vencimiento)
+                if (filaActual.Cells["FechaVencimiento"].Value != null && filaActual.Cells["FechaVencimiento"].Value != DBNull.Value)
+                {
+                    dtpFechaVencimiento.Value = Convert.ToDateTime(filaActual.Cells["FechaVencimiento"].Value);
+                }
+                else
+                {
+                    dtpFechaVencimiento.Value = DateTime.Today; // Fecha por defecto segura si viene vacía en la BD
+                }
+            }
+            catch (Exception ex)
+            {
+                // El bloque catch absorbe cualquier error inesperado y muestra una alerta amigable
+                MessageBox.Show($"Aviso de consistencia al mapear el insumo: {ex.Message}", "Inventario de Insumos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private bool ValidarCamposProducto()
+        {
+            if (string.IsNullOrWhiteSpace(txtNombreProducto.Text) || cmbCategoria.SelectedIndex == -1 ||
+                cmbProveedor.SelectedIndex == -1 ||string.IsNullOrWhiteSpace(txtStockActual.Text))
+            {
+                MessageBox.Show("Todos los campos informativos del insumo son obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            return decimal.TryParse(txtStockActual.Text, out _);
-        }
-
-        private bool ValidarPlatillo()
-        {
-            if (string.IsNullOrWhiteSpace(txtTipoPlatillo.Text) || string.IsNullOrWhiteSpace(txtTamano.Text) || string.IsNullOrWhiteSpace(txtPrecio.Text))
+            if (!int.TryParse(txtStockActual.Text, out int stock) || stock < 0)
             {
-                MessageBox.Show("Completa tipo, tamano y precio del platillo.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El stock actual no puede ser un número negativo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            return decimal.TryParse(txtPrecio.Text, out _);
+            return true;
         }
 
-        private void btnLimpiar_Click(object sender, EventArgs e) => LimpiarProducto();
-        private void btnLimpiarPlatillo_Click(object sender, EventArgs e) => LimpiarPlatillo();
-
-        private void LimpiarProducto()
+        private void LimpiarCamposProducto()
         {
-            productoSeleccionadoId = 0;
+            _productoSeleccionadoId = 0;
             txtNombreProducto.Clear();
+            cmbCategoria.SelectedIndex = -1;
+            cmbProveedor.SelectedIndex = -1;
             txtStockActual.Clear();
-            cmbCategoria.SelectedIndex = cmbCategoria.Items.Count > 0 ? 0 : -1;
-            cmbProveedor.SelectedIndex = cmbProveedor.Items.Count > 0 ? 0 : -1;
             dtpFechaVencimiento.Value = DateTime.Today;
-            tablaProductos.DefaultView.RowFilter = "Enable = true";
+            txtBuscarProducto.Clear();
+            txtNombreProducto.Focus();
         }
 
-        private void LimpiarPlatillo()
+        #endregion
+
+
+        #region Eventos de Botones Platillos
+        private void btnGuardarPlatillo_Click(object sender, EventArgs e)
         {
-            platilloSeleccionadoId = 0;
+            if (!ValidarCamposPlatillo()) return;
+
+            Dish nuevoPlatillo = new Dish
+            {
+                Dish_Type = txtTipoPlatillo.Text.Trim(), // Mapea al tipo/nombre del platillo
+                Size = txtTamano.Text.Trim(),
+                Price = Convert.ToDecimal(txtPrecio.Text.Trim()),
+                Enable = chkDisponible.Checked
+            };
+
+            int resultado = _dishBusiness.InsertDish(nuevoPlatillo);
+            EvaluarRespuestaNegocio(resultado, "Platillo Registrado");
+
+            if (resultado == 0)
+            {
+                CargarInventarioPlatillos();
+                LimpiarCamposPlatillo();
+            }
+        }
+
+        private void btnEditarPlatillo_Click_1(object sender, EventArgs e)
+        {
+            if (_platilloSeleccionadoId <= 0)
+            {
+                MessageBox.Show("Debe seleccionar un platillo de la lista para editar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!ValidarCamposPlatillo()) return;
+
+            Dish platilloEditar = new Dish
+            {
+                Dish_Id = _platilloSeleccionadoId,
+                Dish_Type = txtTipoPlatillo.Text.Trim(),
+                Size = txtTamano.Text.Trim(),
+                Price = Convert.ToDecimal(txtPrecio.Text.Trim()),
+                Enable = chkDisponible.Checked
+            };
+
+            int resultado = _dishBusiness.UpdateDish(platilloEditar);
+            EvaluarRespuestaNegocio(resultado, "Platillo Modificado");
+
+            if (resultado == 0)
+            {
+                CargarInventarioPlatillos();
+                LimpiarCamposPlatillo();
+            }
+        }
+
+        private void btnEliminarPlatillo_Click(object sender, EventArgs e)
+        {
+            if (_platilloSeleccionadoId <= 0)
+            {
+                MessageBox.Show("Debe seleccionar un platillo de la lista para remover.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult confirmacion = MessageBox.Show("¿Desea retirar de la venta este platillo?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirmacion == DialogResult.Yes)
+            {
+                int resultado = _dishBusiness.DeleteDish(_platilloSeleccionadoId);
+                EvaluarRespuestaNegocio(resultado, "Platillo Removido");
+
+                if (resultado == 0)
+                {
+                    CargarInventarioPlatillos();
+                    LimpiarCamposPlatillo();
+                }
+            }
+        }
+
+        private void btnLimpiarControles_Click(object sender, EventArgs e)
+        {
+            LimpiarCamposPlatillo();
+        }
+
+        private void LimpiarCamposPlatillo()
+        {
+            _platilloSeleccionadoId = 0;
             txtTipoPlatillo.Clear();
             txtTamano.Clear();
             txtPrecio.Clear();
             chkDisponible.Checked = true;
-            tablaPlatillos.DefaultView.RowFilter = "Enable = true";
+            txtBuscarPlatillo.Clear();
+            txtTipoPlatillo.Focus();
         }
 
-        private void txtStockActual_TextChanged(object sender, EventArgs e)
+        private void txtBuscarPlatillo_TextChanged(object sender, EventArgs e)
         {
-
+            if (_dtPlatillos != null)
+            {
+                string filtro = txtBuscarPlatillo.Text.Trim().Replace("'", "''");
+                _dtPlatillos.DefaultView.RowFilter = string.IsNullOrEmpty(filtro)
+                    ? ""
+                    : $"Dish_Type LIKE '%{filtro}%'";
+            }
         }
+
+        private void dgvPlatillos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // 1. BLINDAJE ANTI-ENCABEZADOS: Si el usuario toca los títulos de columna (fila -1)
+            // o hace clic en un área muerta donde la fila actual sea nula, cancelamos el proceso de inmediato.
+            if (e.RowIndex < 0 || dgvInventario.CurrentRow == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // Capturamos de forma segura la fila que recibió el clic
+                DataGridViewRow filaActual = dgvInventario.Rows[e.RowIndex];
+
+                // 2. DETECCIÓN DE FILA FANTASMA: Si es la fila en blanco de inserción nueva, salimos.
+                if (filaActual.IsNewRow)
+                {
+                    return;
+                }
+
+                // 3. MAPEO SEGURO DE TEXTO: Usamos el operador '?.ToString() ?? string.Empty'
+                // Esto previene que si 'Dish_Type' o 'Size' son nulos en la BD, la app lance un NullReferenceException
+                txtTipoPlatillo.Text = filaActual.Cells["Dish_Type"].Value?.ToString() ?? string.Empty;
+                txtTamano.Text = filaActual.Cells["Size"].Value?.ToString() ?? string.Empty;
+
+                // 4. MAPEO SEGURO DE PRECIOS: Validamos que la celda no sea nula ni contenga DBNull
+                if (filaActual.Cells["Price"].Value != null && filaActual.Cells["Price"].Value != DBNull.Value)
+                {
+                    txtPrecio.Text = Convert.ToDecimal(filaActual.Cells["Price"].Value).ToString("F2");
+                }
+                else
+                {
+                    txtPrecio.Text = "0.00"; // Valor por defecto seguro si está vacío en SQL
+                }
+
+                // 5. MAPEO SEGURO DE CHECKBOX (Estado Activado/Habilitado):
+                if (filaActual.Cells["Enable"].Value != null && filaActual.Cells["Enable"].Value != DBNull.Value)
+                {
+                    chkDisponible.Checked = Convert.ToBoolean(filaActual.Cells["Enable"].Value);
+                }
+                else
+                {
+                    chkDisponible.Checked = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Si llegase a ocurrir otra anomalía imprevista, el catch absorbe el golpe 
+                // e informa amigablemente en lugar de cerrar el software del restaurante.
+                MessageBox.Show($"Aviso de consistencia de datos: {ex.Message}", "Catálogo de Inventario", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private bool ValidarCamposPlatillo()
+        {
+            if (string.IsNullOrWhiteSpace(txtTipoPlatillo.Text) || string.IsNullOrWhiteSpace(txtTamano.Text) ||
+                string.IsNullOrWhiteSpace(txtPrecio.Text))
+            {
+                MessageBox.Show("Complete el tipo, tamaño y precio del platillo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio <= 0)
+            {
+                MessageBox.Show("El precio asignado al menú debe ser un número positivo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
+        }
+        #endregion
+
+        #region Helper de Respuestas del Servidor
+        private void EvaluarRespuestaNegocio(int codigo, string operacion)
+        {
+            if (codigo == 0)
+            {
+                MessageBox.Show($"Operación [{operacion}] procesada con éxito.", "Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show($"Error de consistencia. El servidor de datos devolvió el código de anomalía: {codigo}", "Error en Operación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
     }
 
 }

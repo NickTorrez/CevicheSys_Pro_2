@@ -1,12 +1,13 @@
-﻿using System;
+﻿using CevicheSys_Pro_2;
+using CevicheSys_Pro_2.Domain;
+using CevicheSys_Pro_2.Services.Persistence;
+using CevicheSys_Pro_2.UI.Catalogs;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CevicheSys_Pro_2.Domain;
-using CevicheSys_Pro_2;
-using CevicheSys_Pro_2.Services.Persistence;
-using CevicheSys_Pro_2.UI.Catalogs;
 
 namespace CevicheSys_Pro_2.Services.BusinessLogic
 {
@@ -15,93 +16,87 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class UserBusiness
     {
-        private readonly User _userDomain = new User();
+        private readonly Users _userDomain = new Users();
 
-        public User AuthenticateUser(string username, string password)
+        public Users AuthenticateUser(string username, string password)
         {
-            // Validación básica de nulidad antes de tocar la base de datos
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                return null;
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("El nombre de usuario es requerido para la autenticación.");
 
-            // Llamada al método de persistencia en la clase Domain (User.cs)
-            // Este método ejecuta el SELECT y devuelve una instancia de User o null.
-            return _userDomain.Authenticate(username.Trim(), password);
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("La contraseña de acceso es requerida para la autenticación.");
+
+            Users user = _userDomain.Authenticate(username.Trim(), password);
+            if (user == null)
+                throw new InvalidOperationException("Credenciales inválidas o el usuario se encuentra deshabilitado.");
+
+            return user;
         }
 
-        public System.Collections.Generic.List<User> ListUsers()
+        public DataTable ListUsers()
         {
             return _userDomain.ListAllUsers();
         }
 
-        /// <summary>
-        /// Valida y procesa el registro de un nuevo usuario en el sistema.
-        /// </summary>
-        /// <returns>
-        /// 0 = Éxito.
-        /// 1 = El objeto de usuario es nulo.
-        /// 2 = Nombre de usuario o contraseña vacíos.
-        /// 3 = Formato de nombre de usuario inválido.
-        /// 4 = El nombre de usuario ya se encuentra registrado.
-        /// 5 = Error al guardar en la base de datos.
-        /// </returns>
-        public int InsertUser(User newUser)
+        public void InsertUser(Users newUser)
         {
-            // 1. Validación de nulidad estructural
-            if (newUser == null) return 1;
+            if (newUser == null)
+                throw new ArgumentNullException(nameof(newUser), "El objeto de usuario no puede ser nulo.");
 
-            // 2. Validación de campos obligatorios
-            if (string.IsNullOrWhiteSpace(newUser.Username) || string.IsNullOrWhiteSpace(newUser.Password))
-                return 2;
+            if (string.IsNullOrWhiteSpace(newUser.Username))
+                throw new ArgumentException("El nombre de usuario es un campo obligatorio.");
 
-            // 3. Validación de formatos internos de la entidad
-            if (!newUser.ValidateUsernameFormat())
-                return 3;
+            if (string.IsNullOrWhiteSpace(newUser.Password))
+                throw new ArgumentException("La contraseña de acceso es obligatoria.");
 
-            // 4. Validación de regla de negocio (No duplicados en BD)
-            // Se usa una instancia limpia o el método estático/instancia de la entidad de dominio
-            if (_userDomain.ExistsByUsername(newUser.Username))
-                return 4;
+            if (string.IsNullOrWhiteSpace(newUser.Role))
+                throw new ArgumentException("Debe asignar un rol válido al usuario.");
 
-            // 5. Si pasa todas las reglas, se ordena al dominio persistir los datos
-            bool success = newUser.InsertUser();
+            if (_userDomain.ExistsByUsername(newUser.Username.Trim(), 0))
+                throw new ArgumentException($"El nombre de usuario '{newUser.Username}' ya se encuentra registrado.");
 
-            return success ? 0 : 5;
+            newUser.Username = newUser.Username.Trim();
+            newUser.Enable = true;
+
+            int rowsAffected = newUser.InsertUser();
+            if (rowsAffected <= 0)
+                throw new Exception("Ocurrió un error inesperado en el almacenamiento de datos; el usuario no fue registrado.");
         }
 
-        /// <summary>
-        /// Valida y procesa la modificación de un usuario existente.
-        /// </summary>
-        /// <returns>
-        /// 0 = Éxito.
-        /// 1 = El objeto es nulo o ID inválido.
-        /// 2 = Nombre de usuario o Rol vacíos.
-        /// 4 = El nombre de usuario ya está ocupado por otra cuenta.
-        /// 5 = Error al actualizar en la base de datos.
-        /// </returns>
-        public int UpdateUser(User existingUser)
+        public void UpdateUser(Users existingUser)
         {
-            if (existingUser == null || existingUser.User_Id <= 0) return 1;
-            if (string.IsNullOrWhiteSpace(existingUser.Username) || string.IsNullOrWhiteSpace(existingUser.Role)) return 2;
+            if (existingUser == null)
+                throw new ArgumentNullException(nameof(existingUser), "El objeto de usuario a actualizar no puede ser nulo.");
 
-            // Validar que el nuevo nombre no choque con otro usuario de la BD
-            if (_userDomain.ExistsByUsername(existingUser.Username, existingUser.User_Id))
-                return 4;
+            if (existingUser.User_Id <= 0)
+                throw new ArgumentException("El ID del usuario proporcionado no es válido.");
 
-            bool success = existingUser.UpdateUser();
-            return success ? 0 : 5;
+            if (string.IsNullOrWhiteSpace(existingUser.Username))
+                throw new ArgumentException("El nombre de usuario no puede ser un valor vacío.");
+
+            if (string.IsNullOrWhiteSpace(existingUser.Role))
+                throw new ArgumentException("Debe especificar un rol de sistema para la actualización.");
+
+            if (_userDomain.ExistsByUsername(existingUser.Username.Trim(), existingUser.User_Id))
+                throw new ArgumentException($"El nombre de usuario '{existingUser.Username}' ya está siendo utilizado por otra cuenta.");
+
+            existingUser.Username = existingUser.Username.Trim();
+
+            int rowsAffected = existingUser.UpdateUser();
+            if (rowsAffected <= 0)
+                throw new Exception("No se pudo actualizar la información del usuario en la base de datos.");
         }
 
-        /// <summary>
-        /// Coordina la eliminación lógica de un usuario.
-        /// </summary>
-        public int DeleteUser(int userId)
+        public void DeleteUser(int userId)
         {
-            if (userId <= 0) return 1;
+            if (userId <= 0)
+                throw new ArgumentException("Debe especificar un ID de usuario válido para la eliminación lógica.");
 
-            User userToDelete = new User { User_Id = userId };
-            bool success = userToDelete.DeleteUser();
+            Users userToDelete = new Users { User_Id = userId };
+            int rowsAffected = userToDelete.DeleteUser();
 
-            return success ? 0 : 5;
+            if (rowsAffected <= 0)
+                throw new Exception("No se pudo completar la deshabilitación lógica del usuario especificado.");
         }
     }
 

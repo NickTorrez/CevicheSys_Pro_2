@@ -182,8 +182,6 @@
             txtObservaciones.Name = "txtObservaciones";
             txtObservaciones.Size = new Size(273, 258);
             txtObservaciones.TabIndex = 4;
-            txtObservaciones.Enter += TextBox_Enter;
-            txtObservaciones.Leave += TextBox_Leave;
             // 
             // label2
             // 
@@ -213,8 +211,6 @@
             txtEfectivoReal.TabIndex = 1;
             txtEfectivoReal.TextAlign = HorizontalAlignment.Right;
             txtEfectivoReal.TextChanged += txtEfectivoReal_TextChanged;
-            txtEfectivoReal.Enter += TextBox_Enter;
-            txtEfectivoReal.Leave += TextBox_Leave;
             // 
             // label1
             // 

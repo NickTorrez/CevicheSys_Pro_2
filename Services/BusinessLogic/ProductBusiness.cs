@@ -1,9 +1,10 @@
-﻿using System;
+﻿using CevicheSys_Pro_2.Domain;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CevicheSys_Pro_2.Domain;
 
 namespace CevicheSys_Pro_2.Services.BusinessLogic
 {
@@ -14,53 +15,76 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     {
         private readonly Product _productDomain = new Product();
 
-        /// <summary>
-        /// Valida y procesa el registro de un nuevo usuario en el sistema.
-        /// </summary>
-        /// <returns>
-        /// 0 = Éxito.
-        /// 1 = El objeto de usuario es nulo.
-        /// 2 = Nombre de usuario o contraseña vacíos.
-        /// 3 = Formato de nombre de usuario inválido.
-        /// 4 = El nombre de usuario ya se encuentra registrado.
-        /// 5 = Error al guardar en la base de datos.
-        /// </returns>
-
-        public int InsertProduct(Product newProduct)
+        public DataTable ListProducts()
         {
-            if (newProduct == null) return 1;
-            if (string.IsNullOrWhiteSpace(newProduct.Product_Name)) return 2;
-            if (newProduct.Category_Id <= 0) return 3;
-
-            // Validaciones numéricas de inventario
-            if (newProduct.Current_Stock < 0 || newProduct.Minimum_Stock < 0) return 4;
-
-            // Validación de duplicidad en la Base de Datos
-            if (_productDomain.ExistsByName(newProduct.Product_Name)) return 5;
-
-            bool success = newProduct.InsertProduct();
-            return success ? 0 : 6;
+            return _productDomain.ListAllProducts();
         }
 
-        public int UpdateProduct(Product existingProduct)
+        public void InsertProduct(Product newProduct)
         {
-            if (existingProduct == null || existingProduct.Product_Id <= 0) return 1;
-            if (string.IsNullOrWhiteSpace(existingProduct.Product_Name)) return 2;
-            if (existingProduct.Category_Id <= 0) return 3;
-            if (existingProduct.Current_Stock < 0 || existingProduct.Minimum_Stock < 0) return 4;
+            if (newProduct == null)
+                throw new ArgumentNullException(nameof(newProduct), "La referencia del producto no puede apuntar a un valor nulo.");
 
-            if (_productDomain.ExistsByName(existingProduct.Product_Name, existingProduct.Product_Id)) return 5;
+            if (string.IsNullOrWhiteSpace(newProduct.Product_Name))
+                throw new ArgumentException("El nombre descriptivo del producto es obligatorio.");
 
-            bool success = existingProduct.UpdateProduct();
-            return success ? 0 : 6;
+            if (newProduct.Category_Id <= 0)
+                throw new ArgumentException("Debe seleccionar una categoría de inventario válida.");
+
+            if (newProduct.Current_Stock < 0)
+                throw new ArgumentException("El stock inicial de existencias no puede ser un valor negativo.");
+
+            if (newProduct.Minimum_Stock < 0)
+                throw new ArgumentException("El parámetro de stock crítico/mínimo no admite valores negativos.");
+
+            if (_productDomain.ExistsByName(newProduct.Product_Name.Trim(), 0))
+                throw new ArgumentException($"Ya se encuentra registrado un producto bajo la nomenclatura '{newProduct.Product_Name}'.");
+
+            newProduct.Product_Name = newProduct.Product_Name.Trim();
+            newProduct.Enable = true;
+
+            int rowsAffected = newProduct.InsertProduct();
+            if (rowsAffected <= 0)
+                throw new Exception("Ocurrió un error físico en el servidor SQL al intentar registrar el nuevo insumo.");
         }
 
-        public int DeleteProduct(int id)
+        public void UpdateProduct(Product existingProduct)
         {
-            if (id <= 0) return 1;
-            Product productToDelete = new Product { Product_Id = id };
-            bool success = productToDelete.DeleteProduct();
-            return success ? 0 : 6;
+            if (existingProduct == null)
+                throw new ArgumentNullException(nameof(existingProduct), "El producto a modificar es nulo.");
+
+            if (existingProduct.Product_Id <= 0)
+                throw new ArgumentException("El ID del producto mapeado es incorrecto.");
+
+            if (string.IsNullOrWhiteSpace(existingProduct.Product_Name))
+                throw new ArgumentException("El nombre de insumo no puede actualizarse con caracteres vacíos.");
+
+            if (existingProduct.Category_Id <= 0)
+                throw new ArgumentException("Debe reasignar una categoría de catálogo válida.");
+
+            if (existingProduct.Current_Stock < 0 || existingProduct.Minimum_Stock < 0)
+                throw new ArgumentException("Las métricas de existencias y alarmas críticas no admiten signos negativos.");
+
+            if (_productDomain.ExistsByName(existingProduct.Product_Name.Trim(), existingProduct.Product_Id))
+                throw new ArgumentException($"Ya existe otro producto activo en el inventario con el nombre '{existingProduct.Product_Name}'.");
+
+            existingProduct.Product_Name = existingProduct.Product_Name.Trim();
+
+            int rowsAffected = existingProduct.UpdateProduct();
+            if (rowsAffected <= 0)
+                throw new Exception("No fue posible actualizar las propiedades físicas del insumo en el almacenamiento.");
+        }
+
+        public void DeleteProduct(int productId)
+        {
+            if (productId <= 0)
+                throw new ArgumentException("El ID provisto para la remoción física/lógica del insumo es inválido.");
+
+            Product productToDelete = new Product { Product_Id = productId };
+            int rowsAffected = productToDelete.DeleteProduct();
+
+            if (rowsAffected <= 0)
+                throw new Exception("Error al purgar de forma lógica el insumo del listado activo.");
         }
     }
 }

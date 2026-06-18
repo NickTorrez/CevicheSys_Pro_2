@@ -13,166 +13,103 @@ namespace CevicheSys_Pro_2
     /// </summary>
     public class FinancialReport
     {
-        #region Propiedades
+        #region Properties
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
-        public decimal TotalIncome { get; private set; }
+        public decimal TotalSales { get; private set; }
         public decimal TotalExpenses { get; private set; }
-        public decimal TotalProfit => TotalIncome - TotalExpenses;
-        public Dish MostSoldDish { get; private set; }
-        public string MostFrequentExpense { get; private set; }
-        public List<DetailedSaleDTO> SalesHistory { get; private set; }
+        public decimal NetProfit { get; private set; }
+        public List<DetailedSaleDTO> DetailedSales { get; private set; }
         #endregion
 
-        #region Constructores
+        #region Constructors
         public FinancialReport(DateTime startDate, DateTime endDate)
         {
-            StartDate = startDate.Date;
-            EndDate = endDate.Date.AddDays(1).AddTicks(-1);
-            TotalIncome = 0m;
-            TotalExpenses = 0m;
-            MostFrequentExpense = "Sin registros";
-            SalesHistory = new List<DetailedSaleDTO>();
+            this.StartDate = startDate.Date;
+            this.EndDate = endDate.Date.AddDays(1).AddTicks(-1); // Extender al final del día (23:59:59)
+            this.DetailedSales = new List<DetailedSaleDTO>();
         }
         #endregion
 
-        #region Métodos
+        #region Analytics Methods
         public void LoadReportData()
         {
-            LoadTotals();
-            LoadMostSoldDish();
-            LoadMostFrequentExpense();
-            LoadSalesHistory();
-        }
-
-        private void LoadTotals()
-        {
-            SqlParameter[] incParams = {
-                new SqlParameter("@start", SqlDbType.DateTime) { Value = StartDate },
-                new SqlParameter("@end", SqlDbType.DateTime) { Value = EndDate }
+            SqlParameter[] reportParameters = new SqlParameter[]
+            {
+                new SqlParameter("@Start", SqlDbType.DateTime) { Value = this.StartDate },
+                new SqlParameter("@End", SqlDbType.DateTime) { Value = this.EndDate }
             };
 
+            // 1. Calcular sumatoria totalizada de transacciones por venta de platillos activos
+            string salesSql = "SELECT ISNULL(SUM(Total_Amount), 0) FROM Sale WHERE Record_Date BETWEEN @Start AND @End AND Enable = 1;";
             using (SelectQuery select = new SelectQuery())
             {
-                DataTable incomeTable = select.ExecuteSelect("SELECT ISNULL(SUM(Total_Amount), 0) AS TotalIncome FROM Sale WHERE Record_Date BETWEEN @start AND @end AND Enable = 1", incParams);
-                if (incomeTable.Rows.Count > 0)
-                    TotalIncome = Convert.ToDecimal(incomeTable.Rows[0]["TotalIncome"]);
+                object? result = select.ExecuteScalar(salesSql, reportParameters);
+                this.TotalSales = result != null ? Convert.ToDecimal(result) : 0;
             }
 
-            SqlParameter[] expParams = {
-                new SqlParameter("@start", SqlDbType.Date) { Value = StartDate.Date },
-                new SqlParameter("@end", SqlDbType.Date) { Value = EndDate.Date }
+            // 2. Calcular sumatoria agregada de egresos y gastos de operación
+            string expensesSql = "SELECT ISNULL(SUM(Amount), 0) FROM Expense WHERE Date BETWEEN @Start AND @End AND Enable = 1;";
+            // Clonar parámetros debido a que el comando SQL toma propiedad del array anterior
+            SqlParameter[] reportParameters2 = new SqlParameter[]
+            {
+                new SqlParameter("@Start", SqlDbType.DateTime) { Value = this.StartDate },
+                new SqlParameter("@End", SqlDbType.DateTime) { Value = this.EndDate }
             };
-
             using (SelectQuery select = new SelectQuery())
             {
-                DataTable expenseTable = select.ExecuteSelect("SELECT ISNULL(SUM(Amount), 0) AS TotalExpenses FROM Expense WHERE Date BETWEEN @start AND @end AND Enable = 1", expParams);
-                if (expenseTable.Rows.Count > 0)
-                    TotalExpenses = Convert.ToDecimal(expenseTable.Rows[0]["TotalExpenses"]);
+                object? result = select.ExecuteScalar(expensesSql, reportParameters2);
+                this.TotalExpenses = result != null ? Convert.ToDecimal(result) : 0;
             }
-        }
 
-        private void LoadMostSoldDish()
-        {
-            string sql = @"
-                SELECT TOP 1 d.Dish_Id, d.Dish_Type, d.Size, d.Price, d.Is_Available, d.Enable
-                FROM Sale_Detail sd
-                INNER JOIN Sale s ON s.Sale_Id = sd.Sale_Id
-                INNER JOIN Dish d ON d.Dish_Id = sd.Dish_Id
-                WHERE s.Record_Date BETWEEN @start AND @end AND s.Enable = 1 AND sd.Enable = 1
-                GROUP BY d.Dish_Id, d.Dish_Type, d.Size, d.Price, d.Is_Available, d.Enable
-                ORDER BY SUM(sd.Quantity) DESC";
+            // 3. Balance del ejercicio contable
+            this.NetProfit = this.TotalSales - this.TotalExpenses;
 
-            SqlParameter[] parameters = {
-                new SqlParameter("@start", SqlDbType.DateTime) { Value = StartDate },
-                new SqlParameter("@end", SqlDbType.DateTime) { Value = EndDate }
-            };
+            // 4. Carga desglosada y relacional de ventas detalladas para auditoría de cuadrícula
+            string listSql = "SELECT s.Sale_Id, sd.Dish_Id, s.Record_Date, " +
+                             "ISNULL(c.Full_Name, 'Cliente General') AS Customer, " +
+                             "d.Dish_Type, d.Size, d.Price, sd.Quantity, " +
+                             "(sd.Quantity * d.Price) AS Calculated_Total, " +
+                             "s.Payment_Method, s.Purchase_Type, u.Username AS Auditor_User " +
+                             "FROM Sale s " +
+                             "INNER JOIN Sale_Detail sd ON s.Sale_Id = sd.Sale_Id " +
+                             "INNER JOIN Dish d ON sd.Dish_Id = d.Dish_Id " +
+                             "INNER JOIN Users u ON s.User_Id = u.User_Id " +
+                             "LEFT JOIN Customer c ON s.Customer_Id = c.Customer_Id " +
+                             "WHERE s.Record_Date BETWEEN @Start AND @End AND s.Enable = 1 AND sd.Enable = 1 " +
+                             "ORDER BY s.Record_Date DESC;";
 
-            using SelectQuery select = new SelectQuery();
-            DataTable dt = select.ExecuteSelect(sql, parameters);
-
-            if (dt.Rows.Count > 0)
+            SqlParameter[] reportParameters3 = new SqlParameter[]
             {
-                DataRow row = dt.Rows[0];
-
-                // Instanciación directa a las propiedades mapeadas
-                MostSoldDish = new Dish
-                {
-                    Dish_Id = Convert.ToInt32(row["Dish_Id"]),
-                    Dish_Type = row["Dish_Type"].ToString(),
-                    Size = row["Size"].ToString(),
-                    Price = Convert.ToDecimal(row["Price"]),
-                    Is_Available = Convert.ToBoolean(row["Is_Available"]),
-                    Enable = Convert.ToBoolean(row["Enable"])
-                };
-            }
-        }
-
-        private void LoadMostFrequentExpense()
-        {
-            string sql = @"
-                SELECT TOP 1 c.Category_Name
-                FROM Expense e
-                INNER JOIN Category c ON c.Category_Id = e.Category_Id
-                WHERE e.Date BETWEEN @start AND @end AND e.Enable = 1
-                GROUP BY c.Category_Name
-                ORDER BY COUNT(*) DESC";
-
-            SqlParameter[] parameters = {
-                new SqlParameter("@start", SqlDbType.Date) { Value = StartDate.Date },
-                new SqlParameter("@end", SqlDbType.Date) { Value = EndDate.Date }
+                new SqlParameter("@Start", SqlDbType.DateTime) { Value = this.StartDate },
+                new SqlParameter("@End", SqlDbType.DateTime) { Value = this.EndDate }
             };
 
-            using SelectQuery select = new SelectQuery();
-            DataTable dt = select.ExecuteSelect(sql, parameters);
-
-            if (dt.Rows.Count > 0)
-                MostFrequentExpense = dt.Rows[0]["Category_Name"].ToString();
-        }
-
-        private void LoadSalesHistory()
-        {
-            string sql = @"
-                SELECT s.Sale_Id, s.Record_Date, ISNULL(c.Full_Name, 'Cliente Mostrador') AS Customer,
-                       d.Dish_Id, d.Dish_Type, d.Size, d.Price, sd.Quantity, 
-                       (d.Price * sd.Quantity) AS Total_Amount, s.Payment_Method, s.Purchase_Type, u.Username AS Auditor_User
-                FROM Sale s
-                INNER JOIN Sale_Detail sd ON sd.Sale_Id = s.Sale_Id
-                INNER JOIN Dish d ON d.Dish_Id = sd.Dish_Id
-                INNER JOIN Users u ON u.User_Id = s.User_Id
-                LEFT JOIN Customer c ON c.Customer_Id = s.Customer_Id
-                WHERE s.Record_Date BETWEEN @start AND @end AND s.Enable = 1 AND sd.Enable = 1
-                ORDER BY s.Record_Date DESC";
-
-            SqlParameter[] parameters = {
-                new SqlParameter("@start", SqlDbType.DateTime) { Value = StartDate },
-                new SqlParameter("@end", SqlDbType.DateTime) { Value = EndDate }
-            };
-
-            using SelectQuery select = new SelectQuery();
-            DataTable dt = select.ExecuteSelect(sql, parameters);
-
-            foreach (DataRow row in dt.Rows)
+            this.DetailedSales.Clear();
+            using (SelectQuery select = new SelectQuery())
             {
-                SalesHistory.Add(new DetailedSaleDTO
+                DataTable table = select.ExecuteSelect(listSql, reportParameters3);
+                foreach (DataRow row in table.Rows)
                 {
-                    Sale_Id = Convert.ToInt32(row["Sale_Id"]),
-                    Dish_Id = Convert.ToInt32(row["Dish_Id"]),
-                    Date = Convert.ToDateTime(row["Record_Date"]),
-                    Customer = row["Customer"].ToString(),
-                    Dish_Type = row["Dish_Type"].ToString(),
-                    Size = row["Size"].ToString(),
-                    Price = Convert.ToDecimal(row["Price"]),
-                    Quantity = Convert.ToInt32(row["Quantity"]),
-                    Total_Amount = Convert.ToDecimal(row["Total_Amount"]),
-                    Payment_Method = row["Payment_Method"].ToString(),
-                    Purchase_Type = row["Purchase_Type"].ToString(),
-                    Auditor_User = row["Auditor_User"].ToString()
-                });
+                    this.DetailedSales.Add(new DetailedSaleDTO
+                    {
+                        Sale_Id = Convert.ToInt32(row["Sale_Id"]),
+                        Dish_Id = Convert.ToInt32(row["Dish_Id"]),
+                        Date = Convert.ToDateTime(row["Record_Date"]),
+                        Customer = row["Customer"].ToString() ?? "Desconocido",
+                        Dish_Type = row["Dish_Type"].ToString() ?? "Indefinido",
+                        Size = row["Size"].ToString() ?? "Estándar",
+                        Price = Convert.ToDecimal(row["Price"]),
+                        Quantity = Convert.ToInt32(row["Quantity"]),
+                        Total_Amount = Convert.ToDecimal(row["Calculated_Total"]),
+                        Payment_Method = row["Payment_Method"].ToString() ?? "Efectivo",
+                        Purchase_Type = row["Purchase_Type"].ToString() ?? "Local",
+                        Auditor_User = row["Auditor_User"].ToString() ?? "Sistema"
+                    });
+                }
             }
         }
         #endregion
-
     }
 
     /// <summary>
@@ -183,25 +120,15 @@ namespace CevicheSys_Pro_2
         public int Sale_Id { get; set; }
         public int Dish_Id { get; set; }
         public DateTime Date { get; set; }
-        public string Customer { get; set; }
-        public string Dish_Type { get; set; }
-        public string Size { get; set; }
+        public string Customer { get; set; } = string.Empty;
+        public string Dish_Type { get; set; } = string.Empty;
+        public string Size { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public decimal Total_Amount { get; set; }
-        public string Payment_Method { get; set; }
-        public string Purchase_Type { get; set; }
-        public string Auditor_User { get; set; }
-
-        public DetailedSaleDTO()
-        {
-            Customer = string.Empty;
-            Dish_Type = string.Empty;
-            Size = string.Empty;
-            Payment_Method = string.Empty;
-            Purchase_Type = string.Empty;
-            Auditor_User = string.Empty;
-        }
+        public string Payment_Method { get; set; } = string.Empty;
+        public string Purchase_Type { get; set; } = string.Empty;
+        public string Auditor_User { get; set; } = string.Empty;
     }
 
 }

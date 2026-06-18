@@ -12,31 +12,19 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     /// </summary>
     public class FinancialReportBusiness
     {
-        #region Constructores
-        public FinancialReportBusiness()
-        {
-            // Sin dependencias iniciales requeridas
-        }
-        #endregion
-
-        #region Métodos
+        /// <summary>
+        /// Genera y retorna un informe consolidado de auditoría dentro de un rango temporal explícito.
+        /// </summary>
         public FinancialReport GenerateReport(DateTime start, DateTime end)
         {
-            try
-            {
-                if (start.Date > end.Date)
-                    throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha final.");
+            if (start.Date > end.Date)
+                throw new ArgumentException("Restricción Inválida: La fecha inicial provista no puede ser posterior a la fecha final de corte.");
 
-                FinancialReport report = new FinancialReport(start, end);
-                report.LoadReportData();
+            // Instancia de negocio mapea y ejecuta los cálculos usando la capa contable del dominio
+            FinancialReport report = new FinancialReport(start, end);
+            report.LoadReportData();
 
-                return report;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error en la generación y cálculo del reporte financiero.", ex);
-            }
+            return report;
         }
-        #endregion
     }
 }

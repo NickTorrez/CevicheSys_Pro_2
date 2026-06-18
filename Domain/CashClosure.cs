@@ -28,10 +28,11 @@ namespace CevicheSys_Pro_2
         #endregion
 
         #region Persistence Methods
-        public bool InsertClosure()
+        public int InsertClosure()
         {
             string sql = @"INSERT INTO Cash_Closure (User_Id, Closure_Date, Initial_Cash, Calculated_Income, Real_Cash, Notes_Remarks, Enable) 
                            VALUES (@UserId, @Date, @Initial, @Calculated, @Real, @Notes, 1)";
+
             using InsertCommand insert = new InsertCommand();
             SqlParameter[] parameters = new SqlParameter[]
             {
@@ -40,9 +41,11 @@ namespace CevicheSys_Pro_2
                 new SqlParameter("@Initial", SqlDbType.Decimal) { Value = this.Initial_Cash },
                 new SqlParameter("@Calculated", SqlDbType.Decimal) { Value = this.Calculated_Income },
                 new SqlParameter("@Real", SqlDbType.Decimal) { Value = this.Real_Cash },
-                new SqlParameter("@Notes", SqlDbType.VarChar) { Value = (object)this.Notes_Remarks ?? DBNull.Value }
+                // Uso de -1 para representar VARCHAR(MAX) en SqlDbType
+                new SqlParameter("@Notes", SqlDbType.VarChar, -1) { Value = (object)this.Notes_Remarks ?? DBNull.Value }
             };
-            return insert.ExecuteInsert(sql, parameters) > 0;
+
+            return insert.ExecuteInsert(sql, parameters);
         }
         #endregion
     }

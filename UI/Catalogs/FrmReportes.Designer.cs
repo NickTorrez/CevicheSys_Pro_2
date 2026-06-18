@@ -324,6 +324,7 @@
             btnAnularVenta.TabIndex = 3;
             btnAnularVenta.Text = "Anular Venta Seleccionada";
             btnAnularVenta.UseVisualStyleBackColor = false;
+            btnAnularVenta.Click += btnAnularVenta_Click;
             // 
             // btnExportarExcel
             // 

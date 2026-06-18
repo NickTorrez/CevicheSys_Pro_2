@@ -56,46 +56,40 @@ namespace CevicheSys_Pro_2
             return list;
         }
 
-        public int AddCustomer()
+        public int InsertCustomer()
         {
-            string sql = "INSERT INTO Customer (Full_Name, Phone, Enable) VALUES (@name, @phone, @enable)";
-
-            SqlParameter[] parameters = {
-                new SqlParameter("@name", SqlDbType.VarChar, 100) { Value = Full_Name },
-                new SqlParameter("@phone", SqlDbType.VarChar, 20) { Value = (object)Phone ?? DBNull.Value },
-                new SqlParameter("@enable", SqlDbType.Bit) { Value = Enable }
-            };
-
+            string sql = "INSERT INTO Customer (Full_Name, Phone, Enable) VALUES (@name, @phone, 1)";
             using InsertCommand insert = new InsertCommand();
+            SqlParameter[] parameters = {
+                // Longitudes exactas definidas (100 y 20)
+                new SqlParameter("@name", SqlDbType.VarChar, 100) { Value = this.Full_Name.Trim() },
+                new SqlParameter("@phone", SqlDbType.VarChar, 20) { Value = (object)this.Phone ?? DBNull.Value }
+            };
             return insert.ExecuteInsert(sql, parameters);
         }
 
         public int UpdateCustomer()
         {
-            string sql = "UPDATE Customer SET Full_Name = @name, Phone = @phone WHERE Customer_Id = @id";
-
-            SqlParameter[] parameters = {
-                new SqlParameter("@id", SqlDbType.Int) { Value = Customer_Id },
-                new SqlParameter("@name", SqlDbType.VarChar, 100) { Value = Full_Name },
-                new SqlParameter("@phone", SqlDbType.VarChar, 20) { Value = (object)Phone ?? DBNull.Value }
-            };
-
+            string sql = "UPDATE Customer SET Full_Name = @name, Phone = @phone WHERE Customer_Id = @id AND Enable = 1";
             using UpdateCommand update = new UpdateCommand();
-            return update.ExecuteUpdate(sql, parameters);
-        }
-
-        public int DisableCustomer(int id)
-        {
-            string sql = "UPDATE Customer SET Enable = @enable WHERE Customer_Id = @id AND Enable = 1";
-
             SqlParameter[] parameters = {
-                new SqlParameter("@id", SqlDbType.Int) { Value = id },
-                new SqlParameter("@enable", SqlDbType.Bit) { Value = false }
+                new SqlParameter("@id", SqlDbType.Int) { Value = this.Customer_Id },
+                new SqlParameter("@name", SqlDbType.VarChar, 100) { Value = this.Full_Name.Trim() },
+                new SqlParameter("@phone", SqlDbType.VarChar, 20) { Value = (object)this.Phone ?? DBNull.Value }
             };
-
-            using UpdateCommand update = new UpdateCommand(); // Usamos Update para borrado lógico
             return update.ExecuteUpdate(sql, parameters);
         }
+
+        public int DeleteCustomer()
+        {
+            string sql = "UPDATE Customer SET Enable = 0 WHERE Customer_Id = @id";
+            using DeleteCommand delete = new DeleteCommand();
+            SqlParameter[] parameters = {
+                new SqlParameter("@id", SqlDbType.Int) { Value = this.Customer_Id }
+            };
+            return delete.ExecuteDelete(sql, parameters);
+        }
+
         #endregion
     }
 }

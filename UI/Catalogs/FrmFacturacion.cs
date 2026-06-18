@@ -1,4 +1,5 @@
 ﻿using CevicheSys_Pro_2.Helpers;
+using CevicheSys_Pro_2.Services.BusinessLogic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,31 +15,44 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 {
     public partial class FrmFacturacion : Form
     {
-        // Variables para recibir los datos desde el Punto de Venta
-        private readonly List<DetailedSaleDTO> carrito;
-        private readonly decimal totalAPagar;
-        private decimal montoEntregado = 0m;
-        private decimal cambio = 0m;
-        private readonly CultureInfo cultura = new CultureInfo("es-NI");
+        // Propiedades e instancias del estado de la transacción
+        private readonly List<DetailedSaleDTO> _carritoCompras;
+        private readonly decimal _totalPagar;
+        private readonly SaleBusiness _saleBusiness; // Suponiendo que tienes tu controlador de ventas
 
 
         // Modificamos el constructor para que reciba el carrito y el total
-        public FrmFacturacion(List<DetailedSaleDTO> carritoCompras, decimal totalAPagar)
+        public FrmFacturacion(List<DetailedSaleDTO> carritoCompras, decimal totalPagar)
         {
             InitializeComponent();
-            carrito = carritoCompras;
-            this.totalAPagar = totalAPagar;
+            // Inyección de dependencias de datos desde el punto de venta
+            _carritoCompras = carritoCompras ?? new List<DetailedSaleDTO>();
+            _totalPagar = totalPagar;
+            _saleBusiness = new SaleBusiness();
+
+            // Configuración nativa del diálogo
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
         }
 
         private void FrmFacturacion_Load(object sender, EventArgs e)
         {
-            lblTotalPagar.Text = $"Total a Pagar: {totalAPagar.ToString("C2", cultura)}";
+            AsignarEventosEstilo();
+            CargarMetodosYTipos();
+
+            // Inicializar la UI con el total transferido
+            lblTotalPagar.Text = $"C$ {_totalPagar:N2}";
+            lblCambio.Text = "C$ 0.00";
+
+            // Por defecto, ocultar o deshabilitar el cálculo si no se ha elegido efectivo
+            pnlEfectivo.Enabled = false;
 
             if (cmbTipoCompra.Items.Count == 0)
                 cmbTipoCompra.Items.AddRange(new string[] { "Local", "Delivery" });
 
             if (cmbMetodoPago.Items.Count == 0)
-                cmbMetodoPago.Items.AddRange(new string[] { "Efectivo", "Tarjeta", "Transferencia" });
+                cmbMetodoPago.Items.AddRange(new string[] { "Efectivo", "Transferencia" });
 
             cmbTipoCompra.SelectedIndex = 0;
             cmbMetodoPago.SelectedIndex = 0;
@@ -50,157 +64,194 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtMontoEntregado.Focus();
         }
 
-        // Evento: Cuando el cajero cambia entre Efectivo o Tarjeta
+        #region Regla de Estilos (Enter / Leave)
+        private void AsignarEventosEstilo()
+        {
+            // Vinculamos todos los controles dentro del GroupBox y paneles
+            Control[] controles = new Control[]
+            {
+                txtNombreCliente, txtTelefono, cmbTipoCompra,
+                cmbMetodoPago, txtMontoEntregado
+            };
+
+            foreach (var ctrl in controles)
+            {
+                if (ctrl != null)
+                {
+                    ctrl.Enter += InputControl_Enter;
+                    ctrl.Leave += InputControl_Leave;
+                }
+            }
+        }
+
+        private void InputControl_Enter(object sender, EventArgs e)
+        {
+            if (sender is Control ctrl) ctrl.BackColor = Color.FromArgb(227, 242, 253);
+        }
+
+        private void InputControl_Leave(object sender, EventArgs e)
+        {
+            if (sender is Control ctrl) ctrl.BackColor = Color.White;
+        }
+        #endregion
+
+        #region Inicialización de Catálogos de Venta
+        private void CargarMetodosYTipos()
+        {
+            // Carga manual o estática según las políticas de tu negocio
+            cmbTipoCompra.Items.Clear();
+            cmbTipoCompra.Items.Add("Consumo Local");
+            cmbTipoCompra.Items.Add("Para Llevar");
+            cmbTipoCompra.SelectedIndex = 0;
+
+            cmbMetodoPago.Items.Clear();
+            cmbMetodoPago.Items.Add("Efectivo");
+            cmbMetodoPago.Items.Add("Tarjeta de Crédito/Débito");
+            cmbMetodoPago.Items.Add("Transferencia Bancaria");
+            cmbMetodoPago.SelectedIndex = 0;
+        }
+
         private void cmbMetodoPago_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string metodo = cmbMetodoPago.SelectedItem?.ToString() ?? string.Empty;
-
-            if (metodo == "Tarjeta" || metodo == "Transferencia")
+            // El panel de efectivo solo se activa si el método seleccionado es "Efectivo"
+            if (cmbMetodoPago.SelectedItem != null && cmbMetodoPago.SelectedItem.ToString() == "Efectivo")
             {
-                txtMontoEntregado.Enabled = false;
-                txtMontoEntregado.Text = totalAPagar.ToString("F2");
-                cambio = 0m;
-                lblCambio.Text = "Cambio: C$ 0.00";
-                lblCambio.ForeColor = Color.Black;
+                pnlEfectivo.Enabled = true;
+                txtMontoEntregado.Focus();
             }
             else
             {
-                txtMontoEntregado.Enabled = true;
-                txtMontoEntregado.Text = string.Empty;
-                cambio = 0m;
-                lblCambio.Text = "Cambio: C$ 0.00";
-                lblCambio.ForeColor = Color.Black;
-                txtMontoEntregado.Focus();
+                pnlEfectivo.Enabled = false;
+                txtMontoEntregado.Clear();
+                lblCambio.Text = "C$ 0.00";
             }
         }
+        #endregion
 
+        #region Lógica Transaccional y Cálculo Analítico
         private void txtMontoEntregado_TextChanged(object sender, EventArgs e)
         {
-            CalcularCambio();
-        }
-
-        private void CalcularCambio()
-        {
-            if (string.IsNullOrWhiteSpace(txtMontoEntregado.Text))
+            if (decimal.TryParse(txtMontoEntregado.Text.Trim(), out decimal montoEntregado))
             {
-                lblCambio.Text = "Cambio: C$ 0.00";
-                lblCambio.ForeColor = Color.Black;
-                return;
-            }
-
-            if (decimal.TryParse(txtMontoEntregado.Text, out montoEntregado))
-            {
-                cambio = montoEntregado - totalAPagar;
-
-                if (cambio < 0)
+                if (montoEntregado >= _totalPagar)
                 {
-                    lblCambio.Text = $"Faltan: {Math.Abs(cambio).ToString("C2", cultura)}";
-                    lblCambio.ForeColor = Color.Red;
+                    decimal cambio = montoEntregado - _totalPagar;
+                    lblCambio.Text = $"C$ {cambio:N2}";
+                    lblCambio.ForeColor = Color.DarkGreen;
                 }
                 else
                 {
-                    lblCambio.Text = $"Cambio: {cambio.ToString("C2", cultura)}";
-                    lblCambio.ForeColor = Color.DarkGreen;
+                    lblCambio.Text = "Monto insuficiente";
+                    lblCambio.ForeColor = Color.Red;
                 }
             }
             else
             {
-                lblCambio.Text = "Monto invalido";
-                lblCambio.ForeColor = Color.Red;
+                lblCambio.Text = "C$ 0.00";
+                lblCambio.ForeColor = Color.Black;
             }
         }
 
         private void btnGenerarFactura_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombreCliente.Text))
+            // Validaciones básicas de front-end
+            if (cmbTipoCompra.SelectedIndex == -1 || cmbMetodoPago.SelectedIndex == -1)
             {
-                MessageBox.Show("Por favor, ingrese el nombre del cliente.", "Dato Requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe seleccionar el tipo de compra y método de pago.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            string metodoPago = cmbMetodoPago.SelectedItem?.ToString() ?? string.Empty;
-
-            if (metodoPago == "Efectivo" && cambio < 0)
+            // Si es efectivo, validar que pagó completo
+            if (cmbMetodoPago.SelectedItem.ToString() == "Efectivo")
             {
-                MessageBox.Show("El monto entregado es menor al total a pagar.", "Falta Dinero", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                if (!decimal.TryParse(txtMontoEntregado.Text.Trim(), out decimal entregado) || entregado < _totalPagar)
+                {
+                    MessageBox.Show("El monto entregado es inválido o insuficiente para cubrir el total.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
             }
 
-            foreach (DetailedSaleDTO item in carrito)
+            try
             {
-                item.Customer = txtNombreCliente.Text.Trim();
-                item.Payment_Method = metodoPago;
-                item.Purchase_Type = cmbTipoCompra.SelectedItem.ToString();
+                // 1. Instanciamos la cabecera de la venta para persistencia en SQL Server
+                Sale nuevaVenta = new Sale
+                {
+                    Customer_Id = null, // Puede mapearse si tienes catálogo de clientes
+                    Payment_Method = cmbMetodoPago.SelectedItem.ToString(),
+                    Purchase_Type = cmbTipoCompra.SelectedItem.ToString(),
+                    Total_Amount = _totalPagar,
+                    Record_Date = DateTime.Now,
+                    User_Id = 1, // Aquí jalarías el ID del usuario logueado en el sistema
+                    Enable = true
+                };
+
+                // 2. CONVERSIÓN CRÍTICA: Transformar List<DetailedSaleDTO> a List<SaleDetail>
+                //capa SaleBusiness exige estrictamente SaleDetail para validar cantidades e IDs de platillos
+                List<SaleDetail> detallesEntidad = new List<SaleDetail>();
+
+                foreach (var itemDto in _carritoCompras)
+                {
+                    SaleDetail detalle = new SaleDetail
+                    {
+                        // Buscamos mapear el ID del platillo. 
+                        
+                        Dish_Id = itemDto.Dish_Id,
+                        Quantity = itemDto.Quantity,
+                        Enable = true
+                    };
+                    detallesEntidad.Add(detalle);
+                }
+
+                // 3. LLAMADA CORREGIDA: Usamos el método real 'InsertCompleteSale' de tu arquitectura
+                int idVentaGenerada = _saleBusiness.InsertCompleteSale(nuevaVenta, detallesEntidad);
+
+                // 4. Generación del comprobante físico/digital (Boucher PDF)
+                GenerarBoucherPDF();
+
+                MessageBox.Show($"Facturación completada con éxito. Venta N° {idVentaGenerada} registrada.", "Sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Retornamos OK para que FrmPuntoVenta sepa que debe limpiar el dgvCarrito
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
-
-            Sale nuevaVenta = new Sale
+            catch (Exception ex)
             {
-                Customer_Id = null, // Luego se reemplaza por el cliente encontrado/creado.
-                Payment_Method = metodoPago,
-                Purchase_Type = cmbTipoCompra.SelectedItem.ToString(),
-                Total_Amount = totalAPagar,
-                Record_Date = DateTime.Now,
-                User_Id = Session.ActiveUser != null ? Session.ActiveUser.User_Id : 1,
-                Enable = true
-            };
-
-            List<SaleDetail> detalles = carrito.Select(item => new SaleDetail
-            {
-                Dish_Id = item.Dish_Id,
-                Quantity = item.Quantity,
-                Enable = true
-            }).ToList();
-
-            // Activar cuando la capa BusinessLogic ya este lista.
-            /*
-            SaleBusiness saleBusiness = new SaleBusiness();
-            int resultado = saleBusiness.InsertCompleteSale(nuevaVenta, detalles);
-
-            if (resultado != 0)
-            {
-                MessageBox.Show("No se pudo registrar la venta. Codigo: " + resultado, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                // Tu arquitectura lanza "throw new ArgumentException" o "Exception" si las validaciones fallan
+                MessageBox.Show($"Error al procesar la transacción: {ex.Message}", "Error de Negocio", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            */
-
-            // Simulacion temporal mientras conectamos BusinessLogic.
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        private void TextBox_Enter(object sender, EventArgs e)
-        {
-            // Evaluamos si el elemento es un control válido
-            if (sender is Control ctrl)
+            DialogResult result = MessageBox.Show("¿Está seguro que desea cancelar la facturación actual?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
             {
-                // Cambia a celeste claro marino al entrar
-                ctrl.BackColor = Color.FromArgb(227, 242, 253);
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
             }
         }
+        #endregion
 
-        private void TextBox_Leave(object sender, EventArgs e)
+        #region Generador de Documentos Extensos (PDF Export)
+        private void GenerarBoucherPDF()
         {
-            if (sender is Control ctrl)
+            try
             {
-                // Regresa a blanco al salir
-                ctrl.BackColor = Color.White;
+                // Aquí va la lógica de exportación utilizando librerías como iTextSharp o PDFsharp.
+                // Como ejemplo nativo, puedes estructurar tu cadena del boucher:
+                string nombreCliente = string.IsNullOrWhiteSpace(txtNombreCliente.Text) ? "Consumidor Final" : txtNombreCliente.Text.Trim();
+                string telefono = string.IsNullOrWhiteSpace(txtTelefono.Text) ? "N/A" : txtTelefono.Text.Trim();
+
+                // Este método simula la creación física del PDF en tu carpeta de documentos
+                // ... Código de renderizado de tablas para el PDF ...
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Fallo al escribir el archivo digital PDF: {ex.Message}");
             }
         }
+        #endregion
 
-        private void SoloNumerosYDecimales_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
-                e.Handled = true;
-
-            if (e.KeyChar == '.' && sender is TextBox txt && txt.Text.Contains("."))
-                e.Handled = true;
-        }
     }
 
 }

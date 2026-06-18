@@ -56,8 +56,6 @@
             txtNombreCliente.Name = "txtNombreCliente";
             txtNombreCliente.Size = new Size(186, 28);
             txtNombreCliente.TabIndex = 1;
-            txtNombreCliente.Enter += TextBox_Enter;
-            txtNombreCliente.Leave += TextBox_Leave;
             // 
             // txtTelefono
             // 
@@ -66,8 +64,6 @@
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(186, 28);
             txtTelefono.TabIndex = 1;
-            txtTelefono.Enter += TextBox_Enter;
-            txtTelefono.Leave += TextBox_Leave;
             // 
             // gbDatos
             // 
@@ -160,8 +156,6 @@
             txtMontoEntregado.TabIndex = 0;
             txtMontoEntregado.TextAlign = HorizontalAlignment.Right;
             txtMontoEntregado.TextChanged += txtMontoEntregado_TextChanged;
-            txtMontoEntregado.Enter += TextBox_Enter;
-            txtMontoEntregado.Leave += TextBox_Leave;
             // 
             // lblTotalPagar
             // 
@@ -193,8 +187,7 @@
             cmbMetodoPago.Name = "cmbMetodoPago";
             cmbMetodoPago.Size = new Size(171, 27);
             cmbMetodoPago.TabIndex = 6;
-            cmbMetodoPago.Enter += TextBox_Enter;
-            cmbMetodoPago.Leave += TextBox_Leave;
+            cmbMetodoPago.SelectedIndexChanged += cmbMetodoPago_SelectedIndexChanged;
             // 
             // cmbTipoCompra
             // 
@@ -205,8 +198,6 @@
             cmbTipoCompra.Name = "cmbTipoCompra";
             cmbTipoCompra.Size = new Size(171, 27);
             cmbTipoCompra.TabIndex = 5;
-            cmbTipoCompra.Enter += TextBox_Enter;
-            cmbTipoCompra.Leave += TextBox_Leave;
             // 
             // label3
             // 

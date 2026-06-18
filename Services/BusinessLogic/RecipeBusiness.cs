@@ -9,46 +9,41 @@ namespace CevicheSys_Pro_2.Services.BusinessLogic
     public class RecipeBusiness
     {
         #region Propiedades
-        private readonly Recipe _recipe;
+        private readonly Recipe _recipeDomain;
         #endregion
 
         #region Constructores
         public RecipeBusiness()
         {
-            _recipe = new Recipe();
+            _recipeDomain = new Recipe();
         }
         #endregion
 
         #region Métodos
         public int InsertRecipe(Recipe newRecipe)
         {
-            try
-            {
-                if (newRecipe == null) return 1;
-                if (newRecipe.Dish_Id <= 0) return 2;
-                if (newRecipe.Product_Id <= 0) return 3;
-                if (newRecipe.Quantity_Used <= 0) return 4;
+            if (newRecipe == null)
+                throw new ArgumentNullException(nameof(newRecipe), "La receta está vacía.");
 
-                newRecipe.Enable = true;
-                return newRecipe.AddRecipe() > 0 ? 0 : 5;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error en la lógica de inserción de la receta.", ex);
-            }
+            if (newRecipe.Dish_Id <= 0)
+                throw new ArgumentException("Debe seleccionar un platillo válido.");
+
+            if (newRecipe.Product_Id <= 0)
+                throw new ArgumentException("Debe seleccionar un producto (insumo) válido.");
+
+            if (newRecipe.Quantity_Used <= 0)
+                throw new ArgumentException("La cantidad utilizada debe ser mayor a cero.");
+
+            newRecipe.Enable = true;
+            return newRecipe.AddRecipe();
         }
 
         public int DisableRecipe(int recipeId)
         {
-            try
-            {
-                if (recipeId <= 0) return 1;
-                return _recipe.DisableRecipe(recipeId) > 0 ? 0 : 5;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al inhabilitar la receta seleccionada.", ex);
-            }
+            if (recipeId <= 0)
+                throw new ArgumentException("Se requiere un ID de receta válido para inhabilitarla.");
+
+            return _recipeDomain.DisableRecipe(recipeId);
         }
         #endregion
     }

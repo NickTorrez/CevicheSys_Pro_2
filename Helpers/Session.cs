@@ -9,7 +9,7 @@ namespace CevicheSys_Pro_2.Helpers
     public static class Session
     {
         // Guardará el objeto completo del usuario que logueó con éxito
-        public static User ActiveUser { get; set; }
+        public static Users ActiveUser { get; set; }
 
         // Bandera para saber si se entró usando la llave maestra
         public static bool IsMasterKeyLogin { get; set; } = false;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CevicheSys_Pro_2.Services.BusinessLogic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,50 +13,28 @@ namespace CevicheSys_Pro_2.UI.Catalogs
 {
     public partial class FrmProveedores : Form
     {
-        private DataTable tablaProveedores = new DataTable();
-        private int proveedorSeleccionadoId = 0;
+        #region Propiedades y Referencias
+        private readonly SupplierBusiness _supplierBusiness;
+        private int _proveedorSeleccionadoId = 0;
+        #endregion
 
+        #region Constructores y Load
         public FrmProveedores()
         {
             InitializeComponent();
-        }
-
-        private void TextBox_Enter(object sender, EventArgs e)
-        {
-            // Evaluamos si el elemento es un control válido
-            if (sender is Control ctrl)
-            {
-                // Cambia a celeste claro marino al entrar
-                ctrl.BackColor = Color.FromArgb(227, 242, 253);
-            }
-        }
-
-        private void TextBox_Leave(object sender, EventArgs e)
-        {
-            if (sender is Control ctrl)
-            {
-                // Regresa a blanco al salir
-                ctrl.BackColor = Color.White;
-            }
+            _supplierBusiness = new SupplierBusiness();
         }
 
         private void FrmProveedores_Load(object sender, EventArgs e)
         {
             ConfigurarFormulario();
-            ConfigurarGrid(dgvProveedores);
-            CrearTablaTemporal();
-            CargarDatosTemporales();
-            LimpiarFormulario();
+            ConfigurarGrid();
+            CargarProveedores();
+            LimpiarCampos();
         }
+        #endregion
 
-        private void SoloNumerosYDecimales_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
-                e.Handled = true;
-
-            if (e.KeyChar == '.' && sender is TextBox txt && txt.Text.Contains("."))
-                e.Handled = true;
-        }
+        #region Configuraciones Visuales y Comportamientos
 
         private void ConfigurarFormulario()
         {
@@ -65,144 +44,78 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtTelefono.MaxLength = 20;
             txtEmail.MaxLength = 100;
             txtDireccion.MaxLength = 255;
-        }
 
-        private void ConfigurarGrid(DataGridView grid)
-        {
-            grid.ReadOnly = true;
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.MultiSelect = false;
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            grid.BackgroundColor = Color.White;
-            grid.BorderStyle = BorderStyle.None;
-            grid.RowHeadersVisible = false;
-            grid.EnableHeadersVisualStyles = false;
-            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 91, 150);
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 247, 250);
-        }
-
-        private void CrearTablaTemporal()
-        {
-            tablaProveedores.Columns.Add("Supplier_Id", typeof(int));
-            tablaProveedores.Columns.Add("Tax_Id", typeof(string));
-            tablaProveedores.Columns.Add("First_Name", typeof(string));
-            tablaProveedores.Columns.Add("Last_Name", typeof(string));
-            tablaProveedores.Columns.Add("Phone", typeof(string));
-            tablaProveedores.Columns.Add("Email", typeof(string));
-            tablaProveedores.Columns.Add("Address", typeof(string));
-            tablaProveedores.Columns.Add("Enable", typeof(bool));
-        }
-
-        private void CargarDatosTemporales()
-        {
-            tablaProveedores.Rows.Add(1, "001-010101-0001A", "Carlos", "Mendoza", "8888-1111", "carlos@proveedor.com", "Mercado Oriental", true);
-            tablaProveedores.Rows.Add(2, "J0310000000001", "Mariscos", "Del Pacifico", "8888-2222", "ventas@pacifico.com", "Corinto", true);
-            dgvProveedores.DataSource = tablaProveedores;
-            OcultarColumnasTecnicas();
-        }
-
-        private void OcultarColumnasTecnicas()
-        {
-            if (dgvProveedores.Columns["Supplier_Id"] != null) dgvProveedores.Columns["Supplier_Id"].Visible = false;
-            if (dgvProveedores.Columns["Enable"] != null) dgvProveedores.Columns["Enable"].Visible = false;
-        }
-
-        private void btnGuardar_Click(object sender, EventArgs e)
-        {
-            if (!ValidarProveedor()) return;
-
-            int nuevoId = tablaProveedores.Rows.Count == 0 ? 1 : tablaProveedores.AsEnumerable().Max(r => r.Field<int>("Supplier_Id")) + 1;
-            tablaProveedores.Rows.Add(nuevoId, txtCedulaRuc.Text.Trim(), txtNombreProveedor.Text.Trim(), txtApellidoProveedor.Text.Trim(), txtTelefono.Text.Trim(), txtEmail.Text.Trim(), txtDireccion.Text.Trim(), true);
-            LimpiarFormulario();
-        }
-
-        private void btnEditar_Click(object sender, EventArgs e)
-        {
-            if (proveedorSeleccionadoId == 0)
+            // Restringir ingreso de letras en campo teléfono
+            txtTelefono.KeyPress += (s, ev) =>
             {
-                MessageBox.Show("Selecciona un proveedor para modificar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                if (!char.IsControl(ev.KeyChar) && !char.IsDigit(ev.KeyChar) && ev.KeyChar != '-')
+                    ev.Handled = true;
+            };
 
-            if (!ValidarProveedor()) return;
-
-            DataRow fila = tablaProveedores.AsEnumerable().First(r => r.Field<int>("Supplier_Id") == proveedorSeleccionadoId);
-            fila["Tax_Id"] = txtCedulaRuc.Text.Trim();
-            fila["First_Name"] = txtNombreProveedor.Text.Trim();
-            fila["Last_Name"] = txtApellidoProveedor.Text.Trim();
-            fila["Phone"] = txtTelefono.Text.Trim();
-            fila["Email"] = txtEmail.Text.Trim();
-            fila["Address"] = txtDireccion.Text.Trim();
-            LimpiarFormulario();
+            // Eventos visuales de Enfoque
+            txtCedulaRuc.Enter += InputControl_Enter;
+            txtCedulaRuc.Leave += InputControl_Leave;
+            txtNombreProveedor.Enter += InputControl_Enter;
+            txtNombreProveedor.Leave += InputControl_Leave;
+            txtApellidoProveedor.Enter += InputControl_Enter;
+            txtApellidoProveedor.Leave += InputControl_Leave;
+            txtTelefono.Enter += InputControl_Enter;
+            txtTelefono.Leave += InputControl_Leave;
+            txtEmail.Enter += InputControl_Enter;
+            txtEmail.Leave += InputControl_Leave;
+            txtDireccion.Enter += InputControl_Enter;
+            txtDireccion.Leave += InputControl_Leave;
+            txtBuscarProveedor.Enter += InputControl_Enter;
+            txtBuscarProveedor.Leave += InputControl_Leave;
         }
 
-        private void btnEliminar_Click(object sender, EventArgs e)
+        private void ConfigurarGrid()
         {
-            if (proveedorSeleccionadoId == 0)
+            dgvProveedores.ReadOnly = true;
+            dgvProveedores.AllowUserToAddRows = false;
+            dgvProveedores.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvProveedores.MultiSelect = false;
+            dgvProveedores.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvProveedores.BackgroundColor = Color.White;
+            dgvProveedores.RowHeadersVisible = false;
+        }
+
+        private void InputControl_Enter(object sender, EventArgs e)
+        {
+            // Evaluamos si el elemento es un control válido
+            if (sender is Control ctrl)
             {
-                MessageBox.Show("Selecciona un proveedor para inactivar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                // Cambia a celeste claro marino al entrar
+                ctrl.BackColor = Color.FromArgb(227, 242, 253);
             }
-
-            DataRow fila = tablaProveedores.AsEnumerable().First(r => r.Field<int>("Supplier_Id") == proveedorSeleccionadoId);
-            fila["Enable"] = false;
-            LimpiarFormulario();
         }
 
-        private void btnLimpiar_Click(object sender, EventArgs e)
+        private void InputControl_Leave(object sender, EventArgs e)
         {
-            LimpiarFormulario();
-        }
-
-        private void dgvProveedores_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            DataGridViewRow row = dgvProveedores.Rows[e.RowIndex];
-            proveedorSeleccionadoId = Convert.ToInt32(row.Cells["Supplier_Id"].Value);
-            txtCedulaRuc.Text = row.Cells["Tax_Id"].Value.ToString();
-            txtNombreProveedor.Text = row.Cells["First_Name"].Value.ToString();
-            txtApellidoProveedor.Text = row.Cells["Last_Name"].Value.ToString();
-            txtTelefono.Text = row.Cells["Phone"].Value.ToString();
-            txtEmail.Text = row.Cells["Email"].Value.ToString();
-            txtDireccion.Text = row.Cells["Address"].Value.ToString();
-        }
-
-        private void txtBuscarProveedor_TextChanged(object sender, EventArgs e)
-        {
-            string filtro = txtBuscarProveedor.Text.Trim().Replace("'", "''");
-            tablaProveedores.DefaultView.RowFilter =
-                $"Enable = true AND (Tax_Id LIKE '%{filtro}%' OR First_Name LIKE '%{filtro}%' OR Last_Name LIKE '%{filtro}%')";
-        }
-
-        private bool ValidarProveedor()
-        {
-            if (string.IsNullOrWhiteSpace(txtCedulaRuc.Text) ||
-                string.IsNullOrWhiteSpace(txtNombreProveedor.Text) ||
-                string.IsNullOrWhiteSpace(txtApellidoProveedor.Text) ||
-                string.IsNullOrWhiteSpace(txtTelefono.Text) ||
-                string.IsNullOrWhiteSpace(txtEmail.Text))
+            if (sender is Control ctrl)
             {
-                MessageBox.Show("Completa los datos obligatorios del proveedor.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
+                // Regresa a blanco al salir
+                ctrl.BackColor = Color.White;
             }
+        }
+        #endregion
 
-            if (!txtEmail.Text.Contains("@"))
+        #region Métodos de Procesamiento
+        private void CargarProveedores()
+        {
+            try
             {
-                MessageBox.Show("Ingresa un correo electronico valido.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
+                dgvProveedores.DataSource = _supplierBusiness.ListSuppliers();
             }
-
-            return true;
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar proveedores:\n{ex.Message}", "Fallo de Lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void LimpiarFormulario()
+        private void LimpiarCampos()
         {
-            proveedorSeleccionadoId = 0;
+            _proveedorSeleccionadoId = 0;
             txtCedulaRuc.Clear();
             txtNombreProveedor.Clear();
             txtApellidoProveedor.Clear();
@@ -210,8 +123,113 @@ namespace CevicheSys_Pro_2.UI.Catalogs
             txtEmail.Clear();
             txtDireccion.Clear();
             txtBuscarProveedor.Clear();
-            tablaProveedores.DefaultView.RowFilter = "Enable = true";
             txtCedulaRuc.Focus();
         }
+        #endregion
+
+        #region Eventos de Botones
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Supplier newSupplier = new Supplier
+                {
+                    Tax_Id = txtCedulaRuc.Text,
+                    First_Name = txtNombreProveedor.Text,
+                    Last_Name = txtApellidoProveedor.Text,
+                    Phone = txtTelefono.Text,
+                    Email = txtEmail.Text,
+                    Address = txtDireccion.Text
+                };
+
+                _supplierBusiness.InsertSupplier(newSupplier);
+
+                MessageBox.Show("Proveedor registrado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarProveedores();
+                LimpiarCampos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Validación de Proveedor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Supplier editSupplier = new Supplier
+                {
+                    Supplier_Id = _proveedorSeleccionadoId,
+                    Tax_Id = txtCedulaRuc.Text,
+                    First_Name = txtNombreProveedor.Text,
+                    Last_Name = txtApellidoProveedor.Text,
+                    Phone = txtTelefono.Text,
+                    Email = txtEmail.Text,
+                    Address = txtDireccion.Text
+                };
+
+                _supplierBusiness.UpdateSupplier(editSupplier);
+
+                MessageBox.Show("Proveedor actualizado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarProveedores();
+                LimpiarCampos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Validación de Proveedor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MessageBox.Show($"¿Dar de baja al proveedor {txtNombreProveedor.Text} {txtApellidoProveedor.Text}?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    _supplierBusiness.DeleteSupplier(_proveedorSeleccionadoId);
+                    MessageBox.Show("Proveedor dado de baja exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    CargarProveedores();
+                    LimpiarCampos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarCampos();
+        }
+
+
+        private void txtBuscarProveedor_TextChanged(object sender, EventArgs e)
+        {
+            if (dgvProveedores.DataSource is DataTable dt)
+            {
+                string filtro = txtBuscarProveedor.Text.Trim().Replace("'", "''");
+                dt.DefaultView.RowFilter = string.IsNullOrWhiteSpace(filtro)
+                    ? ""
+                    : $"Tax_Id LIKE '%{filtro}%' OR First_Name LIKE '%{filtro}%' OR Last_Name LIKE '%{filtro}%'";
+            }
+        }
+
+        private void dgvProveedores_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dgvProveedores.Rows[e.RowIndex];
+                _proveedorSeleccionadoId = Convert.ToInt32(row.Cells["Supplier_Id"]?.Value ?? 0);
+                txtCedulaRuc.Text = row.Cells["Tax_Id"]?.Value?.ToString() ?? "";
+                txtNombreProveedor.Text = row.Cells["First_Name"]?.Value?.ToString() ?? "";
+                txtApellidoProveedor.Text = row.Cells["Last_Name"]?.Value?.ToString() ?? "";
+                txtTelefono.Text = row.Cells["Phone"]?.Value?.ToString() ?? "";
+                txtEmail.Text = row.Cells["Email"]?.Value?.ToString() ?? "";
+                txtDireccion.Text = row.Cells["Address"]?.Value?.ToString() ?? "";
+            }
+        }
+        #endregion
     }
 }

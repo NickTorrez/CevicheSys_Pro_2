@@ -30,9 +30,9 @@ namespace CevicheSys_Pro_2
         /// <summary>
         /// Inserta la cabecera de la venta y sus detalles correspondientes.
         /// </summary>
-        public bool ProcessSaleWithDetails(List<SaleDetail> details)
+        public int ProcessSaleWithDetails(List<SaleDetail> details)
         {
-            string masterQuery = @"INSERT INTO Sale (User_Id, Customer_Id, Payment_Method, Purchase_Type, Total_Amount, Record_Date, Enable)
+            string masterQuery = @"INSERT INTO Sale (User_Id, Customer_Id, Payment_Method, Purchase_Type, Total_Amount, Record_Date, Enable) 
                                    VALUES (@UserId, @CustomerId, @PaymentMethod, @PurchaseType, @TotalAmount, @RecordDate, 1)";
 
             int generatedSaleId = 0;
@@ -43,8 +43,8 @@ namespace CevicheSys_Pro_2
                 {
                     new SqlParameter("@UserId", SqlDbType.Int) { Value = this.User_Id },
                     new SqlParameter("@CustomerId", SqlDbType.Int) { Value = (object)this.Customer_Id ?? DBNull.Value },
-                    new SqlParameter("@PaymentMethod", SqlDbType.VarChar) { Value = this.Payment_Method.Trim() },
-                    new SqlParameter("@PurchaseType", SqlDbType.VarChar) { Value = this.Purchase_Type.Trim() },
+                    new SqlParameter("@PaymentMethod", SqlDbType.VarChar, 20) { Value = this.Payment_Method.Trim() },
+                    new SqlParameter("@PurchaseType", SqlDbType.VarChar, 20) { Value = this.Purchase_Type.Trim() },
                     new SqlParameter("@TotalAmount", SqlDbType.Decimal) { Value = this.Total_Amount },
                     new SqlParameter("@RecordDate", SqlDbType.DateTime) { Value = this.Record_Date }
                 };
@@ -52,7 +52,8 @@ namespace CevicheSys_Pro_2
                 generatedSaleId = insertMaster.ExecuteInsertReturnId(masterQuery, masterParams);
             }
 
-            if (generatedSaleId <= 0) return false;
+            if (generatedSaleId <= 0)
+                throw new Exception("No se pudo generar el identificador de la factura en la base de datos.");
 
             string detailQuery = "INSERT INTO Sale_Detail (Dish_Id, Sale_Id, Quantity, Enable) VALUES (@DishId, @SaleId, @Quantity, 1)";
 
@@ -70,8 +71,34 @@ namespace CevicheSys_Pro_2
                 }
             }
 
-            return true;
+            return generatedSaleId;
         }
+        /// <summary>
+        /// Realiza la anulación lógica de una venta en la base de datos cambiando su estado de disponibilidad.
+        /// </summary>
+        /// <param name="saleId">Identificador único de la venta a anular.</param>
+        /// <param name="auditorUser">Usuario administrador que ejecuta la acción.</param>
+        /// <returns>Número de filas afectadas en la base de datos.</returns>
+        public int AnnulSale(int saleId, string auditorUser)
+        {
+            // Al ser una eliminación lógica, el estándar dicta el uso de UPDATE en lugar de DELETE
+            string sql = @"UPDATE Sales 
+                   SET Enable = 0, 
+                       User_Id = @AuditorUser 
+                   WHERE Sale_Id = @SaleId;";
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@SaleId", SqlDbType.Int) { Value = saleId },
+                new SqlParameter("@AuditorUser", SqlDbType.VarChar, 50) { Value = auditorUser }
+            };
+
+            using (UpdateCommand update = new UpdateCommand())
+            {
+                return update.ExecuteUpdate(sql, parameters);
+            }
+        }
+
         #endregion
     }
 }
